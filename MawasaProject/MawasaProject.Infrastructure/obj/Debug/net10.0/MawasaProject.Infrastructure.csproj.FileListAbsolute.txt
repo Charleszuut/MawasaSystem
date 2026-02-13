@@ -1,0 +1,17 @@
+C:\Projects\MawasaSystem\MawasaProject\MawasaProject.Infrastructure\obj\Debug\net10.0\MawasaProject.Infrastructure.csproj.AssemblyReference.cache
+C:\Projects\MawasaSystem\MawasaProject\MawasaProject.Infrastructure\obj\Debug\net10.0\MawasaProject.Infrastructure.GeneratedMSBuildEditorConfig.editorconfig
+C:\Projects\MawasaSystem\MawasaProject\MawasaProject.Infrastructure\obj\Debug\net10.0\MawasaProject.Infrastructure.AssemblyInfoInputs.cache
+C:\Projects\MawasaSystem\MawasaProject\MawasaProject.Infrastructure\obj\Debug\net10.0\MawasaProject.Infrastructure.AssemblyInfo.cs
+C:\Projects\MawasaSystem\MawasaProject\MawasaProject.Infrastructure\obj\Debug\net10.0\MawasaProject.Infrastructure.csproj.CoreCompileInputs.cache
+C:\Projects\MawasaSystem\MawasaProject\MawasaProject.Infrastructure\bin\Debug\net10.0\MawasaProject.Infrastructure.deps.json
+C:\Projects\MawasaSystem\MawasaProject\MawasaProject.Infrastructure\bin\Debug\net10.0\MawasaProject.Infrastructure.dll
+C:\Projects\MawasaSystem\MawasaProject\MawasaProject.Infrastructure\bin\Debug\net10.0\MawasaProject.Infrastructure.pdb
+C:\Projects\MawasaSystem\MawasaProject\MawasaProject.Infrastructure\bin\Debug\net10.0\MawasaProject.Application.dll
+C:\Projects\MawasaSystem\MawasaProject\MawasaProject.Infrastructure\bin\Debug\net10.0\MawasaProject.Domain.dll
+C:\Projects\MawasaSystem\MawasaProject\MawasaProject.Infrastructure\bin\Debug\net10.0\MawasaProject.Domain.pdb
+C:\Projects\MawasaSystem\MawasaProject\MawasaProject.Infrastructure\bin\Debug\net10.0\MawasaProject.Application.pdb
+C:\Projects\MawasaSystem\MawasaProject\MawasaProject.Infrastructure\obj\Debug\net10.0\MawasaPr.F6D4E2A8.Up2Date
+C:\Projects\MawasaSystem\MawasaProject\MawasaProject.Infrastructure\obj\Debug\net10.0\MawasaProject.Infrastructure.dll
+C:\Projects\MawasaSystem\MawasaProject\MawasaProject.Infrastructure\obj\Debug\net10.0\refint\MawasaProject.Infrastructure.dll
+C:\Projects\MawasaSystem\MawasaProject\MawasaProject.Infrastructure\obj\Debug\net10.0\MawasaProject.Infrastructure.pdb
+C:\Projects\MawasaSystem\MawasaProject\MawasaProject.Infrastructure\obj\Debug\net10.0\ref\MawasaProject.Infrastructure.dll

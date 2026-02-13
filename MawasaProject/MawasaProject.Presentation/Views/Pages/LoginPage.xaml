@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="MawasaProject.Presentation.Views.Pages.LoginPage"
+             Title="Login">
+    <ScrollView>
+        <VerticalStackLayout Padding="24" Spacing="12" MaximumWidthRequest="520" HorizontalOptions="Center">
+            <Label Text="Mawasa Project" FontSize="30" FontAttributes="Bold" />
+            <Label Text="Offline authentication" FontSize="14" TextColor="#6B7280" />
+
+            <Entry Placeholder="Username" Text="{Binding Username}" />
+            <Entry Placeholder="Password" IsPassword="True" Text="{Binding Password}" />
+            <Button Text="Sign In" Command="{Binding LoginCommand}" BackgroundColor="#0B5FFF" TextColor="White" />
+
+            <Label Text="{Binding ErrorMessage}" TextColor="#B91C1C" />
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>

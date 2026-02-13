@@ -1,0 +1,15 @@
+C:\Projects\MawasaSystem\MawasaProject\MawasaProject.Application\obj\Debug\net10.0\MawasaProject.Application.csproj.AssemblyReference.cache
+C:\Projects\MawasaSystem\MawasaProject\MawasaProject.Application\obj\Debug\net10.0\MawasaProject.Application.GeneratedMSBuildEditorConfig.editorconfig
+C:\Projects\MawasaSystem\MawasaProject\MawasaProject.Application\obj\Debug\net10.0\MawasaProject.Application.AssemblyInfoInputs.cache
+C:\Projects\MawasaSystem\MawasaProject\MawasaProject.Application\obj\Debug\net10.0\MawasaProject.Application.AssemblyInfo.cs
+C:\Projects\MawasaSystem\MawasaProject\MawasaProject.Application\obj\Debug\net10.0\MawasaProject.Application.csproj.CoreCompileInputs.cache
+C:\Projects\MawasaSystem\MawasaProject\MawasaProject.Application\bin\Debug\net10.0\MawasaProject.Application.deps.json
+C:\Projects\MawasaSystem\MawasaProject\MawasaProject.Application\bin\Debug\net10.0\MawasaProject.Application.dll
+C:\Projects\MawasaSystem\MawasaProject\MawasaProject.Application\bin\Debug\net10.0\MawasaProject.Application.pdb
+C:\Projects\MawasaSystem\MawasaProject\MawasaProject.Application\bin\Debug\net10.0\MawasaProject.Domain.dll
+C:\Projects\MawasaSystem\MawasaProject\MawasaProject.Application\bin\Debug\net10.0\MawasaProject.Domain.pdb
+C:\Projects\MawasaSystem\MawasaProject\MawasaProject.Application\obj\Debug\net10.0\MawasaPr.AFA1FB99.Up2Date
+C:\Projects\MawasaSystem\MawasaProject\MawasaProject.Application\obj\Debug\net10.0\MawasaProject.Application.dll
+C:\Projects\MawasaSystem\MawasaProject\MawasaProject.Application\obj\Debug\net10.0\refint\MawasaProject.Application.dll
+C:\Projects\MawasaSystem\MawasaProject\MawasaProject.Application\obj\Debug\net10.0\MawasaProject.Application.pdb
+C:\Projects\MawasaSystem\MawasaProject\MawasaProject.Application\obj\Debug\net10.0\ref\MawasaProject.Application.dll

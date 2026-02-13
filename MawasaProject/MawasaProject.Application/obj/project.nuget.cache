@@ -1,0 +1,11 @@
+{
+  "version": 2,
+  "dgSpecHash": "r1XztzBNGf0=",
+  "success": true,
+  "projectFilePath": "C:\\Projects\\MawasaSystem\\MawasaProject\\MawasaProject.Application\\MawasaProject.Application.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\decay\\.nuget\\packages\\microsoft.extensions.dependencyinjection.abstractions\\10.0.0\\microsoft.extensions.dependencyinjection.abstractions.10.0.0.nupkg.sha512",
+    "C:\\Users\\decay\\.nuget\\packages\\microsoft.extensions.logging.abstractions\\10.0.0\\microsoft.extensions.logging.abstractions.10.0.0.nupkg.sha512"
+  ],
+  "logs": []
+}

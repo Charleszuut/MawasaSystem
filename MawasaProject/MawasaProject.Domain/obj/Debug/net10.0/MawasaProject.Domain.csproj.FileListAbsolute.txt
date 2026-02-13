@@ -1,0 +1,11 @@
+C:\Projects\MawasaSystem\MawasaProject\MawasaProject.Domain\bin\Debug\net10.0\MawasaProject.Domain.deps.json
+C:\Projects\MawasaSystem\MawasaProject\MawasaProject.Domain\bin\Debug\net10.0\MawasaProject.Domain.dll
+C:\Projects\MawasaSystem\MawasaProject\MawasaProject.Domain\bin\Debug\net10.0\MawasaProject.Domain.pdb
+C:\Projects\MawasaSystem\MawasaProject\MawasaProject.Domain\obj\Debug\net10.0\MawasaProject.Domain.GeneratedMSBuildEditorConfig.editorconfig
+C:\Projects\MawasaSystem\MawasaProject\MawasaProject.Domain\obj\Debug\net10.0\MawasaProject.Domain.AssemblyInfoInputs.cache
+C:\Projects\MawasaSystem\MawasaProject\MawasaProject.Domain\obj\Debug\net10.0\MawasaProject.Domain.AssemblyInfo.cs
+C:\Projects\MawasaSystem\MawasaProject\MawasaProject.Domain\obj\Debug\net10.0\MawasaProject.Domain.csproj.CoreCompileInputs.cache
+C:\Projects\MawasaSystem\MawasaProject\MawasaProject.Domain\obj\Debug\net10.0\MawasaProject.Domain.dll
+C:\Projects\MawasaSystem\MawasaProject\MawasaProject.Domain\obj\Debug\net10.0\refint\MawasaProject.Domain.dll
+C:\Projects\MawasaSystem\MawasaProject\MawasaProject.Domain\obj\Debug\net10.0\MawasaProject.Domain.pdb
+C:\Projects\MawasaSystem\MawasaProject\MawasaProject.Domain\obj\Debug\net10.0\ref\MawasaProject.Domain.dll

@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="MawasaProject.Presentation.Views.Pages.CustomersPage"
+             Title="Customers">
+    <ScrollView>
+        <VerticalStackLayout Padding="20" Spacing="10" MaximumWidthRequest="760" HorizontalOptions="Center">
+            <Label Text="Customers" FontSize="24" FontAttributes="Bold" />
+            <HorizontalStackLayout Spacing="8">
+                <Entry Placeholder="Search" Text="{Binding SearchQuery}" HorizontalOptions="Fill" />
+                <Button Text="Search" Command="{Binding SearchCommand}" />
+            </HorizontalStackLayout>
+            <Grid ColumnDefinitions="*,*,*" ColumnSpacing="8">
+                <Entry Placeholder="Name" Text="{Binding Name}" />
+                <Entry Grid.Column="1" Placeholder="Phone" Text="{Binding Phone}" />
+                <Entry Grid.Column="2" Placeholder="Email" Text="{Binding Email}" />
+            </Grid>
+            <Button Text="Add Customer" Command="{Binding AddCustomerCommand}" />
+
+            <CollectionView ItemsSource="{Binding Customers}">
+                <CollectionView.ItemTemplate>
+                    <DataTemplate>
+                        <Frame Padding="10" Margin="0,4" BorderColor="#D1D5DB">
+                            <VerticalStackLayout>
+                                <Label Text="{Binding Name}" FontAttributes="Bold" />
+                                <Label Text="{Binding Email}" />
+                                <Label Text="{Binding PhoneNumber}" />
+                            </VerticalStackLayout>
+                        </Frame>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>

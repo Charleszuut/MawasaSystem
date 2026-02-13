@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="MawasaProject.Presentation.Views.Pages.DashboardPage"
+             Title="Dashboard">
+    <ScrollView>
+        <VerticalStackLayout Padding="20" Spacing="12">
+            <Label Text="Dashboard" FontSize="28" FontAttributes="Bold" />
+            <Grid ColumnDefinitions="*,*" RowDefinitions="Auto,Auto" ColumnSpacing="12" RowSpacing="12">
+                <Frame Grid.Row="0" Grid.Column="0" Padding="14" BorderColor="#D1D5DB">
+                    <VerticalStackLayout>
+                        <Label Text="Revenue" TextColor="#6B7280" />
+                        <Label Text="{Binding TotalRevenue, StringFormat='${0:F2}'}" FontSize="24" FontAttributes="Bold" />
+                    </VerticalStackLayout>
+                </Frame>
+                <Frame Grid.Row="0" Grid.Column="1" Padding="14" BorderColor="#D1D5DB">
+                    <VerticalStackLayout>
+                        <Label Text="Outstanding" TextColor="#6B7280" />
+                        <Label Text="{Binding OutstandingBalance, StringFormat='${0:F2}'}" FontSize="24" FontAttributes="Bold" />
+                    </VerticalStackLayout>
+                </Frame>
+                <Frame Grid.Row="1" Grid.Column="0" Padding="14" BorderColor="#D1D5DB">
+                    <VerticalStackLayout>
+                        <Label Text="Pending Bills" TextColor="#6B7280" />
+                        <Label Text="{Binding PendingBills}" FontSize="24" FontAttributes="Bold" />
+                    </VerticalStackLayout>
+                </Frame>
+                <Frame Grid.Row="1" Grid.Column="1" Padding="14" BorderColor="#D1D5DB">
+                    <VerticalStackLayout>
+                        <Label Text="Overdue Bills" TextColor="#6B7280" />
+                        <Label Text="{Binding OverdueBills}" FontSize="24" FontAttributes="Bold" />
+                    </VerticalStackLayout>
+                </Frame>
+            </Grid>
+            <Button Text="Refresh" Command="{Binding RefreshCommand}" />
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>

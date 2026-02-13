@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="MawasaProject.Presentation.Views.Pages.ReportsPage"
+             Title="Reports">
+    <ScrollView>
+        <VerticalStackLayout Padding="20" Spacing="10" MaximumWidthRequest="760" HorizontalOptions="Center">
+            <Label Text="Reports &amp; Analytics" FontSize="24" FontAttributes="Bold" />
+            <Grid ColumnDefinitions="*,*" ColumnSpacing="8">
+                <DatePicker Date="{Binding StartDateUtc}" />
+                <DatePicker Grid.Column="1" Date="{Binding EndDateUtc}" />
+            </Grid>
+            <HorizontalStackLayout Spacing="8">
+                <Button Text="Revenue CSV" Command="{Binding ExportRevenueCsvCommand}" />
+                <Button Text="Overdue CSV" Command="{Binding ExportOverdueCsvCommand}" />
+                <Button Text="Payments CSV" Command="{Binding ExportPaymentsCsvCommand}" />
+            </HorizontalStackLayout>
+            <Label Text="{Binding LastExportPath}" FontSize="12" TextColor="#6B7280" />
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>

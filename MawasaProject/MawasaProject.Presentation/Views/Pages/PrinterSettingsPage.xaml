@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="MawasaProject.Presentation.Views.Pages.PrinterSettingsPage"
+             Title="Printer Settings">
+    <ScrollView>
+        <VerticalStackLayout Padding="20" Spacing="10" MaximumWidthRequest="680" HorizontalOptions="Center">
+            <Label Text="Printer Settings" FontSize="24" FontAttributes="Bold" />
+            <Button Text="Refresh Printers" Command="{Binding RefreshCommand}" />
+            <Picker Title="Select Printer" ItemsSource="{Binding Printers}" SelectedItem="{Binding SelectedPrinter}" />
+            <Button Text="Test Print" Command="{Binding TestPrintCommand}" />
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>

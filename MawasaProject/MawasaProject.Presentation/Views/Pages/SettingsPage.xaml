@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="MawasaProject.Presentation.Views.Pages.SettingsPage"
+             Title="Settings">
+    <ScrollView>
+        <VerticalStackLayout Padding="20" Spacing="10" MaximumWidthRequest="600" HorizontalOptions="Center">
+            <Label Text="Settings" FontSize="24" FontAttributes="Bold" />
+            <Button Text="Backup &amp; Restore" Command="{Binding OpenBackupCommand}" />
+            <Button Text="Printer Settings" Command="{Binding OpenPrinterSettingsCommand}" />
+            <Button Text="Print Queue" Command="{Binding OpenPrintQueueCommand}" />
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>

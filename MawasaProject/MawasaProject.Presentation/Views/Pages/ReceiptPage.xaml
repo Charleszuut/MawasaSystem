@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="MawasaProject.Presentation.Views.Pages.ReceiptPage"
+             Title="Receipt">
+    <ScrollView>
+        <VerticalStackLayout Padding="20" Spacing="10" MaximumWidthRequest="700" HorizontalOptions="Center">
+            <Label Text="Generate Receipt" FontSize="24" FontAttributes="Bold" />
+            <Entry Placeholder="Customer Name" Text="{Binding CustomerName}" />
+            <Entry Placeholder="Bill Number" Text="{Binding BillNumber}" />
+            <Entry Placeholder="Amount" Keyboard="Numeric" Text="{Binding Amount}" />
+            <Button Text="Generate" Command="{Binding GenerateCommand}" />
+            <Label Text="{Binding OutputPath}" FontSize="12" />
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>

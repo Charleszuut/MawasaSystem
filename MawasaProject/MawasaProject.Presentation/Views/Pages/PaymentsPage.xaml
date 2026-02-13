@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="MawasaProject.Presentation.Views.Pages.PaymentsPage"
+             Title="Payments">
+    <ScrollView>
+        <VerticalStackLayout Padding="20" Spacing="10" MaximumWidthRequest="700" HorizontalOptions="Center">
+            <Label Text="Record Payment" FontSize="24" FontAttributes="Bold" />
+            <Entry Placeholder="Bill Id (GUID)" Text="{Binding BillIdText}" />
+            <Entry Placeholder="Amount" Keyboard="Numeric" Text="{Binding Amount}" />
+            <Entry Placeholder="Reference" Text="{Binding Reference}" />
+            <HorizontalStackLayout Spacing="8">
+                <Button Text="Record" Command="{Binding RecordPaymentCommand}" />
+                <Button Text="Load History" Command="{Binding LoadPaymentsCommand}" />
+            </HorizontalStackLayout>
+
+            <CollectionView ItemsSource="{Binding Payments}">
+                <CollectionView.ItemTemplate>
+                    <DataTemplate>
+                        <Frame Padding="8" Margin="0,4" BorderColor="#D1D5DB">
+                            <HorizontalStackLayout Spacing="10">
+                                <Label Text="{Binding PaymentDateUtc}" />
+                                <Label Text="{Binding Amount, StringFormat='${0:F2}'}" FontAttributes="Bold" />
+                                <Label Text="{Binding Status}" />
+                            </HorizontalStackLayout>
+                        </Frame>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>

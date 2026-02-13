@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Shell
+    x:Class="MawasaProject.Presentation.Shell.AppShell"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:pages="clr-namespace:MawasaProject.Presentation.Views.Pages"
+    Title="Mawasa Project">
+
+    <FlyoutItem Title="Dashboard" Route="dashboard">
+        <ShellContent ContentTemplate="{DataTemplate pages:DashboardPage}" Route="dashboard/home" />
+    </FlyoutItem>
+
+    <FlyoutItem Title="Billing" Route="billing">
+        <ShellContent ContentTemplate="{DataTemplate pages:BillingPage}" Route="billing/home" />
+    </FlyoutItem>
+
+    <FlyoutItem Title="Payments" Route="payments">
+        <ShellContent ContentTemplate="{DataTemplate pages:PaymentsPage}" Route="payments/home" />
+    </FlyoutItem>
+
+    <FlyoutItem Title="Customers" Route="customers">
+        <ShellContent ContentTemplate="{DataTemplate pages:CustomersPage}" Route="customers/home" />
+    </FlyoutItem>
+
+    <FlyoutItem Title="Reports" Route="reports">
+        <ShellContent ContentTemplate="{DataTemplate pages:ReportsPage}" Route="reports/home" />
+    </FlyoutItem>
+
+    <FlyoutItem Title="Audit" Route="audit">
+        <ShellContent ContentTemplate="{DataTemplate pages:AuditPage}" Route="audit/home" />
+    </FlyoutItem>
+
+    <FlyoutItem Title="Settings" Route="settings">
+        <ShellContent ContentTemplate="{DataTemplate pages:SettingsPage}" Route="settings/home" />
+    </FlyoutItem>
+
+</Shell>
