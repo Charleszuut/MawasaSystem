@@ -16,6 +16,8 @@ public sealed class LoginViewModel(
 {
     private string _username = "admin";
     private string _password = "Admin@123";
+    private bool _isPasswordHidden = true;
+    private bool _rememberMe = true;
 
     public LoginViewModel() : this(
         App.Services.GetRequiredService<IAuthService>(),
@@ -37,6 +39,36 @@ public sealed class LoginViewModel(
         get => _password;
         set => SetProperty(ref _password, value);
     }
+
+    public bool IsPasswordHidden
+    {
+        get => _isPasswordHidden;
+        set
+        {
+            if (SetProperty(ref _isPasswordHidden, value))
+            {
+                RaisePropertyChanged(nameof(PasswordToggleText));
+            }
+        }
+    }
+
+    public bool RememberMe
+    {
+        get => _rememberMe;
+        set => SetProperty(ref _rememberMe, value);
+    }
+
+    public string PasswordToggleText => IsPasswordHidden ? "Show" : "Hide";
+
+    public RelayCommand TogglePasswordVisibilityCommand => new(() =>
+    {
+        IsPasswordHidden = !IsPasswordHidden;
+    });
+
+    public AsyncCommand ForgotPasswordCommand => new(async () =>
+    {
+        await dialogService.AlertAsync("Password recovery", "Offline mode is enabled. Please contact an Admin to reset your password.");
+    });
 
     public AsyncCommand LoginCommand => new(async () => await RunBusyAsync(async () =>
     {

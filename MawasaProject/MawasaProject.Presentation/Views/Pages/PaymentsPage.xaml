@@ -2,31 +2,370 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="MawasaProject.Presentation.Views.Pages.PaymentsPage"
-             Title="Payments">
-    <ScrollView>
-        <VerticalStackLayout Padding="20" Spacing="10" MaximumWidthRequest="700" HorizontalOptions="Center">
-            <Label Text="Record Payment" FontSize="24" FontAttributes="Bold" />
-            <Entry Placeholder="Bill Id (GUID)" Text="{Binding BillIdText}" />
-            <Entry Placeholder="Amount" Keyboard="Numeric" Text="{Binding Amount}" />
-            <Entry Placeholder="Reference" Text="{Binding Reference}" />
-            <HorizontalStackLayout Spacing="8">
-                <Button Text="Record" Command="{Binding RecordPaymentCommand}" />
-                <Button Text="Load History" Command="{Binding LoadPaymentsCommand}" />
-            </HorizontalStackLayout>
+             Title="Payments"
+             Shell.NavBarIsVisible="False"
+             BackgroundColor="#E9EDF3">
+    <ContentPage.Resources>
+        <Color x:Key="SurfaceCard">#FFFFFF</Color>
+        <Color x:Key="SurfaceMuted">#F6F9FD</Color>
+        <Color x:Key="TextMain">#1F2A37</Color>
+        <Color x:Key="TextMuted">#6F8093</Color>
+        <Color x:Key="BorderSoft">#D9E2EC</Color>
+        <Color x:Key="BorderStrong">#C6D4E3</Color>
+        <Color x:Key="PrimaryBlue">#2D6DE2</Color>
+        <Color x:Key="PrimaryBlueSoft">#EAF0FF</Color>
+        <Style x:Key="FieldLabelStyle" TargetType="Label">
+            <Setter Property="FontSize" Value="11" />
+            <Setter Property="FontAttributes" Value="Bold" />
+            <Setter Property="TextColor" Value="#60758C" />
+        </Style>
+        <Style x:Key="HelperTextStyle" TargetType="Label">
+            <Setter Property="FontSize" Value="12" />
+            <Setter Property="TextColor" Value="{StaticResource TextMuted}" />
+        </Style>
+    </ContentPage.Resources>
 
-            <CollectionView ItemsSource="{Binding Payments}">
-                <CollectionView.ItemTemplate>
-                    <DataTemplate>
-                        <Frame Padding="8" Margin="0,4" BorderColor="#D1D5DB">
-                            <HorizontalStackLayout Spacing="10">
-                                <Label Text="{Binding PaymentDateUtc}" />
-                                <Label Text="{Binding Amount, StringFormat='${0:F2}'}" FontAttributes="Bold" />
-                                <Label Text="{Binding Status}" />
-                            </HorizontalStackLayout>
-                        </Frame>
-                    </DataTemplate>
-                </CollectionView.ItemTemplate>
-            </CollectionView>
+    <ScrollView>
+        <VerticalStackLayout Padding="16,14,16,24" Spacing="14">
+            <Grid ColumnDefinitions="Auto,*" ColumnSpacing="10">
+                <HorizontalStackLayout Spacing="8">
+                    <Button Text="Customer Payments"
+                            FontAttributes="Bold"
+                            BackgroundColor="{StaticResource PrimaryBlue}"
+                            TextColor="White"
+                            Padding="12,8" />
+                    <Button Text="Applicant Fees"
+                            BackgroundColor="#E8EBF1"
+                            TextColor="#5E6F83"
+                            IsEnabled="False"
+                            Padding="12,8" />
+                </HorizontalStackLayout>
+                <Label Grid.Column="1"
+                       Text="{Binding SearchGuide}"
+                       HorizontalTextAlignment="End"
+                       VerticalTextAlignment="Center"
+                       Style="{StaticResource HelperTextStyle}" />
+            </Grid>
+
+            <Border BackgroundColor="{StaticResource SurfaceCard}" Stroke="{StaticResource BorderSoft}" StrokeThickness="1" Padding="14,12">
+                <Border.StrokeShape>
+                    <RoundRectangle CornerRadius="14" />
+                </Border.StrokeShape>
+
+                <Grid ColumnDefinitions="3.2*,Auto,Auto" ColumnSpacing="10" VerticalOptions="Center">
+                    <VerticalStackLayout Spacing="4">
+                        <Label Text="Search Customer" FontSize="24" FontAttributes="Bold" TextColor="{StaticResource TextMain}" />
+                        <Border BackgroundColor="White" Stroke="{StaticResource BorderStrong}" StrokeThickness="1" Padding="10,0">
+                            <Border.StrokeShape>
+                                <RoundRectangle CornerRadius="8" />
+                            </Border.StrokeShape>
+                            <Entry Placeholder="Bill number, bill GUID, customer name, phone, or email"
+                                   Text="{Binding BillSearchText}" />
+                        </Border>
+                        <Label Text="Tip: use a bill number for exact match, or customer details for nearest unpaid bill."
+                               Style="{StaticResource HelperTextStyle}" />
+                    </VerticalStackLayout>
+
+                    <Button Grid.Column="1"
+                            Text="Search"
+                            Command="{Binding SearchBillCommand}"
+                            FontAttributes="Bold"
+                            BackgroundColor="{StaticResource PrimaryBlue}"
+                            TextColor="White"
+                            Padding="20,10"
+                            VerticalOptions="Center" />
+
+                    <Button Grid.Column="2"
+                            Text="Refresh"
+                            Command="{Binding RefreshHistoryCommand}"
+                            IsEnabled="{Binding HasSelectedBill}"
+                            FontAttributes="Bold"
+                            BackgroundColor="#EAF0FA"
+                            TextColor="#445C77"
+                            Padding="16,10"
+                            VerticalOptions="Center" />
+                </Grid>
+            </Border>
+
+            <Border BackgroundColor="{StaticResource SurfaceCard}" Stroke="{StaticResource BorderSoft}" StrokeThickness="1" Padding="14,12">
+                <Border.StrokeShape>
+                    <RoundRectangle CornerRadius="14" />
+                </Border.StrokeShape>
+
+                <VerticalStackLayout Spacing="10">
+                    <Grid ColumnDefinitions="*,Auto,Auto" ColumnSpacing="18">
+                        <VerticalStackLayout Spacing="2">
+                            <Label Text="Current bill for" Style="{StaticResource HelperTextStyle}" />
+                            <Label Text="{Binding AccountPreview}" FontSize="20" FontAttributes="Bold" TextColor="{StaticResource TextMain}" />
+                        </VerticalStackLayout>
+                        <VerticalStackLayout Grid.Column="1" HorizontalOptions="End" Spacing="0">
+                            <Label Text="UNPAID BILLS" FontSize="10" FontAttributes="Bold" TextColor="#788BA1" HorizontalTextAlignment="End" />
+                            <Label Text="{Binding UnpaidBills}" FontSize="30" FontAttributes="Bold" TextColor="#24384F" HorizontalTextAlignment="End" />
+                        </VerticalStackLayout>
+                        <VerticalStackLayout Grid.Column="2" HorizontalOptions="End" Spacing="0">
+                            <Label Text="LATEST BILL" FontSize="10" FontAttributes="Bold" TextColor="#788BA1" HorizontalTextAlignment="End" />
+                            <Label Text="{Binding LatestBillText}" FontSize="30" FontAttributes="Bold" TextColor="#24384F" HorizontalTextAlignment="End" />
+                        </VerticalStackLayout>
+                    </Grid>
+
+                    <Grid ColumnDefinitions="{OnIdiom Phone='*', Tablet='2.2*,1.2*', Desktop='2.2*,1.2*'}" ColumnSpacing="10">
+                        <Border BackgroundColor="#F9FBFE" Stroke="{StaticResource BorderSoft}" StrokeThickness="1" Padding="12,10">
+                            <Border.StrokeShape>
+                                <RoundRectangle CornerRadius="10" />
+                            </Border.StrokeShape>
+                            <VerticalStackLayout Spacing="6">
+                                <Label Text="CURRENT BALANCE" Style="{StaticResource FieldLabelStyle}" />
+                                <Label Text="{Binding CurrentBalanceText}" FontSize="42" FontAttributes="Bold" TextColor="#0B223A" />
+                                <HorizontalStackLayout Spacing="10" VerticalOptions="Center">
+                                    <Label Text="Due Date:" TextColor="{StaticResource TextMuted}" />
+                                    <Label Text="{Binding DueDateDisplay}" FontAttributes="Bold" TextColor="#223548" />
+                                </HorizontalStackLayout>
+                                <HorizontalStackLayout Spacing="10" VerticalOptions="Center">
+                                    <Label Text="Bill:" TextColor="{StaticResource TextMuted}" />
+                                    <Label Text="{Binding CurrentBillNumber}" FontAttributes="Bold" TextColor="#223548" />
+                                </HorizontalStackLayout>
+                                <Border BackgroundColor="{Binding StatusBackground}" StrokeThickness="0" Padding="9,4" HorizontalOptions="Start">
+                                    <Border.StrokeShape>
+                                        <RoundRectangle CornerRadius="11" />
+                                    </Border.StrokeShape>
+                                    <Label Text="{Binding StatusText}" FontSize="11" FontAttributes="Bold" TextColor="{Binding StatusForeground}" />
+                                </Border>
+                            </VerticalStackLayout>
+                        </Border>
+
+                        <Border Grid.Column="{OnIdiom Phone=0, Tablet=1, Desktop=1}"
+                                Grid.Row="{OnIdiom Phone=1, Tablet=0, Desktop=0}"
+                                Margin="{OnIdiom Phone='0,10,0,0', Tablet='0', Desktop='0'}"
+                                BackgroundColor="#F9FBFE"
+                                Stroke="{StaticResource BorderSoft}"
+                                StrokeThickness="1"
+                                Padding="12,10">
+                            <Border.StrokeShape>
+                                <RoundRectangle CornerRadius="10" />
+                            </Border.StrokeShape>
+                            <VerticalStackLayout Spacing="8">
+                                <Label Text="Overview" FontSize="16" FontAttributes="Bold" TextColor="#2A3F56" />
+                                <Label Text="Summary based on the latest billing record and unpaid balance."
+                                       Style="{StaticResource HelperTextStyle}" />
+                                <Grid ColumnDefinitions="Auto,*" RowDefinitions="Auto,Auto,Auto" RowSpacing="6">
+                                    <Label Text="Account:" TextColor="#5C6F84" />
+                                    <Label Grid.Column="1" Text="{Binding AccountPreview}" TextColor="#283C53" LineBreakMode="TailTruncation" />
+
+                                    <Label Grid.Row="1" Text="Latest Bill:" TextColor="#5C6F84" />
+                                    <Label Grid.Row="1" Grid.Column="1" Text="{Binding LatestBillLabel}" TextColor="#283C53" />
+
+                                    <Label Grid.Row="2" Text="Balance:" TextColor="#5C6F84" />
+                                    <Label Grid.Row="2" Grid.Column="1" Text="{Binding CurrentBalanceText}" FontAttributes="Bold" TextColor="#1B3855" />
+                                </Grid>
+                                <Label Text="Details below let you inspect payments and process settlement."
+                                       FontSize="11"
+                                       TextColor="#8DA0B4" />
+                            </VerticalStackLayout>
+                        </Border>
+                    </Grid>
+
+                    <Grid ColumnDefinitions="{OnIdiom Phone='*', Tablet='1.2*,1*', Desktop='1.2*,1*'}" ColumnSpacing="10">
+                        <Border BackgroundColor="#F9FBFE" Stroke="{StaticResource BorderSoft}" StrokeThickness="1" Padding="12,10">
+                            <Border.StrokeShape>
+                                <RoundRectangle CornerRadius="10" />
+                            </Border.StrokeShape>
+                            <VerticalStackLayout Spacing="4">
+                                <Label Text="Quick Links" FontSize="16" FontAttributes="Bold" TextColor="#2A3F56" />
+                                <Label Text="• View payment history" TextColor="#2D6DE2" />
+                                <Label Text="• Recalculate after manual adjustments" TextColor="#2D6DE2" />
+                                <Label Text="• Validate balance before processing" TextColor="#2D6DE2" />
+                            </VerticalStackLayout>
+                        </Border>
+
+                        <Border Grid.Column="{OnIdiom Phone=0, Tablet=1, Desktop=1}"
+                                Grid.Row="{OnIdiom Phone=1, Tablet=0, Desktop=0}"
+                                Margin="{OnIdiom Phone='0,10,0,0', Tablet='0', Desktop='0'}"
+                                BackgroundColor="#F9FBFE"
+                                Stroke="{StaticResource BorderSoft}"
+                                StrokeThickness="1"
+                                Padding="12,10">
+                            <Border.StrokeShape>
+                                <RoundRectangle CornerRadius="10" />
+                            </Border.StrokeShape>
+                            <VerticalStackLayout Spacing="4">
+                                <Label Text="Reference Number" Style="{StaticResource FieldLabelStyle}" />
+                                <Border BackgroundColor="White" Stroke="{StaticResource BorderStrong}" StrokeThickness="1" Padding="10,0">
+                                    <Border.StrokeShape>
+                                        <RoundRectangle CornerRadius="8" />
+                                    </Border.StrokeShape>
+                                    <Entry Placeholder="Optional external transaction reference"
+                                           Text="{Binding Reference}" />
+                                </Border>
+                                <Label Text="{Binding HistorySummary}" Style="{StaticResource HelperTextStyle}" />
+                            </VerticalStackLayout>
+                        </Border>
+                    </Grid>
+                </VerticalStackLayout>
+            </Border>
+
+            <Border BackgroundColor="{StaticResource SurfaceCard}" Stroke="{StaticResource BorderSoft}" StrokeThickness="1" Padding="14,12">
+                <Border.StrokeShape>
+                    <RoundRectangle CornerRadius="14" />
+                </Border.StrokeShape>
+
+                <VerticalStackLayout Spacing="8">
+                    <Label Text="Enter tendered amount. Change is computed automatically. Process Payment will apply only the remaining balance."
+                           Style="{StaticResource HelperTextStyle}" />
+                    <Grid ColumnDefinitions="{OnIdiom Phone='*', Tablet='1.5*,1.1*,1.1*,Auto', Desktop='1.5*,1.1*,1.1*,Auto'}"
+                          RowDefinitions="{OnIdiom Phone='Auto,Auto,Auto,Auto', Tablet='Auto', Desktop='Auto'}"
+                          ColumnSpacing="10"
+                          RowSpacing="8">
+                        <VerticalStackLayout Spacing="4">
+                            <Label Text="Amount Tendered" Style="{StaticResource FieldLabelStyle}" />
+                            <Border BackgroundColor="White" Stroke="{StaticResource BorderStrong}" StrokeThickness="1" Padding="10,0">
+                                <Border.StrokeShape>
+                                    <RoundRectangle CornerRadius="8" />
+                                </Border.StrokeShape>
+                                <Entry Placeholder="Enter amount tendered"
+                                       Keyboard="Numeric"
+                                       Text="{Binding AmountTendered}" />
+                            </Border>
+                        </VerticalStackLayout>
+
+                        <VerticalStackLayout Grid.Column="{OnIdiom Phone=0, Tablet=1, Desktop=1}"
+                                             Grid.Row="{OnIdiom Phone=1, Tablet=0, Desktop=0}"
+                                             Spacing="4">
+                            <Label Text="Amount To Apply" Style="{StaticResource FieldLabelStyle}" />
+                            <Border BackgroundColor="#F4F8FF" Stroke="{StaticResource BorderSoft}" StrokeThickness="1" Padding="10,10">
+                                <Border.StrokeShape>
+                                    <RoundRectangle CornerRadius="8" />
+                                </Border.StrokeShape>
+                                <Label Text="{Binding AmountToApply, StringFormat='P{0:N2}'}"
+                                       FontSize="20"
+                                       FontAttributes="Bold"
+                                       TextColor="#1B3855" />
+                            </Border>
+                        </VerticalStackLayout>
+
+                        <VerticalStackLayout Grid.Column="{OnIdiom Phone=0, Tablet=2, Desktop=2}"
+                                             Grid.Row="{OnIdiom Phone=2, Tablet=0, Desktop=0}"
+                                             Spacing="4">
+                            <Label Text="Change" Style="{StaticResource FieldLabelStyle}" />
+                            <Border BackgroundColor="#F4F8FF" Stroke="{StaticResource BorderSoft}" StrokeThickness="1" Padding="10,10">
+                                <Border.StrokeShape>
+                                    <RoundRectangle CornerRadius="8" />
+                                </Border.StrokeShape>
+                                <Label Text="{Binding ChangeAmount, StringFormat='P{0:N2}'}"
+                                       FontSize="20"
+                                       FontAttributes="Bold"
+                                       TextColor="#1B3855" />
+                            </Border>
+                        </VerticalStackLayout>
+
+                        <Button Grid.Column="{OnIdiom Phone=0, Tablet=3, Desktop=3}"
+                                Grid.Row="{OnIdiom Phone=3, Tablet=0, Desktop=0}"
+                                Text="Process Payment"
+                                Command="{Binding ProcessPaymentCommand}"
+                                IsEnabled="{Binding CanProcessPayment}"
+                                FontAttributes="Bold"
+                                BackgroundColor="{StaticResource PrimaryBlue}"
+                                TextColor="White"
+                                Padding="22,12"
+                                VerticalOptions="End" />
+                    </Grid>
+                </VerticalStackLayout>
+            </Border>
+
+            <Border BackgroundColor="{StaticResource SurfaceCard}" Stroke="{StaticResource BorderSoft}" StrokeThickness="1" Padding="14,12">
+                <Border.StrokeShape>
+                    <RoundRectangle CornerRadius="14" />
+                </Border.StrokeShape>
+
+                <VerticalStackLayout Spacing="10">
+                    <Grid ColumnDefinitions="*,Auto" ColumnSpacing="10">
+                        <VerticalStackLayout Spacing="2">
+                            <Label Text="Payment History" FontSize="22" FontAttributes="Bold" TextColor="{StaticResource TextMain}" />
+                            <Label Text="{Binding HistorySummary}" Style="{StaticResource HelperTextStyle}" />
+                        </VerticalStackLayout>
+                        <Label Grid.Column="1"
+                               Text="{Binding StatusMessage}"
+                               VerticalTextAlignment="Center"
+                               TextColor="#5E7390" />
+                    </Grid>
+
+                    <ScrollView Orientation="Horizontal">
+                        <VerticalStackLayout WidthRequest="980" Spacing="0">
+                            <Grid ColumnDefinitions="1.6*,1.3*,2*,1.2*,1.2*"
+                                  BackgroundColor="#1F67D7"
+                                  Padding="10,8">
+                                <Label Text="PAYMENT DATE" FontSize="10" FontAttributes="Bold" TextColor="White" />
+                                <Label Grid.Column="1" Text="BILL NO." FontSize="10" FontAttributes="Bold" TextColor="White" />
+                                <Label Grid.Column="2" Text="REFERENCE NO." FontSize="10" FontAttributes="Bold" TextColor="White" />
+                                <Label Grid.Column="3" Text="AMOUNT" FontSize="10" FontAttributes="Bold" TextColor="White" />
+                                <Label Grid.Column="4" Text="STATUS" FontSize="10" FontAttributes="Bold" TextColor="White" />
+                            </Grid>
+
+                            <CollectionView ItemsSource="{Binding PaymentHistory}"
+                                            SelectionMode="None"
+                                            HeightRequest="270">
+                                <CollectionView.ItemTemplate>
+                                    <DataTemplate>
+                                        <Grid ColumnDefinitions="1.6*,1.3*,2*,1.2*,1.2*"
+                                              Padding="10,10"
+                                              ColumnSpacing="8"
+                                              BackgroundColor="#F9FBFE">
+                                            <Grid.RowDefinitions>
+                                                <RowDefinition Height="Auto" />
+                                                <RowDefinition Height="1" />
+                                            </Grid.RowDefinitions>
+
+                                            <Label Text="{Binding PaymentDateDisplay}"
+                                                   FontSize="12"
+                                                   TextColor="#41556D"
+                                                   VerticalTextAlignment="Center" />
+                                            <Label Grid.Column="1"
+                                                   Text="{Binding BillNumber}"
+                                                   FontSize="12"
+                                                   TextColor="#41556D"
+                                                   VerticalTextAlignment="Center" />
+                                            <Label Grid.Column="2"
+                                                   Text="{Binding ReferenceNumber}"
+                                                   FontSize="12"
+                                                   TextColor="#41556D"
+                                                   VerticalTextAlignment="Center"
+                                                   LineBreakMode="TailTruncation" />
+                                            <Label Grid.Column="3"
+                                                   Text="{Binding AmountDisplay}"
+                                                   FontSize="12"
+                                                   FontAttributes="Bold"
+                                                   TextColor="#20354B"
+                                                   VerticalTextAlignment="Center" />
+
+                                            <Border Grid.Column="4"
+                                                    BackgroundColor="{Binding StatusBackground}"
+                                                    StrokeThickness="0"
+                                                    Padding="8,4"
+                                                    HorizontalOptions="Start"
+                                                    VerticalOptions="Center">
+                                                <Border.StrokeShape>
+                                                    <RoundRectangle CornerRadius="10" />
+                                                </Border.StrokeShape>
+                                                <Label Text="{Binding StatusText}"
+                                                       FontSize="11"
+                                                       FontAttributes="Bold"
+                                                       TextColor="{Binding StatusForeground}" />
+                                            </Border>
+
+                                            <BoxView Grid.Row="1"
+                                                     Grid.ColumnSpan="5"
+                                                     HeightRequest="1"
+                                                     Color="#E2EAF4"
+                                                     Margin="0,10,0,0" />
+                                        </Grid>
+                                    </DataTemplate>
+                                </CollectionView.ItemTemplate>
+                            </CollectionView>
+                        </VerticalStackLayout>
+                    </ScrollView>
+                </VerticalStackLayout>
+            </Border>
+
+            <Label Text="{Binding ErrorMessage}" FontSize="12" TextColor="#C12424" IsVisible="{Binding HasErrors}" />
         </VerticalStackLayout>
     </ScrollView>
 </ContentPage>

@@ -23,6 +23,7 @@ public sealed class DashboardViewModel : BaseViewModel
     private decimal _averageMonthlyRevenue;
     private decimal _monthlyRevenueChangePercentage;
     private double _overdueRate;
+    private double _collectionRate;
 
     public DashboardViewModel()
         : this(App.Services.GetRequiredService<IDashboardService>())
@@ -102,6 +103,12 @@ public sealed class DashboardViewModel : BaseViewModel
         set => SetProperty(ref _overdueRate, value);
     }
 
+    public double CollectionRate
+    {
+        get => _collectionRate;
+        set => SetProperty(ref _collectionRate, value);
+    }
+
     public ObservableCollection<DashboardRevenuePoint> RevenueSeries { get; }
 
     public AsyncCommand RefreshCommand => _refreshCommand;
@@ -138,6 +145,9 @@ public sealed class DashboardViewModel : BaseViewModel
             AverageMonthlyRevenue = series.Length == 0 ? 0m : series.Average(x => x.Revenue);
             MonthlyRevenueChangePercentage = CalculateMonthOverMonthChange(series);
             OverdueRate = TotalBills == 0 ? 0d : (double)OverdueBills / TotalBills;
+            CollectionRate = (TotalRevenue + OutstandingBalance) <= 0m
+                ? 0d
+                : (double)(TotalRevenue / (TotalRevenue + OutstandingBalance));
             StatusMessage = "Dashboard updated.";
         });
     }

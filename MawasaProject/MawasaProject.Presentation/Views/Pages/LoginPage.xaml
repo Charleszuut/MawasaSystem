@@ -2,17 +2,192 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="MawasaProject.Presentation.Views.Pages.LoginPage"
-             Title="Login">
-    <ScrollView>
-        <VerticalStackLayout Padding="24" Spacing="12" MaximumWidthRequest="520" HorizontalOptions="Center">
-            <Label Text="Mawasa Project" FontSize="30" FontAttributes="Bold" />
-            <Label Text="Offline authentication" FontSize="14" TextColor="#6B7280" />
+             Title="Login"
+             Shell.NavBarIsVisible="False">
+    <ContentPage.Resources>
+        <Color x:Key="LoginCardBackground">#F4F7FB</Color>
+        <Color x:Key="LoginTitleText">#0B2340</Color>
+        <Color x:Key="LoginSubText">#506175</Color>
+        <Color x:Key="LoginInputBackground">#E9EEF4</Color>
+        <Color x:Key="LoginInputStroke">#CCD6E2</Color>
+        <Color x:Key="LoginPrimary">#2E6EEB</Color>
+        <Color x:Key="LoginPrimaryPressed">#245BC1</Color>
+        <Color x:Key="LoginLink">#2D62D7</Color>
+        <Color x:Key="LoginError">#CC2C2C</Color>
+    </ContentPage.Resources>
 
-            <Entry Placeholder="Username" Text="{Binding Username}" />
-            <Entry Placeholder="Password" IsPassword="True" Text="{Binding Password}" />
-            <Button Text="Sign In" Command="{Binding LoginCommand}" BackgroundColor="#0B5FFF" TextColor="White" />
+    <Grid>
+        <Image Source="login_page.png" Aspect="AspectFill" />
+        <BoxView BackgroundColor="#8A0D1725" />
 
-            <Label Text="{Binding ErrorMessage}" TextColor="#B91C1C" />
-        </VerticalStackLayout>
-    </ScrollView>
+        <ScrollView>
+            <Grid Padding="24" MinimumHeightRequest="620">
+                <Border BackgroundColor="{StaticResource LoginCardBackground}"
+                        StrokeThickness="0"
+                        Padding="24"
+                        MaximumWidthRequest="420"
+                        HorizontalOptions="Center"
+                        VerticalOptions="Center">
+                    <Border.StrokeShape>
+                        <RoundRectangle CornerRadius="14" />
+                    </Border.StrokeShape>
+                    <Border.Shadow>
+                        <Shadow Brush="#2A000000" Offset="0,10" Radius="26" Opacity="0.35" />
+                    </Border.Shadow>
+
+                    <VerticalStackLayout Spacing="14">
+                        <Grid HorizontalOptions="Center" Margin="0,2,0,8">
+                            <Border WidthRequest="108"
+                                    HeightRequest="108"
+                                    BackgroundColor="#FFFFFF"
+                                    Stroke="#D8E0EA"
+                                    StrokeThickness="1">
+                                <Border.StrokeShape>
+                                    <RoundRectangle CornerRadius="54" />
+                                </Border.StrokeShape>
+                                <Border.Shadow>
+                                    <Shadow Brush="#26000000" Offset="0,5" Radius="14" Opacity="0.35" />
+                                </Border.Shadow>
+                                <Image Source="mawasa_logo.png"
+                                       Aspect="AspectFit"
+                                       Margin="12" />
+                            </Border>
+                        </Grid>
+
+                        <Label Text="Sign in to your account"
+                               FontSize="34"
+                               FontAttributes="Bold"
+                               TextColor="{StaticResource LoginTitleText}"
+                               HorizontalTextAlignment="Center"
+                               FontFamily="OpenSansSemibold" />
+                        <Label Text="Use your MAWASA credentials"
+                               FontSize="14"
+                               TextColor="{StaticResource LoginSubText}"
+                               HorizontalTextAlignment="Center"
+                               Margin="0,-8,0,6" />
+
+                        <Label Text="Username"
+                               FontSize="14"
+                               TextColor="{StaticResource LoginTitleText}"
+                               FontAttributes="Bold" />
+                        <Border BackgroundColor="{StaticResource LoginInputBackground}"
+                                Stroke="{StaticResource LoginInputStroke}"
+                                StrokeThickness="1">
+                            <Border.StrokeShape>
+                                <RoundRectangle CornerRadius="8" />
+                            </Border.StrokeShape>
+                            <Grid ColumnDefinitions="40,*" HeightRequest="44">
+                                <Label Text="@"
+                                       Grid.Column="0"
+                                       HorizontalTextAlignment="Center"
+                                       VerticalTextAlignment="Center"
+                                       TextColor="#7B8EA4"
+                                       FontAttributes="Bold" />
+                                <Entry Grid.Column="1"
+                                       Placeholder="Enter your username"
+                                       Text="{Binding Username}"
+                                       BackgroundColor="Transparent"
+                                       ClearButtonVisibility="WhileEditing"
+                                       Margin="0,0,10,0" />
+                            </Grid>
+                        </Border>
+
+                        <Label Text="Password"
+                               FontSize="14"
+                               TextColor="{StaticResource LoginTitleText}"
+                               FontAttributes="Bold"
+                               Margin="0,4,0,0" />
+                        <Border BackgroundColor="{StaticResource LoginInputBackground}"
+                                Stroke="{StaticResource LoginInputStroke}"
+                                StrokeThickness="1">
+                            <Border.StrokeShape>
+                                <RoundRectangle CornerRadius="8" />
+                            </Border.StrokeShape>
+                            <Grid ColumnDefinitions="40,*,64" HeightRequest="44">
+                                <Label Text="#"
+                                       Grid.Column="0"
+                                       HorizontalTextAlignment="Center"
+                                       VerticalTextAlignment="Center"
+                                       TextColor="#7B8EA4"
+                                       FontAttributes="Bold" />
+                                <Entry Grid.Column="1"
+                                       Placeholder="Enter your password"
+                                       Text="{Binding Password}"
+                                       IsPassword="{Binding IsPasswordHidden}"
+                                       BackgroundColor="Transparent"
+                                       Margin="0,0,4,0" />
+                                <Button Grid.Column="2"
+                                        Text="{Binding PasswordToggleText}"
+                                        Command="{Binding TogglePasswordVisibilityCommand}"
+                                        Padding="8,0"
+                                        FontSize="12"
+                                        BackgroundColor="Transparent"
+                                        TextColor="#5E7187" />
+                            </Grid>
+                        </Border>
+
+                        <Grid ColumnDefinitions="Auto,*,Auto" Margin="0,2,0,2">
+                            <HorizontalStackLayout Grid.Column="0" Grid.ColumnSpan="2" Spacing="6" VerticalOptions="Center">
+                                <CheckBox IsChecked="{Binding RememberMe}" Scale="0.85" />
+                                <Label Text="Remember me"
+                                       TextColor="{StaticResource LoginSubText}"
+                                       FontSize="13"
+                                       VerticalTextAlignment="Center" />
+                            </HorizontalStackLayout>
+                            <Label Grid.Column="2"
+                                   Text="Forgot password?"
+                                   TextColor="{StaticResource LoginLink}"
+                                   FontSize="13"
+                                   HorizontalOptions="End"
+                                   VerticalTextAlignment="Center">
+                                <Label.GestureRecognizers>
+                                    <TapGestureRecognizer Command="{Binding ForgotPasswordCommand}" />
+                                </Label.GestureRecognizers>
+                            </Label>
+                        </Grid>
+
+                        <Button Text="Login"
+                                Command="{Binding LoginCommand}"
+                                HeightRequest="46"
+                                FontSize="18"
+                                FontAttributes="Bold"
+                                BackgroundColor="{StaticResource LoginPrimary}"
+                                TextColor="White"
+                                Margin="0,6,0,0">
+                            <Button.VisualStateManager.VisualStateGroups>
+                                <VisualStateGroupList>
+                                    <VisualStateGroup x:Name="CommonStates">
+                                        <VisualState x:Name="Normal" />
+                                        <VisualState x:Name="Pressed">
+                                            <VisualState.Setters>
+                                                <Setter Property="BackgroundColor" Value="{StaticResource LoginPrimaryPressed}" />
+                                            </VisualState.Setters>
+                                        </VisualState>
+                                    </VisualStateGroup>
+                                </VisualStateGroupList>
+                            </Button.VisualStateManager.VisualStateGroups>
+                        </Button>
+
+                        <ActivityIndicator IsVisible="{Binding IsBusy}"
+                                           IsRunning="{Binding IsBusy}"
+                                           Color="{StaticResource LoginPrimary}"
+                                           HorizontalOptions="Center"
+                                           Margin="0,4,0,0" />
+
+                        <Label Text="{Binding ErrorMessage}"
+                               TextColor="{StaticResource LoginError}"
+                               FontSize="13"
+                               HorizontalTextAlignment="Center"
+                               LineBreakMode="WordWrap"
+                               Margin="0,-6,0,0" />
+                        <Label Text="Authorized personnel only"
+                               FontSize="12"
+                               TextColor="{StaticResource LoginSubText}"
+                               HorizontalTextAlignment="Center"
+                               Margin="0,-2,0,0" />
+                    </VerticalStackLayout>
+                </Border>
+            </Grid>
+        </ScrollView>
+    </Grid>
 </ContentPage>

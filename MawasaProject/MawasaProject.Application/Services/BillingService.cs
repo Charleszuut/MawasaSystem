@@ -13,6 +13,11 @@ public sealed class BillingService(
     IAuditInterceptor auditInterceptor,
     BusinessRuleEngine rules) : IBillingService
 {
+    public Task<IReadOnlyList<Bill>> GetBillsAsync(CancellationToken cancellationToken = default)
+    {
+        return billRepository.ListAsync(cancellationToken);
+    }
+
     public async Task<Bill> CreateBillAsync(Bill bill, CancellationToken cancellationToken = default)
     {
         EntityValidator.ValidateObject(bill);
