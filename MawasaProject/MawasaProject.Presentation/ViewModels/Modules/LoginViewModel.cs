@@ -40,10 +40,13 @@ public sealed class LoginViewModel(
 
     public AsyncCommand LoginCommand => new(async () => await RunBusyAsync(async () =>
     {
-        var usernameErrors = ValidationFramework.ValidateRequired(nameof(Username), Username, "Username is required.");
-        var passwordErrors = ValidationFramework.ValidateRequired(nameof(Password), Password, "Password is required.");
-        var errors = usernameErrors.Concat(passwordErrors).ToArray();
-        if (errors.Length > 0)
+        var errors = ValidationFramework.Combine(
+            ValidationFramework.ValidateRequired(nameof(Username), Username, "Username is required."),
+            ValidationFramework.ValidateRequired(nameof(Password), Password, "Password is required."),
+            ValidationFramework.ValidateMinLength(nameof(Password), Password, 8, "Password must be at least 8 characters."));
+        SetValidationErrors(errors);
+
+        if (errors.Count > 0)
         {
             await dialogService.AlertAsync("Validation", string.Join("\n", errors.Select(static x => x.Message)));
             return;
@@ -57,6 +60,7 @@ public sealed class LoginViewModel(
         }
 
         appStateStore.Session = sessionService.CurrentSession;
-        await navigationService.GoToAsync("//dashboard/home");
+        StatusMessage = "Login successful.";
+        await navigationService.GoToAsync(RouteMap.DashboardHome);
     }));
 }

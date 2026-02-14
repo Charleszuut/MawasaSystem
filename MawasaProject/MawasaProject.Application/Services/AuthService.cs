@@ -16,19 +16,28 @@ public sealed class AuthService(
 {
     public async Task<AuthResult> LoginAsync(string username, string password, CancellationToken cancellationToken = default)
     {
-        var user = await userRepository.GetByUsernameAsync(username, cancellationToken);
+        var normalizedUsername = (username ?? string.Empty).Trim();
+        if (string.IsNullOrWhiteSpace(normalizedUsername) || string.IsNullOrWhiteSpace(password))
+        {
+            return new AuthResult(false, "Invalid username or password.");
+        }
+
+        var user = await userRepository.GetByUsernameAsync(normalizedUsername, cancellationToken);
         if (user is null || user.IsDeleted || !user.IsActive)
         {
+            await TryLogFailedLoginAsync(normalizedUsername, user?.Id, cancellationToken);
             return new AuthResult(false, "Invalid username or password.");
         }
 
         if (!passwordHasher.Verify(password, user.PasswordHash, user.PasswordSalt))
         {
+            await TryLogFailedLoginAsync(normalizedUsername, user.Id, cancellationToken);
             return new AuthResult(false, "Invalid username or password.");
         }
 
         var roles = await userRepository.GetUserRolesAsync(user.Id, cancellationToken);
-        sessionService.Set(new SessionContext(user.Id, user.Username, roles, DateTime.UtcNow, DateTime.UtcNow));
+        var nowUtc = DateTime.UtcNow;
+        sessionService.Set(new SessionContext(user.Id, user.Username, roles, nowUtc, nowUtc));
 
         user.RegisterLogin();
         await userRepository.UpdateAsync(user, cancellationToken);
@@ -63,5 +72,25 @@ public sealed class AuthService(
         }
 
         sessionService.Clear();
+    }
+
+    private async Task TryLogFailedLoginAsync(string username, Guid? userId, CancellationToken cancellationToken)
+    {
+        try
+        {
+            await auditService.LogAsync(
+                AuditActionType.Login,
+                nameof(User),
+                userId?.ToString(),
+                oldValuesJson: null,
+                newValuesJson: "{\"status\":\"login-failed\"}",
+                context: "Offline local login failed",
+                username: username,
+                cancellationToken);
+        }
+        catch
+        {
+            // Keep authentication flow stable even if audit persistence fails.
+        }
     }
 }

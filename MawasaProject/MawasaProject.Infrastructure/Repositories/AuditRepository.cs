@@ -1,13 +1,17 @@
 using Microsoft.Data.Sqlite;
+using MawasaProject.Application.Abstractions.Logging;
 using MawasaProject.Application.Abstractions.Persistence;
 using MawasaProject.Domain.Entities;
-using MawasaProject.Domain.Enums;
+using MawasaProject.Infrastructure.Data.Mappers;
 using MawasaProject.Infrastructure.Data.SQLite;
 
 namespace MawasaProject.Infrastructure.Repositories;
 
-public sealed class AuditRepository(ISqliteConnectionManager connectionManager)
-    : GenericRepository<AuditLog>(connectionManager), IAuditRepository
+public sealed class AuditRepository(
+    ISqliteConnectionManager connectionManager,
+    SqliteDatabaseOptions options,
+    IAppLogger<AuditRepository> logger)
+    : GenericRepository<AuditLog>(connectionManager, options), IAuditRepository
 {
     protected override string TableName => "AuditLogs";
 
@@ -19,19 +23,7 @@ public sealed class AuditRepository(ISqliteConnectionManager connectionManager)
 
     protected override AuditLog Map(SqliteDataReader reader)
     {
-        return new AuditLog
-        {
-            Id = SqliteHelper.GetGuid(reader, "Id"),
-            ActionType = (AuditActionType)reader.GetInt32(reader.GetOrdinal("ActionType")),
-            EntityName = reader.GetString(reader.GetOrdinal("EntityName")),
-            EntityId = reader.IsDBNull(reader.GetOrdinal("EntityId")) ? null : reader.GetString(reader.GetOrdinal("EntityId")),
-            Username = reader.IsDBNull(reader.GetOrdinal("Username")) ? null : reader.GetString(reader.GetOrdinal("Username")),
-            Context = reader.IsDBNull(reader.GetOrdinal("Context")) ? null : reader.GetString(reader.GetOrdinal("Context")),
-            OldValuesJson = reader.IsDBNull(reader.GetOrdinal("OldValuesJson")) ? null : reader.GetString(reader.GetOrdinal("OldValuesJson")),
-            NewValuesJson = reader.IsDBNull(reader.GetOrdinal("NewValuesJson")) ? null : reader.GetString(reader.GetOrdinal("NewValuesJson")),
-            DeviceIpAddress = reader.IsDBNull(reader.GetOrdinal("DeviceIpAddress")) ? null : reader.GetString(reader.GetOrdinal("DeviceIpAddress")),
-            TimestampUtc = SqliteHelper.GetDateTime(reader, "TimestampUtc")
-        };
+        return AuditLogMapper.FromReader(reader);
     }
 
     protected override void BindInsert(SqliteCommand command, AuditLog entity)
@@ -59,9 +51,7 @@ public sealed class AuditRepository(ISqliteConnectionManager connectionManager)
 
         try
         {
-            using var command = connection.CreateCommand();
-            command.Transaction = ConnectionManager.CurrentTransaction;
-            command.CommandText = "SELECT * FROM AuditLogs WHERE ($FromUtc IS NULL OR TimestampUtc >= $FromUtc) AND ($ToUtc IS NULL OR TimestampUtc <= $ToUtc) ORDER BY TimestampUtc DESC;";
+            using var command = CreateCommand(connection, "SELECT * FROM AuditLogs WHERE ($FromUtc IS NULL OR TimestampUtc >= $FromUtc) AND ($ToUtc IS NULL OR TimestampUtc <= $ToUtc) ORDER BY TimestampUtc DESC;");
             command.Parameters.AddWithValue("$FromUtc", (object?)fromUtc?.ToString("O") ?? DBNull.Value);
             command.Parameters.AddWithValue("$ToUtc", (object?)toUtc?.ToString("O") ?? DBNull.Value);
 
@@ -73,6 +63,15 @@ public sealed class AuditRepository(ISqliteConnectionManager connectionManager)
             }
 
             return output;
+        }
+        catch (SqliteException exception)
+        {
+            logger.Error(
+                exception,
+                "Failed to query audit logs from {0} to {1}",
+                fromUtc?.ToString("O") ?? "null",
+                toUtc?.ToString("O") ?? "null");
+            throw CreateRepositoryException("Query", exception);
         }
         finally
         {

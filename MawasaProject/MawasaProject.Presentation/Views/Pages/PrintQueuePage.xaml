@@ -4,10 +4,56 @@
              x:Class="MawasaProject.Presentation.Views.Pages.PrintQueuePage"
              Title="Print Queue">
     <ScrollView>
-        <VerticalStackLayout Padding="20" Spacing="10" MaximumWidthRequest="680" HorizontalOptions="Center">
+        <VerticalStackLayout Padding="20" Spacing="10" MaximumWidthRequest="960" HorizontalOptions="Center">
             <Label Text="Print Queue" FontSize="24" FontAttributes="Bold" />
-            <Button Text="Refresh" Command="{Binding RefreshCommand}" />
-            <CollectionView ItemsSource="{Binding QueueItems}" />
+
+            <HorizontalStackLayout Spacing="8">
+                <Button Text="Refresh" Command="{Binding RefreshCommand}" />
+                <Button Text="Process Queue" Command="{Binding ProcessQueueCommand}" />
+                <Button Text="Retry Selected" Command="{Binding RetrySelectedCommand}" />
+            </HorizontalStackLayout>
+
+            <Grid ColumnDefinitions="*,*" ColumnSpacing="10">
+                <VerticalStackLayout Spacing="6">
+                    <Label Text="Jobs" FontAttributes="Bold" />
+                    <CollectionView ItemsSource="{Binding Jobs}" SelectedItem="{Binding SelectedJob}">
+                        <CollectionView.ItemTemplate>
+                            <DataTemplate>
+                                <Frame Padding="8" Margin="0,3" BorderColor="#D1D5DB">
+                                    <VerticalStackLayout Spacing="2">
+                                        <Label Text="{Binding Id}" FontSize="12" />
+                                        <Label Text="{Binding TemplateName}" FontAttributes="Bold" />
+                                        <Label Text="{Binding PrinterName}" FontSize="12" />
+                                        <Label Text="{Binding Status, StringFormat='Status: {0}'}" FontSize="12" />
+                                        <Label Text="{Binding RetryCount, StringFormat='Retry: {0}'}" FontSize="12" />
+                                        <Label Text="{Binding LastError}" FontSize="12" TextColor="#B91C1C" />
+                                    </VerticalStackLayout>
+                                </Frame>
+                            </DataTemplate>
+                        </CollectionView.ItemTemplate>
+                    </CollectionView>
+                </VerticalStackLayout>
+
+                <VerticalStackLayout Grid.Column="1" Spacing="6">
+                    <Label Text="Logs (selected job)" FontAttributes="Bold" />
+                    <CollectionView ItemsSource="{Binding Logs}">
+                        <CollectionView.ItemTemplate>
+                            <DataTemplate>
+                                <Frame Padding="8" Margin="0,3" BorderColor="#D1D5DB">
+                                    <VerticalStackLayout Spacing="2">
+                                        <Label Text="{Binding LoggedAtUtc}" FontSize="12" />
+                                        <Label Text="{Binding Status}" FontAttributes="Bold" />
+                                        <Label Text="{Binding Error}" FontSize="12" TextColor="#B91C1C" />
+                                    </VerticalStackLayout>
+                                </Frame>
+                            </DataTemplate>
+                        </CollectionView.ItemTemplate>
+                    </CollectionView>
+                </VerticalStackLayout>
+            </Grid>
+
+            <Label Text="{Binding StatusMessage}" FontSize="12" TextColor="#6B7280" />
+            <Label Text="{Binding ErrorMessage}" FontSize="12" TextColor="#B91C1C" IsVisible="{Binding HasErrors}" />
         </VerticalStackLayout>
     </ScrollView>
 </ContentPage>

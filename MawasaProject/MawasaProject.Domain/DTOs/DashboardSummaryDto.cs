@@ -4,6 +4,7 @@ public sealed class DashboardSummaryDto
 {
     public decimal TotalRevenue { get; init; }
     public decimal OutstandingBalance { get; init; }
+    public int TotalBills { get; init; }
     public int PendingBills { get; init; }
     public int OverdueBills { get; init; }
     public int TotalCustomers { get; init; }

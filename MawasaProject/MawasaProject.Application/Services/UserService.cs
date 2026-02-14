@@ -9,7 +9,8 @@ namespace MawasaProject.Application.Services;
 public sealed class UserService(
     IUserRepository userRepository,
     IPasswordHasher passwordHasher,
-    IAuditService auditService) : IUserService
+    IUnitOfWork unitOfWork,
+    IAuditInterceptor auditInterceptor) : IUserService
 {
     public Task<IReadOnlyList<MawasaProject.Domain.DTOs.UserDto>> GetUsersAsync(CancellationToken cancellationToken = default)
     {
@@ -18,33 +19,58 @@ public sealed class UserService(
 
     public async Task CreateUserAsync(string username, string password, IReadOnlyCollection<UserRole> roles, Guid createdByUserId, CancellationToken cancellationToken = default)
     {
-        var existing = await userRepository.GetByUsernameAsync(username, cancellationToken);
+        if (string.IsNullOrWhiteSpace(username))
+        {
+            throw new InvalidOperationException("Username is required.");
+        }
+
+        if (string.IsNullOrWhiteSpace(password) || password.Length < 8)
+        {
+            throw new InvalidOperationException("Password must be at least 8 characters long.");
+        }
+
+        if (roles is null || roles.Count == 0)
+        {
+            throw new InvalidOperationException("At least one user role is required.");
+        }
+
+        var normalizedUsername = username.Trim();
+        var existing = await userRepository.GetByUsernameAsync(normalizedUsername, cancellationToken);
         if (existing is not null)
         {
             throw new InvalidOperationException("Username already exists.");
         }
 
-        var hashed = passwordHasher.Hash(password);
-
-        var user = new User
+        await unitOfWork.ExecuteInTransactionAsync(async ct =>
         {
-            Username = username.Trim(),
-            CreatedAtUtc = DateTime.UtcNow
-        };
-        user.SetCredentials(hashed.Hash, hashed.Salt);
-        user.Activate();
+            var hashed = passwordHasher.Hash(password);
 
-        await userRepository.AddAsync(user, cancellationToken);
-        await userRepository.AssignRolesAsync(user.Id, roles, cancellationToken);
+            var user = new User
+            {
+                Username = normalizedUsername,
+                CreatedAtUtc = DateTime.UtcNow
+            };
+            user.SetCredentials(hashed.Hash, hashed.Salt);
+            user.Activate();
 
-        await auditService.LogAsync(
-            MawasaProject.Domain.Enums.AuditActionType.Create,
-            nameof(User),
-            user.Id.ToString(),
-            oldValuesJson: null,
-            newValuesJson: "{\"username\":\"" + user.Username + "\"}",
-            context: "User created",
-            username: createdByUserId.ToString(),
-            cancellationToken);
+            await userRepository.AddAsync(user, ct);
+            await userRepository.AssignRolesAsync(user.Id, roles, ct);
+
+            await auditInterceptor.TrackAsync(
+                MawasaProject.Domain.Enums.AuditActionType.Create,
+                nameof(User),
+                user.Id.ToString(),
+                oldValue: null,
+                newValue: new
+                {
+                    user.Username,
+                    user.IsActive,
+                    Roles = roles,
+                    CreatedByUserId = createdByUserId
+                },
+                context: "User created",
+                username: createdByUserId.ToString(),
+                ct);
+        }, cancellationToken);
     }
 }

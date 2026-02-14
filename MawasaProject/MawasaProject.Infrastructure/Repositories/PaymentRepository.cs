@@ -1,13 +1,17 @@
 using Microsoft.Data.Sqlite;
+using MawasaProject.Application.Abstractions.Logging;
 using MawasaProject.Application.Abstractions.Persistence;
 using MawasaProject.Domain.Entities;
-using MawasaProject.Domain.Enums;
+using MawasaProject.Infrastructure.Data.Mappers;
 using MawasaProject.Infrastructure.Data.SQLite;
 
 namespace MawasaProject.Infrastructure.Repositories;
 
-public sealed class PaymentRepository(ISqliteConnectionManager connectionManager)
-    : GenericRepository<Payment>(connectionManager), IPaymentRepository
+public sealed class PaymentRepository(
+    ISqliteConnectionManager connectionManager,
+    SqliteDatabaseOptions options,
+    IAppLogger<PaymentRepository> logger)
+    : GenericRepository<Payment>(connectionManager, options), IPaymentRepository
 {
     protected override string TableName => "Payments";
 
@@ -19,18 +23,7 @@ public sealed class PaymentRepository(ISqliteConnectionManager connectionManager
 
     protected override Payment Map(SqliteDataReader reader)
     {
-        return new Payment
-        {
-            Id = SqliteHelper.GetGuid(reader, "Id"),
-            BillId = SqliteHelper.GetGuid(reader, "BillId"),
-            Amount = SqliteHelper.GetDecimal(reader, "Amount"),
-            PaymentDateUtc = SqliteHelper.GetDateTime(reader, "PaymentDateUtc"),
-            Status = (PaymentStatus)reader.GetInt32(reader.GetOrdinal("Status")),
-            ReferenceNumber = reader.IsDBNull(reader.GetOrdinal("ReferenceNumber")) ? null : reader.GetString(reader.GetOrdinal("ReferenceNumber")),
-            CreatedByUserId = SqliteHelper.GetGuid(reader, "CreatedByUserId"),
-            CreatedAtUtc = SqliteHelper.GetDateTime(reader, "CreatedAtUtc"),
-            UpdatedAtUtc = SqliteHelper.GetNullableDateTime(reader, "UpdatedAtUtc")
-        };
+        return PaymentMapper.FromReader(reader);
     }
 
     protected override void BindInsert(SqliteCommand command, Payment entity)
@@ -58,9 +51,7 @@ public sealed class PaymentRepository(ISqliteConnectionManager connectionManager
 
         try
         {
-            using var command = connection.CreateCommand();
-            command.Transaction = ConnectionManager.CurrentTransaction;
-            command.CommandText = sql;
+            using var command = CreateCommand(connection, sql);
             command.Parameters.AddWithValue("$BillId", billId.ToString());
 
             using var reader = await command.ExecuteReaderAsync(cancellationToken);
@@ -71,6 +62,11 @@ public sealed class PaymentRepository(ISqliteConnectionManager connectionManager
             }
 
             return output;
+        }
+        catch (SqliteException exception)
+        {
+            logger.Error(exception, "Failed to list payments for bill {0}", billId);
+            throw CreateRepositoryException("GetByBillId", exception);
         }
         finally
         {
@@ -85,13 +81,16 @@ public sealed class PaymentRepository(ISqliteConnectionManager connectionManager
 
         try
         {
-            using var command = connection.CreateCommand();
-            command.Transaction = ConnectionManager.CurrentTransaction;
-            command.CommandText = sql;
+            using var command = CreateCommand(connection, sql);
             command.Parameters.AddWithValue("$BillId", billId.ToString());
 
             var value = await command.ExecuteScalarAsync(cancellationToken);
             return Convert.ToDecimal(value);
+        }
+        catch (SqliteException exception)
+        {
+            logger.Error(exception, "Failed to calculate total paid for bill {0}", billId);
+            throw CreateRepositoryException("GetTotalPaidForBill", exception);
         }
         finally
         {

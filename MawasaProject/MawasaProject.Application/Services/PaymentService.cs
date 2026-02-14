@@ -1,6 +1,6 @@
-using System.Text.Json;
 using MawasaProject.Application.Abstractions.Persistence;
 using MawasaProject.Application.Abstractions.Services;
+using MawasaProject.Application.Rules;
 using MawasaProject.Application.Validation;
 using MawasaProject.Domain.Entities;
 using MawasaProject.Domain.Enums;
@@ -11,7 +11,8 @@ public sealed class PaymentService(
     IBillRepository billRepository,
     IPaymentRepository paymentRepository,
     IUnitOfWork unitOfWork,
-    IAuditService auditService) : IPaymentService
+    IAuditInterceptor auditInterceptor,
+    BusinessRuleEngine rules) : IPaymentService
 {
     public async Task<Payment> RecordPaymentAsync(Payment payment, CancellationToken cancellationToken = default)
     {
@@ -19,9 +20,17 @@ public sealed class PaymentService(
 
         var bill = await billRepository.GetByIdAsync(payment.BillId, cancellationToken)
             ?? throw new InvalidOperationException("Target bill was not found.");
+        rules.EnsurePaymentCanBeApplied(bill, payment.Amount);
 
         await unitOfWork.ExecuteInTransactionAsync(async ct =>
         {
+            var billBefore = new
+            {
+                bill.Status,
+                bill.Balance,
+                bill.PaidAtUtc
+            };
+
             var reference = string.IsNullOrWhiteSpace(payment.ReferenceNumber)
                 ? $"PMT-{DateTime.UtcNow:yyyyMMddHHmmssfff}"
                 : payment.ReferenceNumber;
@@ -33,13 +42,36 @@ public sealed class PaymentService(
 
             await billRepository.UpdateAsync(bill, ct);
 
-            await auditService.LogAsync(
-                AuditActionType.Update,
+            await auditInterceptor.TrackAsync(
+                AuditActionType.Create,
                 nameof(Payment),
                 payment.Id.ToString(),
-                oldValuesJson: null,
-                newValuesJson: JsonSerializer.Serialize(payment),
+                oldValue: null,
+                newValue: new
+                {
+                    payment.BillId,
+                    payment.Amount,
+                    payment.PaymentDateUtc,
+                    payment.Status,
+                    payment.ReferenceNumber,
+                    payment.CreatedByUserId
+                },
                 context: "Payment recorded",
+                username: null,
+                ct);
+
+            await auditInterceptor.TrackAsync(
+                AuditActionType.Update,
+                nameof(Bill),
+                bill.Id.ToString(),
+                oldValue: billBefore,
+                newValue: new
+                {
+                    bill.Status,
+                    bill.Balance,
+                    bill.PaidAtUtc
+                },
+                context: "Bill recalculated after payment",
                 username: null,
                 ct);
         }, cancellationToken);

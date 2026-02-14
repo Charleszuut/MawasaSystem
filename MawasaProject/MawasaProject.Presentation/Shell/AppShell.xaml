@@ -6,32 +6,36 @@
     xmlns:pages="clr-namespace:MawasaProject.Presentation.Views.Pages"
     Title="Mawasa Project">
 
-    <FlyoutItem Title="Dashboard" Route="dashboard">
-        <ShellContent ContentTemplate="{DataTemplate pages:DashboardPage}" Route="dashboard/home" />
+    <FlyoutItem x:Name="LoginItem" Title="Login" Route="login-root" FlyoutItemIsVisible="False">
+        <ShellContent ContentTemplate="{DataTemplate pages:LoginPage}" Route="login" />
     </FlyoutItem>
 
-    <FlyoutItem Title="Billing" Route="billing">
-        <ShellContent ContentTemplate="{DataTemplate pages:BillingPage}" Route="billing/home" />
+    <FlyoutItem x:Name="DashboardItem" Title="Dashboard" Route="dashboard">
+        <ShellContent ContentTemplate="{DataTemplate pages:DashboardPage}" Route="home" />
     </FlyoutItem>
 
-    <FlyoutItem Title="Payments" Route="payments">
-        <ShellContent ContentTemplate="{DataTemplate pages:PaymentsPage}" Route="payments/home" />
+    <FlyoutItem x:Name="BillingItem" Title="Billing" Route="billing">
+        <ShellContent ContentTemplate="{DataTemplate pages:BillingPage}" Route="home" />
     </FlyoutItem>
 
-    <FlyoutItem Title="Customers" Route="customers">
-        <ShellContent ContentTemplate="{DataTemplate pages:CustomersPage}" Route="customers/home" />
+    <FlyoutItem x:Name="PaymentsItem" Title="Payments" Route="payments">
+        <ShellContent ContentTemplate="{DataTemplate pages:PaymentsPage}" Route="home" />
     </FlyoutItem>
 
-    <FlyoutItem Title="Reports" Route="reports">
-        <ShellContent ContentTemplate="{DataTemplate pages:ReportsPage}" Route="reports/home" />
+    <FlyoutItem x:Name="CustomersItem" Title="Customers" Route="customers">
+        <ShellContent ContentTemplate="{DataTemplate pages:CustomersPage}" Route="home" />
     </FlyoutItem>
 
-    <FlyoutItem Title="Audit" Route="audit">
-        <ShellContent ContentTemplate="{DataTemplate pages:AuditPage}" Route="audit/home" />
+    <FlyoutItem x:Name="ReportsItem" Title="Reports" Route="reports">
+        <ShellContent ContentTemplate="{DataTemplate pages:ReportsPage}" Route="home" />
     </FlyoutItem>
 
-    <FlyoutItem Title="Settings" Route="settings">
-        <ShellContent ContentTemplate="{DataTemplate pages:SettingsPage}" Route="settings/home" />
+    <FlyoutItem x:Name="AuditItem" Title="Audit" Route="audit">
+        <ShellContent ContentTemplate="{DataTemplate pages:AuditPage}" Route="home" />
+    </FlyoutItem>
+
+    <FlyoutItem x:Name="SettingsItem" Title="Settings" Route="settings">
+        <ShellContent ContentTemplate="{DataTemplate pages:SettingsPage}" Route="home" />
     </FlyoutItem>
 
 </Shell>

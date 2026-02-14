@@ -1,9 +1,12 @@
+using MawasaProject.Application.Abstractions.Logging;
 using MawasaProject.Application.Abstractions.Persistence;
 using MawasaProject.Infrastructure.Data.SQLite;
 
 namespace MawasaProject.Infrastructure.Repositories;
 
-public sealed class SqliteUnitOfWork(ISqliteConnectionManager connectionManager) : IUnitOfWork
+public sealed class SqliteUnitOfWork(
+    ISqliteConnectionManager connectionManager,
+    IAppLogger<SqliteUnitOfWork> logger) : IUnitOfWork
 {
     public async Task ExecuteInTransactionAsync(Func<CancellationToken, Task> action, CancellationToken cancellationToken = default)
     {
@@ -14,9 +17,18 @@ public sealed class SqliteUnitOfWork(ISqliteConnectionManager connectionManager)
             await action(cancellationToken);
             await connectionManager.CommitTransactionAsync(cancellationToken);
         }
-        catch
+        catch (Exception exception)
         {
-            await connectionManager.RollbackTransactionAsync(cancellationToken);
+            try
+            {
+                await connectionManager.RollbackTransactionAsync(cancellationToken);
+            }
+            catch (Exception rollbackException)
+            {
+                logger.Error(rollbackException, "Rollback failed after transaction error.");
+            }
+
+            logger.Error(exception, "Transaction execution failed.");
             throw;
         }
     }
@@ -31,9 +43,18 @@ public sealed class SqliteUnitOfWork(ISqliteConnectionManager connectionManager)
             await connectionManager.CommitTransactionAsync(cancellationToken);
             return result;
         }
-        catch
+        catch (Exception exception)
         {
-            await connectionManager.RollbackTransactionAsync(cancellationToken);
+            try
+            {
+                await connectionManager.RollbackTransactionAsync(cancellationToken);
+            }
+            catch (Exception rollbackException)
+            {
+                logger.Error(rollbackException, "Rollback failed after transaction error.");
+            }
+
+            logger.Error(exception, "Transaction execution failed.");
             throw;
         }
     }

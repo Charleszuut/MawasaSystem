@@ -5,10 +5,13 @@ using MawasaProject.Infrastructure.Data.SQLite;
 
 namespace MawasaProject.Infrastructure.Repositories;
 
-public abstract class GenericRepository<T>(ISqliteConnectionManager connectionManager) : IRepository<T>
+public abstract class GenericRepository<T>(
+    ISqliteConnectionManager connectionManager,
+    SqliteDatabaseOptions options) : IRepository<T>
     where T : class, IEntity, new()
 {
     protected ISqliteConnectionManager ConnectionManager => connectionManager;
+    protected SqliteDatabaseOptions Options => options;
 
     protected abstract string TableName { get; }
     protected virtual string GetByIdSql => $"SELECT * FROM {TableName} WHERE Id = $Id LIMIT 1;";
@@ -28,13 +31,15 @@ public abstract class GenericRepository<T>(ISqliteConnectionManager connectionMa
 
         try
         {
-            using var command = connection.CreateCommand();
-            command.Transaction = ConnectionManager.CurrentTransaction;
-            command.CommandText = GetByIdSql;
+            using var command = CreateCommand(connection, GetByIdSql);
             command.Parameters.AddWithValue("$Id", id.ToString());
 
             using var reader = await command.ExecuteReaderAsync(cancellationToken);
             return await reader.ReadAsync(cancellationToken) ? Map(reader) : null;
+        }
+        catch (SqliteException exception)
+        {
+            throw CreateRepositoryException("GetById", exception);
         }
         finally
         {
@@ -48,9 +53,7 @@ public abstract class GenericRepository<T>(ISqliteConnectionManager connectionMa
 
         try
         {
-            using var command = connection.CreateCommand();
-            command.Transaction = ConnectionManager.CurrentTransaction;
-            command.CommandText = ListSql;
+            using var command = CreateCommand(connection, ListSql);
 
             using var reader = await command.ExecuteReaderAsync(cancellationToken);
             var output = new List<T>();
@@ -60,6 +63,10 @@ public abstract class GenericRepository<T>(ISqliteConnectionManager connectionMa
             }
 
             return output;
+        }
+        catch (SqliteException exception)
+        {
+            throw CreateRepositoryException("List", exception);
         }
         finally
         {
@@ -73,11 +80,13 @@ public abstract class GenericRepository<T>(ISqliteConnectionManager connectionMa
 
         try
         {
-            using var command = connection.CreateCommand();
-            command.Transaction = ConnectionManager.CurrentTransaction;
-            command.CommandText = InsertSql;
+            using var command = CreateCommand(connection, InsertSql);
             BindInsert(command, entity);
             await command.ExecuteNonQueryAsync(cancellationToken);
+        }
+        catch (SqliteException exception)
+        {
+            throw CreateRepositoryException("Add", exception);
         }
         finally
         {
@@ -91,11 +100,13 @@ public abstract class GenericRepository<T>(ISqliteConnectionManager connectionMa
 
         try
         {
-            using var command = connection.CreateCommand();
-            command.Transaction = ConnectionManager.CurrentTransaction;
-            command.CommandText = UpdateSql;
+            using var command = CreateCommand(connection, UpdateSql);
             BindUpdate(command, entity);
             await command.ExecuteNonQueryAsync(cancellationToken);
+        }
+        catch (SqliteException exception)
+        {
+            throw CreateRepositoryException("Update", exception);
         }
         finally
         {
@@ -109,15 +120,31 @@ public abstract class GenericRepository<T>(ISqliteConnectionManager connectionMa
 
         try
         {
-            using var command = connection.CreateCommand();
-            command.Transaction = ConnectionManager.CurrentTransaction;
-            command.CommandText = DeleteSql;
+            using var command = CreateCommand(connection, DeleteSql);
             command.Parameters.AddWithValue("$Id", id.ToString());
             await command.ExecuteNonQueryAsync(cancellationToken);
+        }
+        catch (SqliteException exception)
+        {
+            throw CreateRepositoryException("Delete", exception);
         }
         finally
         {
             await ConnectionManager.DisposeConnectionIfNeededAsync(connection);
         }
+    }
+
+    protected SqliteCommand CreateCommand(SqliteConnection connection, string sql)
+    {
+        var command = connection.CreateCommand();
+        command.Transaction = ConnectionManager.CurrentTransaction;
+        command.CommandTimeout = Options.DefaultCommandTimeoutSeconds;
+        command.CommandText = sql;
+        return command;
+    }
+
+    protected RepositoryException CreateRepositoryException(string operation, Exception exception)
+    {
+        return new RepositoryException($"Repository operation '{operation}' failed for table '{TableName}'.", exception);
     }
 }

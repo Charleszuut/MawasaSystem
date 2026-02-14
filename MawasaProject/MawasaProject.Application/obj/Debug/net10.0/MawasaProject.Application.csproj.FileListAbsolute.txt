@@ -13,3 +13,4 @@ C:\Projects\MawasaSystem\MawasaProject\MawasaProject.Application\obj\Debug\net10
 C:\Projects\MawasaSystem\MawasaProject\MawasaProject.Application\obj\Debug\net10.0\refint\MawasaProject.Application.dll
 C:\Projects\MawasaSystem\MawasaProject\MawasaProject.Application\obj\Debug\net10.0\MawasaProject.Application.pdb
 C:\Projects\MawasaSystem\MawasaProject\MawasaProject.Application\obj\Debug\net10.0\ref\MawasaProject.Application.dll
+C:\Projects\MawasaSystem\MawasaProject\MawasaProject.Application\obj\Debug\net10.0\MawasaProject.Application.sourcelink.json

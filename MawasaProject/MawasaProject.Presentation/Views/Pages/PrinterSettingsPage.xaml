@@ -4,11 +4,60 @@
              x:Class="MawasaProject.Presentation.Views.Pages.PrinterSettingsPage"
              Title="Printer Settings">
     <ScrollView>
-        <VerticalStackLayout Padding="20" Spacing="10" MaximumWidthRequest="680" HorizontalOptions="Center">
+        <VerticalStackLayout Padding="20" Spacing="10" MaximumWidthRequest="860" HorizontalOptions="Center">
             <Label Text="Printer Settings" FontSize="24" FontAttributes="Bold" />
-            <Button Text="Refresh Printers" Command="{Binding RefreshCommand}" />
-            <Picker Title="Select Printer" ItemsSource="{Binding Printers}" SelectedItem="{Binding SelectedPrinter}" />
-            <Button Text="Test Print" Command="{Binding TestPrintCommand}" />
+
+            <HorizontalStackLayout Spacing="8">
+                <Button Text="Refresh" Command="{Binding RefreshCommand}" />
+                <Button Text="Set Default Printer" Command="{Binding SetDefaultCommand}" />
+                <Button Text="Test Print" Command="{Binding TestPrintCommand}" />
+            </HorizontalStackLayout>
+
+            <Grid ColumnDefinitions="*,*" ColumnSpacing="8">
+                <VerticalStackLayout Spacing="8">
+                    <Label Text="Printer Device" />
+                    <Picker Title="Select Printer"
+                            ItemsSource="{Binding Printers}"
+                            SelectedItem="{Binding SelectedPrinter}" />
+                    <Label Text="Profile Name" />
+                    <Entry Text="{Binding ProfileName}" Placeholder="e.g. MainOffice-A4" />
+                    <Label Text="Paper Size" />
+                    <Picker ItemsSource="{Binding PaperSizes}" SelectedItem="{Binding PaperSize}" />
+                    <HorizontalStackLayout Spacing="16">
+                        <HorizontalStackLayout Spacing="6">
+                            <CheckBox IsChecked="{Binding IsDefaultProfile}" />
+                            <Label Text="Default" VerticalTextAlignment="Center" />
+                        </HorizontalStackLayout>
+                        <HorizontalStackLayout Spacing="6">
+                            <CheckBox IsChecked="{Binding IsActiveProfile}" />
+                            <Label Text="Active" VerticalTextAlignment="Center" />
+                        </HorizontalStackLayout>
+                    </HorizontalStackLayout>
+                    <Button Text="Save Profile" Command="{Binding SaveProfileCommand}" />
+                </VerticalStackLayout>
+
+                <VerticalStackLayout Grid.Column="1" Spacing="8">
+                    <Label Text="Printer Profiles" FontAttributes="Bold" />
+                    <CollectionView ItemsSource="{Binding Profiles}" SelectedItem="{Binding SelectedProfile}">
+                        <CollectionView.ItemTemplate>
+                            <DataTemplate>
+                                <Frame Padding="8" Margin="0,3" BorderColor="#D1D5DB">
+                                    <VerticalStackLayout Spacing="2">
+                                        <Label Text="{Binding Name}" FontAttributes="Bold" />
+                                        <Label Text="{Binding DeviceName}" FontSize="12" />
+                                        <Label Text="{Binding PaperSize, StringFormat='Paper: {0}'}" FontSize="12" />
+                                        <Label Text="{Binding IsDefault, StringFormat='Default: {0}'}" FontSize="12" TextColor="#6B7280" />
+                                        <Label Text="{Binding IsActive, StringFormat='Active: {0}'}" FontSize="12" TextColor="#6B7280" />
+                                    </VerticalStackLayout>
+                                </Frame>
+                            </DataTemplate>
+                        </CollectionView.ItemTemplate>
+                    </CollectionView>
+                </VerticalStackLayout>
+            </Grid>
+
+            <Label Text="{Binding StatusMessage}" FontSize="12" TextColor="#6B7280" />
+            <Label Text="{Binding ErrorMessage}" FontSize="12" TextColor="#B91C1C" IsVisible="{Binding HasErrors}" />
         </VerticalStackLayout>
     </ScrollView>
 </ContentPage>

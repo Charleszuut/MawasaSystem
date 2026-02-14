@@ -9,18 +9,29 @@
             <HorizontalStackLayout Spacing="8">
                 <Button Text="Refresh" Command="{Binding RefreshCommand}" />
                 <Button Text="Create Backup" Command="{Binding CreateBackupCommand}" />
+                <Button Text="Validate Backup" Command="{Binding ValidateBackupCommand}" />
             </HorizontalStackLayout>
 
             <Entry Placeholder="Restore file path" Text="{Binding RestorePath}" />
-            <Button Text="Restore Selected Backup" Command="{Binding RestoreCommand}" BackgroundColor="#B91C1C" TextColor="White" />
+            <Button Text="Restore Selected Backup"
+                    Command="{Binding RestoreCommand}"
+                    IsEnabled="{Binding CanRestore}"
+                    BackgroundColor="#B91C1C"
+                    TextColor="White" />
+            <Label Text="{Binding ValidationSummary}" FontSize="12" TextColor="#6B7280" />
 
-            <CollectionView ItemsSource="{Binding History}">
+            <CollectionView ItemsSource="{Binding History}"
+                            SelectionMode="Single"
+                            SelectedItem="{Binding SelectedBackup, Mode=TwoWay}">
                 <CollectionView.ItemTemplate>
                     <DataTemplate>
                         <Frame Padding="8" Margin="0,4" BorderColor="#D1D5DB">
                             <VerticalStackLayout>
                                 <Label Text="{Binding FileName}" FontAttributes="Bold" />
                                 <Label Text="{Binding FilePath}" FontSize="12" />
+                                <Label Text="{Binding Version, StringFormat='Version: {0}'}" FontSize="12" TextColor="#6B7280" />
+                                <Label Text="{Binding IsAutomatic, StringFormat='Automatic: {0}'}" FontSize="12" TextColor="#6B7280" />
+                                <Label Text="{Binding IntegrityVerifiedAtUtc, StringFormat='Verified: {0:yyyy-MM-dd HH:mm:ss} UTC'}" FontSize="12" TextColor="#6B7280" />
                                 <Label Text="{Binding CreatedAtUtc}" FontSize="12" TextColor="#6B7280" />
                             </VerticalStackLayout>
                         </Frame>

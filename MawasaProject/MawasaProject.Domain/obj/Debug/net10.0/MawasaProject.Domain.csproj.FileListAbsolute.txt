@@ -9,3 +9,4 @@ C:\Projects\MawasaSystem\MawasaProject\MawasaProject.Domain\obj\Debug\net10.0\Ma
 C:\Projects\MawasaSystem\MawasaProject\MawasaProject.Domain\obj\Debug\net10.0\refint\MawasaProject.Domain.dll
 C:\Projects\MawasaSystem\MawasaProject\MawasaProject.Domain\obj\Debug\net10.0\MawasaProject.Domain.pdb
 C:\Projects\MawasaSystem\MawasaProject\MawasaProject.Domain\obj\Debug\net10.0\ref\MawasaProject.Domain.dll
+C:\Projects\MawasaSystem\MawasaProject\MawasaProject.Domain\obj\Debug\net10.0\MawasaProject.Domain.sourcelink.json

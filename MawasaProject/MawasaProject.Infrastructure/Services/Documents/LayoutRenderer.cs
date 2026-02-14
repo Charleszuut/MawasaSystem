@@ -5,6 +5,7 @@ public sealed class LayoutRenderer
     public string Render(string title, string body, string? branding = null)
     {
         var header = string.IsNullOrWhiteSpace(branding) ? title : $"{branding}\n{title}";
-        return $"====================\n{header}\n====================\n{body}\n";
+        var divider = new string('=', 44);
+        return $"{divider}\n{header}\n{divider}\n{body}\n{divider}\nRenderedAtUtc: {DateTime.UtcNow:O}\n";
     }
 }

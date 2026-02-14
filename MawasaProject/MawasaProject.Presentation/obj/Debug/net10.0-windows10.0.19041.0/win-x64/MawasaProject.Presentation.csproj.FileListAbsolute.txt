@@ -527,3 +527,8 @@ C:\Projects\MawasaSystem\MawasaProject\MawasaProject.Presentation\obj\Debug\net1
 C:\Projects\MawasaSystem\MawasaProject\MawasaProject.Presentation\obj\Debug\net10.0-windows10.0.19041.0\win-x64\qualifiers.txt
 C:\Projects\MawasaSystem\MawasaProject\MawasaProject.Presentation\obj\Debug\net10.0-windows10.0.19041.0\win-x64\qualifiers.txt.intermediate
 C:\Projects\MawasaSystem\MawasaProject\MawasaProject.Presentation\obj\Debug\net10.0-windows10.0.19041.0\win-x64\MultipleQualifiersPerDimensionFound.txt
+C:\Projects\MawasaSystem\MawasaProject\MawasaProject.Presentation\obj\Debug\net10.0-windows10.0.19041.0\win-x64\MawasaProject.Presentation.sourcelink.json
+C:\Projects\MawasaSystem\MawasaProject\MawasaProject.Presentation\bin\Debug\net10.0-windows10.0.19041.0\win-x64\login_page.scale-100.png
+C:\Projects\MawasaSystem\MawasaProject\MawasaProject.Presentation\bin\Debug\net10.0-windows10.0.19041.0\win-x64\mawasa_logo.scale-100.png
+C:\Projects\MawasaSystem\MawasaProject\MawasaProject.Presentation\obj\Debug\net10.0-windows10.0.19041.0\win-x64\resizetizer\r\login_page.scale-100.png
+C:\Projects\MawasaSystem\MawasaProject\MawasaProject.Presentation\obj\Debug\net10.0-windows10.0.19041.0\win-x64\resizetizer\r\mawasa_logo.scale-100.png

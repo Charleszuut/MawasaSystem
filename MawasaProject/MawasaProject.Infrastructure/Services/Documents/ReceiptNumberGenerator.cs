@@ -1,12 +1,9 @@
 namespace MawasaProject.Infrastructure.Services.Documents;
 
-public sealed class ReceiptNumberGenerator
+public sealed class ReceiptNumberGenerator(DocumentNumberService numberService)
 {
-    private int _sequence;
-
-    public string Next()
+    public Task<string> NextAsync(CancellationToken cancellationToken = default)
     {
-        var index = Interlocked.Increment(ref _sequence);
-        return $"RCPT-{DateTime.UtcNow:yyyyMMdd}-{index:D5}";
+        return numberService.NextAsync("Receipt", "RCPT", cancellationToken);
     }
 }

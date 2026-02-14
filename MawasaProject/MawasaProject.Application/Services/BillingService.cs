@@ -1,4 +1,3 @@
-using System.Text.Json;
 using MawasaProject.Application.Abstractions.Persistence;
 using MawasaProject.Application.Abstractions.Services;
 using MawasaProject.Application.Rules;
@@ -11,7 +10,7 @@ namespace MawasaProject.Application.Services;
 public sealed class BillingService(
     IBillRepository billRepository,
     IUnitOfWork unitOfWork,
-    IAuditService auditService,
+    IAuditInterceptor auditInterceptor,
     BusinessRuleEngine rules) : IBillingService
 {
     public async Task<Bill> CreateBillAsync(Bill bill, CancellationToken cancellationToken = default)
@@ -28,12 +27,21 @@ public sealed class BillingService(
             }
             await billRepository.AddAsync(bill, ct);
 
-            await auditService.LogAsync(
+            await auditInterceptor.TrackAsync(
                 AuditActionType.Create,
                 nameof(Bill),
                 bill.Id.ToString(),
-                oldValuesJson: null,
-                newValuesJson: JsonSerializer.Serialize(bill),
+                oldValue: null,
+                newValue: new
+                {
+                    bill.BillNumber,
+                    bill.CustomerId,
+                    bill.Amount,
+                    bill.Balance,
+                    bill.DueDateUtc,
+                    bill.Status,
+                    bill.CreatedByUserId
+                },
                 context: "Bill created",
                 username: null,
                 ct);
@@ -56,32 +64,48 @@ public sealed class BillingService(
 
     public async Task UpdateBillStatusAsync(Guid billId, BillStatus newStatus, Guid changedByUserId, CancellationToken cancellationToken = default)
     {
-        var bill = await billRepository.GetByIdAsync(billId, cancellationToken)
-            ?? throw new InvalidOperationException("Bill was not found.");
-
-        var oldStatus = bill.Status;
-        switch (newStatus)
+        await unitOfWork.ExecuteInTransactionAsync(async ct =>
         {
-            case BillStatus.Paid:
-                bill.MarkPaid();
-                break;
-            case BillStatus.Overdue:
-                bill.MarkOverdue();
-                break;
-            default:
-                bill.MarkPending();
-                break;
-        }
+            var bill = await billRepository.GetByIdAsync(billId, ct)
+                ?? throw new InvalidOperationException("Bill was not found.");
 
-        await billRepository.UpdateAsync(bill, cancellationToken);
-        await auditService.LogAsync(
-            AuditActionType.Update,
-            nameof(Bill),
-            bill.Id.ToString(),
-            oldValuesJson: JsonSerializer.Serialize(new { Status = oldStatus }),
-            newValuesJson: JsonSerializer.Serialize(new { Status = bill.Status, ChangedBy = changedByUserId }),
-            context: "Bill status updated",
-            username: null,
-            cancellationToken);
+            rules.EnsureBillStatusTransitionAllowed(bill, newStatus);
+            var oldState = new
+            {
+                bill.Status,
+                bill.Balance,
+                bill.PaidAtUtc
+            };
+
+            switch (newStatus)
+            {
+                case BillStatus.Paid:
+                    bill.MarkPaid();
+                    break;
+                case BillStatus.Overdue:
+                    bill.MarkOverdue();
+                    break;
+                default:
+                    bill.MarkPending();
+                    break;
+            }
+
+            await billRepository.UpdateAsync(bill, ct);
+            await auditInterceptor.TrackAsync(
+                AuditActionType.Update,
+                nameof(Bill),
+                bill.Id.ToString(),
+                oldValue: oldState,
+                newValue: new
+                {
+                    bill.Status,
+                    bill.Balance,
+                    bill.PaidAtUtc,
+                    ChangedBy = changedByUserId
+                },
+                context: "Bill status updated",
+                username: null,
+                ct);
+        }, cancellationToken);
     }
 }

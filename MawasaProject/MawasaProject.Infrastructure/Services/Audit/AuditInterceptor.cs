@@ -3,7 +3,7 @@ using MawasaProject.Domain.Enums;
 
 namespace MawasaProject.Infrastructure.Services.Audit;
 
-public sealed class AuditInterceptor(IAuditService auditService, EntityDiffService diffService)
+public sealed class AuditInterceptor(IAuditService auditService, EntityDiffService diffService) : IAuditInterceptor
 {
     public Task TrackAsync(
         AuditActionType action,

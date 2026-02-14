@@ -12,6 +12,7 @@ using MawasaProject.Infrastructure.Services.Audit;
 using MawasaProject.Infrastructure.Services.Backup;
 using MawasaProject.Infrastructure.Services.Documents;
 using MawasaProject.Infrastructure.Services.Printing;
+using MawasaProject.Infrastructure.Services.Reports;
 
 namespace MawasaProject.Infrastructure;
 
@@ -53,21 +54,26 @@ public static class DependencyInjection
 
         services.AddScoped<IBackupService, BackupService>();
         services.AddScoped<IRestoreService, RestoreService>();
+        services.AddSingleton<BackupIntegrityChecker>();
         services.AddSingleton<BackupScheduler>();
 
         services.AddSingleton<PrintQueueService>();
         services.AddScoped<IPrinterService, PrinterService>();
 
+        services.AddSingleton<DocumentNumberService>();
         services.AddSingleton<TemplateEngine>();
         services.AddSingleton<LayoutRenderer>();
         services.AddSingleton<PdfGenerator>();
+        services.AddSingleton<DocumentArtifactWriter>();
         services.AddSingleton<ReceiptNumberGenerator>();
         services.AddSingleton<InvoiceNumberGenerator>();
         services.AddScoped<IReceiptService, ReceiptService>();
         services.AddScoped<IInvoiceService, InvoiceService>();
+        services.AddScoped<IReportFileWriter, OfflineReportFileWriter>();
 
         services.AddScoped<EntityDiffService>();
-        services.AddScoped<AuditInterceptor>();
+        services.AddScoped<IAuditInterceptor, AuditInterceptor>();
+        services.AddSingleton<IAuditContextProvider, RuntimeAuditContextProvider>();
 
         services.AddSingleton(typeof(IAppLogger<>), typeof(AppLogger<>));
 

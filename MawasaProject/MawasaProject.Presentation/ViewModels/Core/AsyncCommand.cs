@@ -2,9 +2,14 @@ using System.Windows.Input;
 
 namespace MawasaProject.Presentation.ViewModels.Core;
 
-public sealed class AsyncCommand(Func<Task> executeAsync, Func<bool>? canExecute = null) : ICommand
+public sealed class AsyncCommand(
+    Func<Task> executeAsync,
+    Func<bool>? canExecute = null,
+    Action<Exception>? onException = null) : IAsyncCommand
 {
     private bool _isExecuting;
+
+    public bool IsExecuting => _isExecuting;
 
     public event EventHandler? CanExecuteChanged;
 
@@ -14,6 +19,11 @@ public sealed class AsyncCommand(Func<Task> executeAsync, Func<bool>? canExecute
     }
 
     public async void Execute(object? parameter)
+    {
+        await ExecuteAsync(parameter);
+    }
+
+    public async Task ExecuteAsync(object? parameter = null)
     {
         if (!CanExecute(parameter))
         {
@@ -25,6 +35,10 @@ public sealed class AsyncCommand(Func<Task> executeAsync, Func<bool>? canExecute
             _isExecuting = true;
             RaiseCanExecuteChanged();
             await executeAsync();
+        }
+        catch (Exception exception)
+        {
+            onException?.Invoke(exception);
         }
         finally
         {

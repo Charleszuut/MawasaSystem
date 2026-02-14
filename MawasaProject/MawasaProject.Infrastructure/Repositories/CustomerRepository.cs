@@ -1,12 +1,17 @@
 using Microsoft.Data.Sqlite;
+using MawasaProject.Application.Abstractions.Logging;
 using MawasaProject.Application.Abstractions.Persistence;
 using MawasaProject.Domain.Entities;
+using MawasaProject.Infrastructure.Data.Mappers;
 using MawasaProject.Infrastructure.Data.SQLite;
 
 namespace MawasaProject.Infrastructure.Repositories;
 
-public sealed class CustomerRepository(ISqliteConnectionManager connectionManager)
-    : GenericRepository<Customer>(connectionManager), ICustomerRepository
+public sealed class CustomerRepository(
+    ISqliteConnectionManager connectionManager,
+    SqliteDatabaseOptions options,
+    IAppLogger<CustomerRepository> logger)
+    : GenericRepository<Customer>(connectionManager, options), ICustomerRepository
 {
     protected override string TableName => "Customers";
     protected override string GetByIdSql => "SELECT * FROM Customers WHERE Id = $Id AND IsDeleted = 0 LIMIT 1;";
@@ -21,18 +26,7 @@ public sealed class CustomerRepository(ISqliteConnectionManager connectionManage
 
     protected override Customer Map(SqliteDataReader reader)
     {
-        return new Customer
-        {
-            Id = SqliteHelper.GetGuid(reader, "Id"),
-            Name = reader.GetString(reader.GetOrdinal("Name")),
-            PhoneNumber = reader.IsDBNull(reader.GetOrdinal("PhoneNumber")) ? null : reader.GetString(reader.GetOrdinal("PhoneNumber")),
-            Email = reader.IsDBNull(reader.GetOrdinal("Email")) ? null : reader.GetString(reader.GetOrdinal("Email")),
-            Address = reader.IsDBNull(reader.GetOrdinal("Address")) ? null : reader.GetString(reader.GetOrdinal("Address")),
-            CreatedAtUtc = SqliteHelper.GetDateTime(reader, "CreatedAtUtc"),
-            UpdatedAtUtc = SqliteHelper.GetNullableDateTime(reader, "UpdatedAtUtc"),
-            IsDeleted = SqliteHelper.GetBoolean(reader, "IsDeleted"),
-            DeletedAtUtc = SqliteHelper.GetNullableDateTime(reader, "DeletedAtUtc")
-        };
+        return CustomerMapper.FromReader(reader);
     }
 
     protected override void BindInsert(SqliteCommand command, Customer entity)
@@ -71,9 +65,7 @@ public sealed class CustomerRepository(ISqliteConnectionManager connectionManage
 
         try
         {
-            using var command = connection.CreateCommand();
-            command.Transaction = ConnectionManager.CurrentTransaction;
-            command.CommandText = sql;
+            using var command = CreateCommand(connection, sql);
             command.Parameters.AddWithValue("$Search", "%" + searchText.Trim() + "%");
 
             using var reader = await command.ExecuteReaderAsync(cancellationToken);
@@ -84,6 +76,11 @@ public sealed class CustomerRepository(ISqliteConnectionManager connectionManage
             }
 
             return output;
+        }
+        catch (SqliteException exception)
+        {
+            logger.Error(exception, "Failed to search customers by text {0}", searchText);
+            throw CreateRepositoryException("Search", exception);
         }
         finally
         {
@@ -97,12 +94,15 @@ public sealed class CustomerRepository(ISqliteConnectionManager connectionManage
 
         try
         {
-            using var command = connection.CreateCommand();
-            command.Transaction = ConnectionManager.CurrentTransaction;
-            command.CommandText = DeleteSql;
+            using var command = CreateCommand(connection, DeleteSql);
             command.Parameters.AddWithValue("$Id", id.ToString());
             command.Parameters.AddWithValue("$DeletedAtUtc", DateTime.UtcNow.ToString("O"));
             await command.ExecuteNonQueryAsync(cancellationToken);
+        }
+        catch (SqliteException exception)
+        {
+            logger.Error(exception, "Failed to soft delete customer {0}", id);
+            throw CreateRepositoryException("Delete", exception);
         }
         finally
         {

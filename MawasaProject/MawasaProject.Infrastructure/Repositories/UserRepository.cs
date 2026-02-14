@@ -1,14 +1,19 @@
 using Microsoft.Data.Sqlite;
+using MawasaProject.Application.Abstractions.Logging;
 using MawasaProject.Application.Abstractions.Persistence;
 using MawasaProject.Domain.DTOs;
 using MawasaProject.Domain.Entities;
+using MawasaProject.Infrastructure.Data.Mappers;
 using MawasaProject.Infrastructure.Data.SQLite;
 using UserRole = MawasaProject.Domain.Enums.UserRole;
 
 namespace MawasaProject.Infrastructure.Repositories;
 
-public sealed class UserRepository(ISqliteConnectionManager connectionManager)
-    : GenericRepository<User>(connectionManager), IUserRepository
+public sealed class UserRepository(
+    ISqliteConnectionManager connectionManager,
+    SqliteDatabaseOptions options,
+    IAppLogger<UserRepository> logger)
+    : GenericRepository<User>(connectionManager, options), IUserRepository
 {
     protected override string TableName => "Users";
     protected override string GetByIdSql => "SELECT * FROM Users WHERE Id = $Id AND IsDeleted = 0 LIMIT 1;";
@@ -23,19 +28,7 @@ public sealed class UserRepository(ISqliteConnectionManager connectionManager)
 
     protected override User Map(SqliteDataReader reader)
     {
-        return new User
-        {
-            Id = SqliteHelper.GetGuid(reader, "Id"),
-            Username = reader.GetString(reader.GetOrdinal("Username")),
-            PasswordHash = reader.GetString(reader.GetOrdinal("PasswordHash")),
-            PasswordSalt = reader.GetString(reader.GetOrdinal("PasswordSalt")),
-            IsActive = SqliteHelper.GetBoolean(reader, "IsActive"),
-            LastLoginAtUtc = SqliteHelper.GetNullableDateTime(reader, "LastLoginAtUtc"),
-            CreatedAtUtc = SqliteHelper.GetDateTime(reader, "CreatedAtUtc"),
-            UpdatedAtUtc = SqliteHelper.GetNullableDateTime(reader, "UpdatedAtUtc"),
-            IsDeleted = SqliteHelper.GetBoolean(reader, "IsDeleted"),
-            DeletedAtUtc = SqliteHelper.GetNullableDateTime(reader, "DeletedAtUtc")
-        };
+        return UserMapper.FromReader(reader);
     }
 
     protected override void BindInsert(SqliteCommand command, User entity)
@@ -63,13 +56,16 @@ public sealed class UserRepository(ISqliteConnectionManager connectionManager)
 
         try
         {
-            using var command = connection.CreateCommand();
-            command.Transaction = ConnectionManager.CurrentTransaction;
-            command.CommandText = "SELECT * FROM Users WHERE Username = $Username AND IsDeleted = 0 LIMIT 1;";
+            using var command = CreateCommand(connection, "SELECT * FROM Users WHERE Username = $Username AND IsDeleted = 0 LIMIT 1;");
             command.Parameters.AddWithValue("$Username", username);
 
             using var reader = await command.ExecuteReaderAsync(cancellationToken);
             return await reader.ReadAsync(cancellationToken) ? Map(reader) : null;
+        }
+        catch (SqliteException exception)
+        {
+            logger.Error(exception, "Failed to get user by username {0}", username);
+            throw CreateRepositoryException("GetByUsername", exception);
         }
         finally
         {
@@ -90,9 +86,7 @@ public sealed class UserRepository(ISqliteConnectionManager connectionManager)
 
         try
         {
-            using var command = connection.CreateCommand();
-            command.Transaction = ConnectionManager.CurrentTransaction;
-            command.CommandText = sql;
+            using var command = CreateCommand(connection, sql);
             command.Parameters.AddWithValue("$UserId", userId.ToString());
 
             using var reader = await command.ExecuteReaderAsync(cancellationToken);
@@ -108,6 +102,11 @@ public sealed class UserRepository(ISqliteConnectionManager connectionManager)
 
             return roles;
         }
+        catch (SqliteException exception)
+        {
+            logger.Error(exception, "Failed to get roles for user {0}", userId);
+            throw CreateRepositoryException("GetUserRoles", exception);
+        }
         finally
         {
             await ConnectionManager.DisposeConnectionIfNeededAsync(connection);
@@ -120,9 +119,7 @@ public sealed class UserRepository(ISqliteConnectionManager connectionManager)
 
         try
         {
-            using var delete = connection.CreateCommand();
-            delete.Transaction = ConnectionManager.CurrentTransaction;
-            delete.CommandText = "DELETE FROM UserRoles WHERE UserId = $UserId;";
+            using var delete = CreateCommand(connection, "DELETE FROM UserRoles WHERE UserId = $UserId;");
             delete.Parameters.AddWithValue("$UserId", userId.ToString());
             await delete.ExecuteNonQueryAsync(cancellationToken);
 
@@ -130,15 +127,18 @@ public sealed class UserRepository(ISqliteConnectionManager connectionManager)
             {
                 var roleId = await EnsureRoleExistsAsync(connection, role.ToString(), cancellationToken);
 
-                using var insert = connection.CreateCommand();
-                insert.Transaction = ConnectionManager.CurrentTransaction;
-                insert.CommandText = "INSERT INTO UserRoles (Id, UserId, RoleId, CreatedAtUtc) VALUES ($Id, $UserId, $RoleId, $CreatedAtUtc);";
+                using var insert = CreateCommand(connection, "INSERT INTO UserRoles (Id, UserId, RoleId, CreatedAtUtc) VALUES ($Id, $UserId, $RoleId, $CreatedAtUtc);");
                 insert.Parameters.AddWithValue("$Id", Guid.NewGuid().ToString());
                 insert.Parameters.AddWithValue("$UserId", userId.ToString());
                 insert.Parameters.AddWithValue("$RoleId", roleId.ToString());
                 insert.Parameters.AddWithValue("$CreatedAtUtc", DateTime.UtcNow.ToString("O"));
                 await insert.ExecuteNonQueryAsync(cancellationToken);
             }
+        }
+        catch (SqliteException exception)
+        {
+            logger.Error(exception, "Failed to assign roles for user {0}", userId);
+            throw CreateRepositoryException("AssignRoles", exception);
         }
         finally
         {
@@ -172,12 +172,15 @@ public sealed class UserRepository(ISqliteConnectionManager connectionManager)
 
         try
         {
-            using var command = connection.CreateCommand();
-            command.Transaction = ConnectionManager.CurrentTransaction;
-            command.CommandText = DeleteSql;
+            using var command = CreateCommand(connection, DeleteSql);
             command.Parameters.AddWithValue("$Id", id.ToString());
             command.Parameters.AddWithValue("$DeletedAtUtc", DateTime.UtcNow.ToString("O"));
             await command.ExecuteNonQueryAsync(cancellationToken);
+        }
+        catch (SqliteException exception)
+        {
+            logger.Error(exception, "Failed to soft delete user {0}", id);
+            throw CreateRepositoryException("Delete", exception);
         }
         finally
         {
@@ -185,10 +188,9 @@ public sealed class UserRepository(ISqliteConnectionManager connectionManager)
         }
     }
 
-    private static async Task<Guid> EnsureRoleExistsAsync(SqliteConnection connection, string roleName, CancellationToken cancellationToken)
+    private async Task<Guid> EnsureRoleExistsAsync(SqliteConnection connection, string roleName, CancellationToken cancellationToken)
     {
-        using var check = connection.CreateCommand();
-        check.CommandText = "SELECT Id FROM Roles WHERE Name = $Name LIMIT 1;";
+        using var check = CreateCommand(connection, "SELECT Id FROM Roles WHERE Name = $Name LIMIT 1;");
         check.Parameters.AddWithValue("$Name", roleName);
         var existing = await check.ExecuteScalarAsync(cancellationToken);
 
@@ -198,8 +200,7 @@ public sealed class UserRepository(ISqliteConnectionManager connectionManager)
         }
 
         var roleId = Guid.NewGuid();
-        using var insert = connection.CreateCommand();
-        insert.CommandText = "INSERT INTO Roles (Id, Name, Description, CreatedAtUtc, IsDeleted) VALUES ($Id, $Name, $Description, $CreatedAtUtc, 0);";
+        using var insert = CreateCommand(connection, "INSERT INTO Roles (Id, Name, Description, CreatedAtUtc, IsDeleted) VALUES ($Id, $Name, $Description, $CreatedAtUtc, 0);");
         insert.Parameters.AddWithValue("$Id", roleId.ToString());
         insert.Parameters.AddWithValue("$Name", roleName);
         insert.Parameters.AddWithValue("$Description", roleName + " role");

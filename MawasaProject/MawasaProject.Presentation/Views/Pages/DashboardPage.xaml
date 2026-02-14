@@ -4,9 +4,16 @@
              x:Class="MawasaProject.Presentation.Views.Pages.DashboardPage"
              Title="Dashboard">
     <ScrollView>
-        <VerticalStackLayout Padding="20" Spacing="12">
+        <VerticalStackLayout Padding="20" Spacing="12" MaximumWidthRequest="980" HorizontalOptions="Center">
             <Label Text="Dashboard" FontSize="28" FontAttributes="Bold" />
-            <Grid ColumnDefinitions="*,*" RowDefinitions="Auto,Auto" ColumnSpacing="12" RowSpacing="12">
+
+            <Grid ColumnDefinitions="*,*,Auto" ColumnSpacing="8">
+                <DatePicker Date="{Binding StartDateUtc}" />
+                <DatePicker Grid.Column="1" Date="{Binding EndDateUtc}" />
+                <Button Grid.Column="2" Text="Refresh" Command="{Binding RefreshCommand}" />
+            </Grid>
+
+            <Grid ColumnDefinitions="*,*" RowDefinitions="Auto,Auto,Auto" ColumnSpacing="12" RowSpacing="12">
                 <Frame Grid.Row="0" Grid.Column="0" Padding="14" BorderColor="#D1D5DB">
                     <VerticalStackLayout>
                         <Label Text="Revenue" TextColor="#6B7280" />
@@ -31,8 +38,51 @@
                         <Label Text="{Binding OverdueBills}" FontSize="24" FontAttributes="Bold" />
                     </VerticalStackLayout>
                 </Frame>
+
+                <Frame Grid.Row="2" Grid.Column="0" Padding="14" BorderColor="#D1D5DB">
+                    <VerticalStackLayout>
+                        <Label Text="Average Monthly Revenue" TextColor="#6B7280" />
+                        <Label Text="{Binding AverageMonthlyRevenue, StringFormat='${0:F2}'}" FontSize="22" FontAttributes="Bold" />
+                        <Label Text="{Binding MonthlyRevenueChangePercentage, StringFormat='MoM: {0:+0.##;-0.##;0}%'}" TextColor="#2563EB" />
+                    </VerticalStackLayout>
+                </Frame>
+
+                <Frame Grid.Row="2" Grid.Column="1" Padding="14" BorderColor="#D1D5DB">
+                    <VerticalStackLayout>
+                        <Label Text="Overdue Rate" TextColor="#6B7280" />
+                        <Label Text="{Binding OverdueRate, StringFormat='{0:P1}'}" FontSize="22" FontAttributes="Bold" />
+                        <Label Text="{Binding TotalBills, StringFormat='Total bills: {0}'}" TextColor="#6B7280" />
+                        <Label Text="{Binding TotalCustomers, StringFormat='Total customers: {0}'}" TextColor="#6B7280" />
+                    </VerticalStackLayout>
+                </Frame>
             </Grid>
-            <Button Text="Refresh" Command="{Binding RefreshCommand}" />
+
+            <Frame Padding="14" BorderColor="#D1D5DB">
+                <VerticalStackLayout Spacing="10">
+                    <Label Text="Monthly Revenue Trend" FontSize="18" FontAttributes="Bold" />
+                    <CollectionView ItemsSource="{Binding RevenueSeries}" HeightRequest="280">
+                        <CollectionView.ItemTemplate>
+                            <DataTemplate>
+                                <Grid ColumnDefinitions="90,*,80" Padding="0,2">
+                                    <Label Text="{Binding Label}" VerticalOptions="Center" TextColor="#4B5563" />
+                                    <ProgressBar Grid.Column="1"
+                                                 Progress="{Binding RelativeHeight}"
+                                                 HeightRequest="14"
+                                                 VerticalOptions="Center" />
+                                    <Label Grid.Column="2"
+                                           Text="{Binding Revenue, StringFormat='${0:F2}'}"
+                                           HorizontalTextAlignment="End"
+                                           VerticalOptions="Center"
+                                           FontAttributes="Bold" />
+                                </Grid>
+                            </DataTemplate>
+                        </CollectionView.ItemTemplate>
+                    </CollectionView>
+                </VerticalStackLayout>
+            </Frame>
+
+            <Label Text="{Binding StatusMessage}" FontSize="12" TextColor="#6B7280" />
+            <Label Text="{Binding ErrorMessage}" FontSize="12" TextColor="#B91C1C" IsVisible="{Binding HasErrors}" />
         </VerticalStackLayout>
     </ScrollView>
 </ContentPage>

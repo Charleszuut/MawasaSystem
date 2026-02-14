@@ -8,10 +8,21 @@
             <Label Text="Generate Invoice" FontSize="24" FontAttributes="Bold" />
             <Entry Placeholder="Customer Name" Text="{Binding CustomerName}" />
             <Entry Placeholder="Bill Number" Text="{Binding BillNumber}" />
+            <Entry Placeholder="Bill ID (optional GUID)" Text="{Binding BillIdText}" />
             <Entry Placeholder="Total Amount" Keyboard="Numeric" Text="{Binding TotalAmount}" />
             <DatePicker Date="{Binding DueDateUtc}" />
+            <Picker Title="Template" ItemsSource="{Binding Templates}" SelectedItem="{Binding SelectedTemplate}" />
+            <Entry Placeholder="QR payload (optional)" Text="{Binding QrPayload}" />
+            <HorizontalStackLayout Spacing="8">
+                <CheckBox IsChecked="{Binding AutoPrint}" VerticalOptions="Center" />
+                <Label Text="Auto print after generation" VerticalOptions="Center" />
+            </HorizontalStackLayout>
             <Button Text="Generate" Command="{Binding GenerateCommand}" />
-            <Label Text="{Binding OutputPath}" FontSize="12" />
+            <Label Text="Generated Files" FontSize="14" FontAttributes="Bold" />
+            <Label Text="{Binding OutputPdfPath}" FontSize="12" />
+            <Label Text="{Binding OutputLayoutPath}" FontSize="12" />
+            <Label Text="{Binding OutputImagePath}" FontSize="12" />
+            <Label Text="{Binding OutputCsvPath}" FontSize="12" />
         </VerticalStackLayout>
     </ScrollView>
 </ContentPage>

@@ -4,27 +4,58 @@ namespace MawasaProject.Infrastructure.Security;
 
 public sealed class InMemorySessionService : ISessionService
 {
+    private static readonly TimeSpan IdleTimeout = TimeSpan.FromHours(8);
+    private readonly object _sync = new();
     private SessionContext? _current;
 
-    public SessionContext? CurrentSession => _current;
+    public SessionContext? CurrentSession
+    {
+        get
+        {
+            lock (_sync)
+            {
+                if (_current is null)
+                {
+                    return null;
+                }
+
+                if (DateTime.UtcNow - _current.LastActivityAtUtc > IdleTimeout)
+                {
+                    _current = null;
+                    return null;
+                }
+
+                return _current;
+            }
+        }
+    }
 
     public void Set(SessionContext context)
     {
-        _current = context;
+        lock (_sync)
+        {
+            _current = context;
+        }
     }
 
     public void Clear()
     {
-        _current = null;
+        lock (_sync)
+        {
+            _current = null;
+        }
     }
 
     public void Touch()
     {
-        if (_current is null)
+        lock (_sync)
         {
-            return;
-        }
+            if (_current is null)
+            {
+                return;
+            }
 
-        _current = _current with { LastActivityAtUtc = DateTime.UtcNow };
+            _current = _current with { LastActivityAtUtc = DateTime.UtcNow };
+        }
     }
 }

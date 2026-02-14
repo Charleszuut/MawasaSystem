@@ -9,6 +9,7 @@
             <Button Text="Backup &amp; Restore" Command="{Binding OpenBackupCommand}" />
             <Button Text="Printer Settings" Command="{Binding OpenPrinterSettingsCommand}" />
             <Button Text="Print Queue" Command="{Binding OpenPrintQueueCommand}" />
+            <Button Text="Logout" Command="{Binding LogoutCommand}" />
         </VerticalStackLayout>
     </ScrollView>
 </ContentPage>

@@ -21,12 +21,17 @@ public sealed class SqliteDatabaseInitializer(
     [
         new("001", "MawasaProject.Infrastructure.Data.Sql.001_initial_schema.sql", "Initial core schema"),
         new("002", "MawasaProject.Infrastructure.Data.Sql.002_enterprise_extensions.sql", "Enterprise extension schema"),
-        new("003", "MawasaProject.Infrastructure.Data.Sql.003_phase1_hardening.sql", "Phase 1 hardening")
+        new("003", "MawasaProject.Infrastructure.Data.Sql.003_phase1_hardening.sql", "Phase 1 hardening"),
+        new("004", "MawasaProject.Infrastructure.Data.Sql.004_phase6_audit_hardening.sql", "Phase 6 audit hardening"),
+        new("005", "MawasaProject.Infrastructure.Data.Sql.005_phase12_backup_hardening.sql", "Phase 12 backup and restore hardening"),
+        new("006", "MawasaProject.Infrastructure.Data.Sql.006_phase13_printer_hardening.sql", "Phase 13 printer integration hardening"),
+        new("007", "MawasaProject.Infrastructure.Data.Sql.007_phase14_documents_hardening.sql", "Phase 14 receipt and invoice hardening")
     ];
 
     private static readonly Guid AdminRoleId = Guid.Parse("7D089763-EBB9-4F5D-909F-02CB685EF65D");
     private static readonly Guid StaffRoleId = Guid.Parse("83CA95EC-56D3-4627-A1DC-F0081B8CC8C8");
     private static readonly Guid AdminUserId = Guid.Parse("9B9B34E1-9F8A-4BD5-B8FB-1DF7A1724E21");
+    private static readonly Guid StaffUserId = Guid.Parse("6AE79A5F-7CF1-4E2B-98A3-F9E7C090E5F1");
     private static readonly Guid SampleCustomerId = Guid.Parse("5AC1FF84-7785-47E3-B1B8-66CCFF2D8EC0");
     private static readonly Guid SampleBillId = Guid.Parse("053D5168-D69A-49A2-9F8F-D55D78267B62");
     private static readonly Guid SamplePaymentId = Guid.Parse("E2F0F58D-7677-4B4A-B1C9-9ACF5A060D5D");
@@ -222,7 +227,8 @@ public sealed class SqliteDatabaseInitializer(
     private async Task SeedAsync(SqliteConnection connection, CancellationToken cancellationToken)
     {
         var now = DateTime.UtcNow.ToString("O");
-        var password = passwordHasher.Hash("Admin@123");
+        var adminPassword = passwordHasher.Hash("Admin@123");
+        var staffPassword = passwordHasher.Hash("Staff@123");
 
         using var transaction = await connection.BeginTransactionAsync(cancellationToken);
 
@@ -265,8 +271,8 @@ public sealed class SqliteDatabaseInitializer(
             [
                 ("$Id", AdminUserId.ToString()),
                 ("$Username", "admin"),
-                ("$PasswordHash", password.Hash),
-                ("$PasswordSalt", password.Salt),
+                ("$PasswordHash", adminPassword.Hash),
+                ("$PasswordSalt", adminPassword.Salt),
                 ("$CreatedAtUtc", now)
             ],
             cancellationToken);
@@ -279,11 +285,39 @@ public sealed class SqliteDatabaseInitializer(
             cancellationToken) ?? AdminUserId;
 
         await ExecuteAsync(connection, transaction,
+            "INSERT OR IGNORE INTO Users (Id, Username, PasswordHash, PasswordSalt, IsActive, CreatedAtUtc, IsDeleted) VALUES ($Id, $Username, $PasswordHash, $PasswordSalt, 1, $CreatedAtUtc, 0);",
+            [
+                ("$Id", StaffUserId.ToString()),
+                ("$Username", "staff"),
+                ("$PasswordHash", staffPassword.Hash),
+                ("$PasswordSalt", staffPassword.Salt),
+                ("$CreatedAtUtc", now)
+            ],
+            cancellationToken);
+
+        var resolvedStaffUserId = await QueryGuidAsync(
+            connection,
+            transaction,
+            "SELECT Id FROM Users WHERE Username = $Username LIMIT 1;",
+            [("$Username", "staff")],
+            cancellationToken) ?? StaffUserId;
+
+        await ExecuteAsync(connection, transaction,
             "INSERT OR IGNORE INTO UserRoles (Id, UserId, RoleId, CreatedAtUtc) VALUES ($Id, $UserId, $RoleId, $CreatedAtUtc);",
             [
                 ("$Id", Guid.NewGuid().ToString()),
                 ("$UserId", resolvedAdminUserId.ToString()),
                 ("$RoleId", resolvedAdminRoleId.ToString()),
+                ("$CreatedAtUtc", now)
+            ],
+            cancellationToken);
+
+        await ExecuteAsync(connection, transaction,
+            "INSERT OR IGNORE INTO UserRoles (Id, UserId, RoleId, CreatedAtUtc) VALUES ($Id, $UserId, $RoleId, $CreatedAtUtc);",
+            [
+                ("$Id", Guid.NewGuid().ToString()),
+                ("$UserId", resolvedStaffUserId.ToString()),
+                ("$RoleId", resolvedStaffRoleId.ToString()),
                 ("$CreatedAtUtc", now)
             ],
             cancellationToken);

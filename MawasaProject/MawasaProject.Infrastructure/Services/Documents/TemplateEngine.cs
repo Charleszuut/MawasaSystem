@@ -6,19 +6,63 @@ public sealed class TemplateEngine
 {
     public string RenderReceipt(ReceiptDto model, string receiptNumber)
     {
-        return $"Receipt No: {receiptNumber}\n" +
-               $"Customer: {model.CustomerName}\n" +
-               $"Bill: {model.BillNumber}\n" +
-               $"Paid: {model.PaidAmount:F2}\n" +
-               $"Date: {model.PaymentDateUtc:yyyy-MM-dd HH:mm:ss} UTC\n";
+        var lines = new List<string>
+        {
+            $"Template: {model.TemplateName}",
+            $"Receipt No: {receiptNumber}",
+            $"Customer: {model.CustomerName}",
+            $"Bill: {model.BillNumber}",
+            $"Paid: {model.PaidAmount:F2}",
+            $"Date: {model.PaymentDateUtc:yyyy-MM-dd HH:mm:ss} UTC"
+        };
+
+        if (string.Equals(model.TemplateName, "compact", StringComparison.OrdinalIgnoreCase))
+        {
+            lines.Add("Format: compact");
+        }
+        else
+        {
+            lines.Add("Format: standard");
+            lines.Add("Thank you for your payment.");
+        }
+
+        if (!string.IsNullOrWhiteSpace(model.QrPayload))
+        {
+            lines.Add($"QR: {model.QrPayload}");
+        }
+
+        lines.Add($"BARCODE: {receiptNumber}");
+        return string.Join('\n', lines) + '\n';
     }
 
     public string RenderInvoice(InvoiceDto model, string invoiceNumber)
     {
-        return $"Invoice No: {invoiceNumber}\n" +
-               $"Customer: {model.CustomerName}\n" +
-               $"Bill: {model.BillNumber}\n" +
-               $"Total: {model.TotalAmount:F2}\n" +
-               $"Due Date: {model.DueDateUtc:yyyy-MM-dd}\n";
+        var lines = new List<string>
+        {
+            $"Template: {model.TemplateName}",
+            $"Invoice No: {invoiceNumber}",
+            $"Customer: {model.CustomerName}",
+            $"Bill: {model.BillNumber}",
+            $"Total: {model.TotalAmount:F2}",
+            $"Due Date: {model.DueDateUtc:yyyy-MM-dd}"
+        };
+
+        if (string.Equals(model.TemplateName, "compact", StringComparison.OrdinalIgnoreCase))
+        {
+            lines.Add("Format: compact");
+        }
+        else
+        {
+            lines.Add("Format: standard");
+            lines.Add("Payment terms: due by listed due date.");
+        }
+
+        if (!string.IsNullOrWhiteSpace(model.QrPayload))
+        {
+            lines.Add($"QR: {model.QrPayload}");
+        }
+
+        lines.Add($"BARCODE: {invoiceNumber}");
+        return string.Join('\n', lines) + '\n';
     }
 }

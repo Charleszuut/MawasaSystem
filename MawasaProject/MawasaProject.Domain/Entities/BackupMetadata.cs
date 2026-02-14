@@ -10,4 +10,8 @@ public sealed class BackupMetadata
     public DateTime CreatedAtUtc { get; set; } = DateTime.UtcNow;
     public string CreatedBy { get; set; } = string.Empty;
     public string Version { get; set; } = "v1";
+    public bool IsAutomatic { get; set; }
+    public bool IsEncrypted { get; set; }
+    public DateTime? IntegrityVerifiedAtUtc { get; set; }
+    public string? Notes { get; set; }
 }

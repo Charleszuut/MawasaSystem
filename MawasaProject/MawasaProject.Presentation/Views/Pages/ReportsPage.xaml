@@ -6,16 +6,37 @@
     <ScrollView>
         <VerticalStackLayout Padding="20" Spacing="10" MaximumWidthRequest="760" HorizontalOptions="Center">
             <Label Text="Reports &amp; Analytics" FontSize="24" FontAttributes="Bold" />
+
             <Grid ColumnDefinitions="*,*" ColumnSpacing="8">
                 <DatePicker Date="{Binding StartDateUtc}" />
                 <DatePicker Grid.Column="1" Date="{Binding EndDateUtc}" />
             </Grid>
+
+            <Entry Placeholder="Customer ID (optional GUID)"
+                   Text="{Binding CustomerIdText}" />
+            <HorizontalStackLayout Spacing="8">
+                <Label Text="Overdue only" VerticalTextAlignment="Center" />
+                <Switch IsToggled="{Binding IncludeOverdueOnly}" />
+            </HorizontalStackLayout>
+
             <HorizontalStackLayout Spacing="8">
                 <Button Text="Revenue CSV" Command="{Binding ExportRevenueCsvCommand}" />
                 <Button Text="Overdue CSV" Command="{Binding ExportOverdueCsvCommand}" />
                 <Button Text="Payments CSV" Command="{Binding ExportPaymentsCsvCommand}" />
             </HorizontalStackLayout>
-            <Label Text="{Binding LastExportPath}" FontSize="12" TextColor="#6B7280" />
+
+            <Frame Padding="12" BorderColor="#D1D5DB">
+                <VerticalStackLayout Spacing="6">
+                    <Label Text="Last Export" FontAttributes="Bold" />
+                    <Label Text="{Binding LastExportType, StringFormat='Type: {0}'}" TextColor="#4B5563" />
+                    <Label Text="{Binding LastExportRowCount, StringFormat='Rows: {0}'}" TextColor="#4B5563" />
+                    <Label Text="{Binding LastExportedAtUtc, StringFormat='Generated (UTC): {0:yyyy-MM-dd HH:mm:ss}'}" TextColor="#4B5563" />
+                    <Label Text="{Binding LastExportPath}" FontSize="12" TextColor="#6B7280" />
+                </VerticalStackLayout>
+            </Frame>
+
+            <Label Text="{Binding StatusMessage}" FontSize="12" TextColor="#6B7280" />
+            <Label Text="{Binding ErrorMessage}" FontSize="12" TextColor="#B91C1C" IsVisible="{Binding HasErrors}" />
         </VerticalStackLayout>
     </ScrollView>
 </ContentPage>

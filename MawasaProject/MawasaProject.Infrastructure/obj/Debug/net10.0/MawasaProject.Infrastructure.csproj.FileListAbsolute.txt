@@ -15,3 +15,4 @@ C:\Projects\MawasaSystem\MawasaProject\MawasaProject.Infrastructure\obj\Debug\ne
 C:\Projects\MawasaSystem\MawasaProject\MawasaProject.Infrastructure\obj\Debug\net10.0\refint\MawasaProject.Infrastructure.dll
 C:\Projects\MawasaSystem\MawasaProject\MawasaProject.Infrastructure\obj\Debug\net10.0\MawasaProject.Infrastructure.pdb
 C:\Projects\MawasaSystem\MawasaProject\MawasaProject.Infrastructure\obj\Debug\net10.0\ref\MawasaProject.Infrastructure.dll
+C:\Projects\MawasaSystem\MawasaProject\MawasaProject.Infrastructure\obj\Debug\net10.0\MawasaProject.Infrastructure.sourcelink.json

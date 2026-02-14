@@ -28,7 +28,7 @@ public sealed class BackupScheduler(
             {
                 try
                 {
-                    await backupService.CreateManualBackupAsync(initiatedBy, cancellationToken);
+                    await backupService.CreateAutomaticBackupAsync(initiatedBy, cancellationToken);
                 }
                 catch (Exception exception)
                 {

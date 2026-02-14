@@ -10,4 +10,8 @@ public sealed class BackupHistory : AuditableEntity
     public long SizeBytes { get; set; }
     public string Version { get; set; } = "v1";
     public string CreatedBy { get; set; } = string.Empty;
+    public bool IsAutomatic { get; set; }
+    public bool IsEncrypted { get; set; }
+    public DateTime? IntegrityVerifiedAtUtc { get; set; }
+    public string? Notes { get; set; }
 }
