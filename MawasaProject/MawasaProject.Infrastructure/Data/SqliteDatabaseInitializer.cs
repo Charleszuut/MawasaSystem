@@ -146,13 +146,7 @@ public sealed class SqliteDatabaseInitializer(
 
         using var transaction = await connection.BeginTransactionAsync(cancellationToken);
 
-        using (var command = connection.CreateCommand())
-        {
-            command.Transaction = (SqliteTransaction)transaction;
-            command.CommandTimeout = options.DefaultCommandTimeoutSeconds;
-            command.CommandText = script;
-            await command.ExecuteNonQueryAsync(cancellationToken);
-        }
+        await ExecuteMigrationScriptAsync(connection, (SqliteTransaction)transaction, script, cancellationToken);
 
         using (var insert = connection.CreateCommand())
         {
@@ -168,6 +162,94 @@ public sealed class SqliteDatabaseInitializer(
 
         await transaction.CommitAsync(cancellationToken);
         return true;
+    }
+
+    private async Task ExecuteMigrationScriptAsync(
+        SqliteConnection connection,
+        SqliteTransaction transaction,
+        string script,
+        CancellationToken cancellationToken)
+    {
+        foreach (var statement in SplitSqlStatements(script))
+        {
+            if (string.IsNullOrWhiteSpace(statement))
+            {
+                continue;
+            }
+
+            using var command = connection.CreateCommand();
+            command.Transaction = transaction;
+            command.CommandTimeout = options.DefaultCommandTimeoutSeconds;
+            command.CommandText = statement;
+
+            try
+            {
+                await command.ExecuteNonQueryAsync(cancellationToken);
+            }
+            catch (SqliteException exception) when (IsIgnorableMigrationError(exception, statement))
+            {
+                continue;
+            }
+        }
+    }
+
+    private static IReadOnlyList<string> SplitSqlStatements(string script)
+    {
+        var statements = new List<string>();
+        var builder = new StringBuilder();
+        using var reader = new StringReader(script);
+        string? line;
+
+        while ((line = reader.ReadLine()) is not null)
+        {
+            var trimmed = line.Trim();
+            if (trimmed.StartsWith("--", StringComparison.Ordinal))
+            {
+                continue;
+            }
+
+            builder.AppendLine(line);
+            if (trimmed.EndsWith(';'))
+            {
+                var statement = builder.ToString().Trim();
+                if (!string.IsNullOrWhiteSpace(statement))
+                {
+                    statements.Add(statement);
+                }
+
+                builder.Clear();
+            }
+        }
+
+        var tail = builder.ToString().Trim();
+        if (!string.IsNullOrWhiteSpace(tail))
+        {
+            statements.Add(tail);
+        }
+
+        return statements;
+    }
+
+    private static bool IsIgnorableMigrationError(SqliteException exception, string statement)
+    {
+        var message = exception.Message ?? string.Empty;
+        var normalized = statement.TrimStart();
+
+        if (message.Contains("duplicate column name", StringComparison.OrdinalIgnoreCase)
+            && normalized.StartsWith("ALTER TABLE", StringComparison.OrdinalIgnoreCase)
+            && normalized.Contains(" ADD COLUMN ", StringComparison.OrdinalIgnoreCase))
+        {
+            return true;
+        }
+
+        if (message.Contains("already exists", StringComparison.OrdinalIgnoreCase)
+            && (normalized.StartsWith("CREATE INDEX", StringComparison.OrdinalIgnoreCase)
+                || normalized.StartsWith("CREATE TABLE", StringComparison.OrdinalIgnoreCase)))
+        {
+            return true;
+        }
+
+        return false;
     }
 
     private async Task<(string Version, string? Checksum)?> GetAppliedMigrationAsync(SqliteConnection connection, string version, CancellationToken cancellationToken)

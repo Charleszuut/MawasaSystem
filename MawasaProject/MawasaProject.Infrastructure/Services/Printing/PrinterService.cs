@@ -151,13 +151,23 @@ public sealed class PrinterService(
 
     public async Task<Guid> EnqueueAsync(PrintRequest request, CancellationToken cancellationToken = default)
     {
+        if (string.IsNullOrWhiteSpace(request.TemplateName))
+        {
+            throw new InvalidOperationException("Template name is required.");
+        }
+
+        if (string.IsNullOrWhiteSpace(request.Content))
+        {
+            throw new InvalidOperationException("Print content is required.");
+        }
+
         var profile = await ResolveProfileAsync(request, cancellationToken);
         var printerName = request.PrinterName
             ?? profile?.DeviceName
             ?? "Default-Printer";
         var paperSize = string.IsNullOrWhiteSpace(request.PaperSize)
             ? profile?.PaperSize ?? "A4"
-            : request.PaperSize;
+            : request.PaperSize.Trim();
         var profileName = request.ProfileName ?? profile?.Name;
 
         var jobId = Guid.NewGuid();

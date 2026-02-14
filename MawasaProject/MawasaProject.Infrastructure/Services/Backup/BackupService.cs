@@ -137,6 +137,10 @@ public sealed class BackupService(
             throw new FileNotFoundException("Database file was not found.", dbPath);
         }
 
+        var actor = string.IsNullOrWhiteSpace(initiatedBy)
+            ? sessionService.CurrentSession?.Username ?? "system"
+            : initiatedBy.Trim();
+
         var backupDirectory = Path.Combine(Path.GetDirectoryName(dbPath)!, "backups");
         Directory.CreateDirectory(backupDirectory);
 
@@ -159,7 +163,7 @@ public sealed class BackupService(
             FilePath = destinationPath,
             Hash = hash,
             SizeBytes = new FileInfo(destinationPath).Length,
-            CreatedBy = initiatedBy,
+            CreatedBy = actor,
             CreatedAtUtc = DateTime.UtcNow,
             Version = "v2",
             IsAutomatic = isAutomatic,
@@ -171,7 +175,7 @@ public sealed class BackupService(
         await SaveHistoryAsync(metadata, cancellationToken);
         await WriteManifestAsync(metadata, cancellationToken);
 
-        var username = sessionService.CurrentSession?.Username ?? initiatedBy;
+        var username = sessionService.CurrentSession?.Username ?? actor;
         await auditService.LogAsync(
             AuditActionType.Backup,
             nameof(BackupHistory),

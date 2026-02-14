@@ -8,30 +8,42 @@ public sealed class PrintQueueService(
     ISqliteConnectionManager connectionManager,
     IAppLogger<PrintQueueService> logger)
 {
+    private readonly SemaphoreSlim _processingGate = new(1, 1);
+
     public async Task ProcessQueueAsync(CancellationToken cancellationToken = default)
     {
-        var jobs = await GetQueuedJobsAsync(cancellationToken);
-
-        foreach (var job in jobs)
+        await _processingGate.WaitAsync(cancellationToken);
+        try
         {
-            try
-            {
-                await UpdateStatusAsync(job.Id, "Processing", job.RetryCount, null, cancellationToken);
-                await SimulatePlatformPrintAsync(job, cancellationToken);
-                await UpdateStatusAsync(job.Id, "Completed", job.RetryCount, null, cancellationToken);
-                await AddLogAsync(job.Id, "Completed", null, cancellationToken);
-            }
-            catch (Exception exception)
-            {
-                logger.Error(exception, "Print job processing failed for {0}", job.Id);
+            var jobs = await GetQueuedJobsAsync(cancellationToken);
 
-                var nextRetryCount = job.RetryCount + 1;
-                var canRetry = nextRetryCount <= Math.Max(0, job.MaxRetries);
-                var status = canRetry ? "Retrying" : "Failed";
+            foreach (var job in jobs)
+            {
+                cancellationToken.ThrowIfCancellationRequested();
 
-                await UpdateStatusAsync(job.Id, status, nextRetryCount, exception.Message, cancellationToken);
-                await AddLogAsync(job.Id, status, exception.Message, cancellationToken);
+                try
+                {
+                    await UpdateStatusAsync(job.Id, "Processing", job.RetryCount, null, cancellationToken);
+                    await SimulatePlatformPrintAsync(job, cancellationToken);
+                    await UpdateStatusAsync(job.Id, "Completed", job.RetryCount, null, cancellationToken);
+                    await AddLogAsync(job.Id, "Completed", null, cancellationToken);
+                }
+                catch (Exception exception)
+                {
+                    logger.Error(exception, "Print job processing failed for {0}", job.Id);
+
+                    var nextRetryCount = job.RetryCount + 1;
+                    var canRetry = nextRetryCount <= Math.Max(0, job.MaxRetries);
+                    var status = canRetry ? "Retrying" : "Failed";
+
+                    await UpdateStatusAsync(job.Id, status, nextRetryCount, exception.Message, cancellationToken);
+                    await AddLogAsync(job.Id, status, exception.Message, cancellationToken);
+                }
             }
+        }
+        finally
+        {
+            _processingGate.Release();
         }
     }
 

@@ -57,12 +57,17 @@ public sealed class RestoreService(
             throw new InvalidOperationException("Backup validation failed: hash verification mismatch.");
         }
 
+        var actor = string.IsNullOrWhiteSpace(initiatedBy)
+            ? session?.Username ?? "system"
+            : initiatedBy.Trim();
+
         var dbPath = connectionManager.DatabasePath;
         var safetyDirectory = Path.Combine(Path.GetDirectoryName(dbPath)!, "backups", "pre_restore");
         Directory.CreateDirectory(safetyDirectory);
         var safetyCopyPath = Path.Combine(safetyDirectory, $"pre_restore_{DateTime.UtcNow:yyyyMMdd_HHmmss}.db");
 
         SqliteConnection.ClearAllPools();
+        DeleteWalArtifacts(dbPath);
 
         if (File.Exists(dbPath))
         {
@@ -76,6 +81,7 @@ public sealed class RestoreService(
         {
             if (File.Exists(safetyCopyPath))
             {
+                DeleteWalArtifacts(dbPath);
                 File.Copy(safetyCopyPath, dbPath, overwrite: true);
             }
 
@@ -97,7 +103,22 @@ public sealed class RestoreService(
                 SafetyCopy = safetyCopyPath
             }),
             context: "Database restored from backup",
-            username: initiatedBy,
+            username: actor,
             cancellationToken);
+    }
+
+    private static void DeleteWalArtifacts(string dbPath)
+    {
+        var walPath = dbPath + "-wal";
+        if (File.Exists(walPath))
+        {
+            File.Delete(walPath);
+        }
+
+        var shmPath = dbPath + "-shm";
+        if (File.Exists(shmPath))
+        {
+            File.Delete(shmPath);
+        }
     }
 }
