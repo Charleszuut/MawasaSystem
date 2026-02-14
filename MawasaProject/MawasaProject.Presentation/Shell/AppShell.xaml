@@ -85,8 +85,33 @@
                         <Border.GestureRecognizers>
                             <TapGestureRecognizer Tapped="OnCustomersTapped" />
                         </Border.GestureRecognizers>
-                        <Label Text="Customers" TextColor="{StaticResource SidebarText}" FontSize="15" />
+                        <Grid ColumnDefinitions="*,Auto">
+                            <Label Text="Customers" TextColor="{StaticResource SidebarText}" FontSize="15" />
+                            <Label Grid.Column="1" Text="v" TextColor="{StaticResource SidebarText}" FontSize="14" />
+                        </Grid>
                     </Border>
+
+                    <VerticalStackLayout x:Name="CustomersActionMenu" IsVisible="False" Spacing="6" Margin="16,-2,0,2">
+                        <Border x:Name="CustomersManagementActionItem" BackgroundColor="#137DB2" StrokeThickness="0" Padding="10,8">
+                            <Border.StrokeShape>
+                                <RoundRectangle CornerRadius="8" />
+                            </Border.StrokeShape>
+                            <Border.GestureRecognizers>
+                                <TapGestureRecognizer Tapped="OnCustomersManagementTapped" />
+                            </Border.GestureRecognizers>
+                            <Label Text="Customer Management" TextColor="#EAF6FF" FontSize="13" />
+                        </Border>
+
+                        <Border x:Name="CustomersRegisterActionItem" BackgroundColor="#137DB2" StrokeThickness="0" Padding="10,8">
+                            <Border.StrokeShape>
+                                <RoundRectangle CornerRadius="8" />
+                            </Border.StrokeShape>
+                            <Border.GestureRecognizers>
+                                <TapGestureRecognizer Tapped="OnCustomersRegisterTapped" />
+                            </Border.GestureRecognizers>
+                            <Label Text="Create/Register Customers" TextColor="#EAF6FF" FontSize="13" />
+                        </Border>
+                    </VerticalStackLayout>
 
                     <Border x:Name="ReportsNavItem" BackgroundColor="Transparent" StrokeThickness="0" Padding="12,10">
                         <Border.StrokeShape>
@@ -95,8 +120,43 @@
                         <Border.GestureRecognizers>
                             <TapGestureRecognizer Tapped="OnReportsTapped" />
                         </Border.GestureRecognizers>
-                        <Label Text="Reports" TextColor="{StaticResource SidebarText}" FontSize="15" />
+                        <Grid ColumnDefinitions="*,Auto">
+                            <Label Text="Reports" TextColor="{StaticResource SidebarText}" FontSize="15" />
+                            <Label Grid.Column="1" Text="v" TextColor="{StaticResource SidebarText}" FontSize="14" />
+                        </Grid>
                     </Border>
+
+                    <VerticalStackLayout x:Name="ReportsActionMenu" IsVisible="False" Spacing="6" Margin="16,-2,0,2">
+                        <Border x:Name="ReportsPaymentsActionItem" BackgroundColor="#137DB2" StrokeThickness="0" Padding="10,8">
+                            <Border.StrokeShape>
+                                <RoundRectangle CornerRadius="8" />
+                            </Border.StrokeShape>
+                            <Border.GestureRecognizers>
+                                <TapGestureRecognizer Tapped="OnReportsCustomerPaymentTapped" />
+                            </Border.GestureRecognizers>
+                            <Label Text="Customer Payment Report" TextColor="#EAF6FF" FontSize="13" />
+                        </Border>
+
+                        <Border x:Name="ReportsIssueActionItem" BackgroundColor="#137DB2" StrokeThickness="0" Padding="10,8">
+                            <Border.StrokeShape>
+                                <RoundRectangle CornerRadius="8" />
+                            </Border.StrokeShape>
+                            <Border.GestureRecognizers>
+                                <TapGestureRecognizer Tapped="OnReportsIssueTapped" />
+                            </Border.GestureRecognizers>
+                            <Label Text="Issue Report" TextColor="#EAF6FF" FontSize="13" />
+                        </Border>
+
+                        <Border x:Name="ReportsPrintActionItem" BackgroundColor="#137DB2" StrokeThickness="0" Padding="10,8">
+                            <Border.StrokeShape>
+                                <RoundRectangle CornerRadius="8" />
+                            </Border.StrokeShape>
+                            <Border.GestureRecognizers>
+                                <TapGestureRecognizer Tapped="OnReportsPrintTapped" />
+                            </Border.GestureRecognizers>
+                            <Label Text="Print Reports" TextColor="#EAF6FF" FontSize="13" />
+                        </Border>
+                    </VerticalStackLayout>
 
                     <Border x:Name="AuditNavItem" BackgroundColor="Transparent" StrokeThickness="0" Padding="12,10">
                         <Border.StrokeShape>

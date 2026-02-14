@@ -1,7 +1,7 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Projects\\MawasaSystem\\MawasaProject\\MawasaProject.Infrastructure\\MawasaProject.Infrastructure.csproj": {}
+    "c:\\Projects\\MawasaSystem\\MawasaProject\\MawasaProject.Infrastructure\\MawasaProject.Infrastructure.csproj": {}
   },
   "projects": {
     "C:\\Projects\\MawasaSystem\\MawasaProject\\MawasaProject.Application\\MawasaProject.Application.csproj": {
@@ -698,14 +698,14 @@
         }
       }
     },
-    "C:\\Projects\\MawasaSystem\\MawasaProject\\MawasaProject.Infrastructure\\MawasaProject.Infrastructure.csproj": {
+    "c:\\Projects\\MawasaSystem\\MawasaProject\\MawasaProject.Infrastructure\\MawasaProject.Infrastructure.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Projects\\MawasaSystem\\MawasaProject\\MawasaProject.Infrastructure\\MawasaProject.Infrastructure.csproj",
+        "projectUniqueName": "c:\\Projects\\MawasaSystem\\MawasaProject\\MawasaProject.Infrastructure\\MawasaProject.Infrastructure.csproj",
         "projectName": "MawasaProject.Infrastructure",
-        "projectPath": "C:\\Projects\\MawasaSystem\\MawasaProject\\MawasaProject.Infrastructure\\MawasaProject.Infrastructure.csproj",
+        "projectPath": "c:\\Projects\\MawasaSystem\\MawasaProject\\MawasaProject.Infrastructure\\MawasaProject.Infrastructure.csproj",
         "packagesPath": "C:\\Users\\decay\\.nuget\\packages\\",
-        "outputPath": "C:\\Projects\\MawasaSystem\\MawasaProject\\MawasaProject.Infrastructure\\obj\\",
+        "outputPath": "c:\\Projects\\MawasaSystem\\MawasaProject\\MawasaProject.Infrastructure\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"

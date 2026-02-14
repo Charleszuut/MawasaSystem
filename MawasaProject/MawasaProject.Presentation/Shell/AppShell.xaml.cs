@@ -11,6 +11,8 @@ public partial class AppShell : Microsoft.Maui.Controls.Shell
     private readonly IRbacService _rbacService;
     private static readonly Color ActiveMenuColor = Color.FromArgb("#22ABE8");
     private static readonly Color InactiveMenuColor = Colors.Transparent;
+    private static readonly Color ReportsActionActiveColor = Color.FromArgb("#22ABE8");
+    private static readonly Color ReportsActionInactiveColor = Color.FromArgb("#137DB2");
 
     public AppShell()
     {
@@ -61,9 +63,19 @@ public partial class AppShell : Microsoft.Maui.Controls.Shell
 
     private async void OnPaymentsTapped(object? sender, TappedEventArgs e) => await NavigateToAsync(RouteMap.PaymentsHome);
 
-    private async void OnCustomersTapped(object? sender, TappedEventArgs e) => await NavigateToAsync(RouteMap.CustomersHome);
+    private async void OnCustomersTapped(object? sender, TappedEventArgs e) => await NavigateToAsync(RouteMap.CustomersManagementHome);
 
-    private async void OnReportsTapped(object? sender, TappedEventArgs e) => await NavigateToAsync(RouteMap.ReportsHome);
+    private async void OnCustomersManagementTapped(object? sender, TappedEventArgs e) => await NavigateToAsync(RouteMap.CustomersManagementHome);
+
+    private async void OnCustomersRegisterTapped(object? sender, TappedEventArgs e) => await NavigateToAsync(RouteMap.CustomersRegisterHome);
+
+    private async void OnReportsTapped(object? sender, TappedEventArgs e) => await NavigateToAsync(RouteMap.ReportsCustomerPaymentHome);
+
+    private async void OnReportsCustomerPaymentTapped(object? sender, TappedEventArgs e) => await NavigateToAsync(RouteMap.ReportsCustomerPaymentHome);
+
+    private async void OnReportsIssueTapped(object? sender, TappedEventArgs e) => await NavigateToAsync(RouteMap.ReportsIssueHome);
+
+    private async void OnReportsPrintTapped(object? sender, TappedEventArgs e) => await NavigateToAsync(RouteMap.ReportsPrintHome);
 
     private async void OnAuditTapped(object? sender, TappedEventArgs e) => await NavigateToAsync(RouteMap.AuditHome);
 
@@ -106,7 +118,9 @@ public partial class AppShell : Microsoft.Maui.Controls.Shell
         BillingNavItem.IsVisible = BillingItem.IsVisible;
         PaymentsNavItem.IsVisible = PaymentsItem.IsVisible;
         CustomersNavItem.IsVisible = CustomersItem.IsVisible;
+        CustomersActionMenu.IsVisible = false;
         ReportsNavItem.IsVisible = ReportsItem.IsVisible;
+        ReportsActionMenu.IsVisible = false;
         AuditNavItem.IsVisible = AuditItem.IsVisible;
         SettingsNavItem.IsVisible = SettingsItem.IsVisible;
 
@@ -120,9 +134,26 @@ public partial class AppShell : Microsoft.Maui.Controls.Shell
         SetMenuState(DashboardNavItem, route.Contains("//dashboard", StringComparison.OrdinalIgnoreCase));
         SetMenuState(BillingNavItem, route.Contains("//billing", StringComparison.OrdinalIgnoreCase));
         SetMenuState(PaymentsNavItem, route.Contains("//payments", StringComparison.OrdinalIgnoreCase));
-        SetMenuState(CustomersNavItem, route.Contains("//customers", StringComparison.OrdinalIgnoreCase));
-        SetMenuState(ReportsNavItem, route.Contains("//reports", StringComparison.OrdinalIgnoreCase));
+        var customersActive = route.Contains("//customers", StringComparison.OrdinalIgnoreCase);
+        SetMenuState(CustomersNavItem, customersActive);
+        CustomersActionMenu.IsVisible = customersActive && CustomersItem.IsVisible;
+
+        var customersRegisterActive = route.Contains("mode=register", StringComparison.OrdinalIgnoreCase);
+        var customersManagementActive = customersActive && !customersRegisterActive;
+        SetReportsActionState(CustomersManagementActionItem, customersManagementActive);
+        SetReportsActionState(CustomersRegisterActionItem, customersRegisterActive);
+
+        var reportsActive = route.Contains("//reports", StringComparison.OrdinalIgnoreCase);
+        SetMenuState(ReportsNavItem, reportsActive);
         SetMenuState(AuditNavItem, route.Contains("//audit", StringComparison.OrdinalIgnoreCase));
+        ReportsActionMenu.IsVisible = reportsActive && ReportsItem.IsVisible;
+
+        var reportsIssueActive = route.Contains("mode=issues", StringComparison.OrdinalIgnoreCase);
+        var reportsPrintActive = route.Contains("mode=print", StringComparison.OrdinalIgnoreCase);
+        var reportsPaymentActive = reportsActive && !reportsIssueActive && !reportsPrintActive;
+        SetReportsActionState(ReportsPaymentsActionItem, reportsPaymentActive);
+        SetReportsActionState(ReportsIssueActionItem, reportsIssueActive);
+        SetReportsActionState(ReportsPrintActionItem, reportsPrintActive);
 
         var settingsActive = route.Contains("//settings", StringComparison.OrdinalIgnoreCase)
             || route.Contains(RouteMap.Backup, StringComparison.OrdinalIgnoreCase)
@@ -136,6 +167,26 @@ public partial class AppShell : Microsoft.Maui.Controls.Shell
     private static void SetMenuState(Border menuItem, bool active)
     {
         menuItem.BackgroundColor = active ? ActiveMenuColor : InactiveMenuColor;
+
+        if (menuItem.Content is Label label)
+        {
+            label.FontAttributes = active ? FontAttributes.Bold : FontAttributes.None;
+            return;
+        }
+
+        if (menuItem.Content is Grid grid)
+        {
+            var firstLabel = grid.Children.OfType<Label>().FirstOrDefault();
+            if (firstLabel is not null)
+            {
+                firstLabel.FontAttributes = active ? FontAttributes.Bold : FontAttributes.None;
+            }
+        }
+    }
+
+    private static void SetReportsActionState(Border menuItem, bool active)
+    {
+        menuItem.BackgroundColor = active ? ReportsActionActiveColor : ReportsActionInactiveColor;
 
         if (menuItem.Content is Label label)
         {

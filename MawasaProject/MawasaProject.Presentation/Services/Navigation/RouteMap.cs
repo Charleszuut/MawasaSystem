@@ -7,7 +7,12 @@ public static class RouteMap
     public const string BillingHome = "//billing/home";
     public const string PaymentsHome = "//payments/home";
     public const string CustomersHome = "//customers/home";
+    public const string CustomersManagementHome = "//customers/home?mode=manage";
+    public const string CustomersRegisterHome = "//customers/home?mode=register";
     public const string ReportsHome = "//reports/home";
+    public const string ReportsCustomerPaymentHome = "//reports/home?mode=payments";
+    public const string ReportsIssueHome = "//reports/home?mode=issues";
+    public const string ReportsPrintHome = "//reports/home?mode=print";
     public const string AuditHome = "//audit/home";
     public const string SettingsHome = "//settings/home";
     public const string Backup = "backup";

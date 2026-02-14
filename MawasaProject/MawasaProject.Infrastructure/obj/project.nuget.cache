@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "GSyWuzjTCKE=",
+  "dgSpecHash": "eQLjAp0C+vM=",
   "success": true,
-  "projectFilePath": "C:\\Projects\\MawasaSystem\\MawasaProject\\MawasaProject.Infrastructure\\MawasaProject.Infrastructure.csproj",
+  "projectFilePath": "c:\\Projects\\MawasaSystem\\MawasaProject\\MawasaProject.Infrastructure\\MawasaProject.Infrastructure.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\decay\\.nuget\\packages\\microsoft.data.sqlite\\10.0.0\\microsoft.data.sqlite.10.0.0.nupkg.sha512",
     "C:\\Users\\decay\\.nuget\\packages\\microsoft.data.sqlite.core\\10.0.0\\microsoft.data.sqlite.core.10.0.0.nupkg.sha512",

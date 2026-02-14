@@ -7,6 +7,7 @@
              BackgroundColor="#E9EDF3">
     <ContentPage.Resources>
         <Color x:Key="SurfaceCard">#FFFFFF</Color>
+        <Color x:Key="SurfaceSection">#F7F9FC</Color>
         <Color x:Key="TextMain">#1F2A37</Color>
         <Color x:Key="TextMuted">#6F8093</Color>
         <Color x:Key="BorderSoft">#D9E2EC</Color>
@@ -25,6 +26,215 @@
 
     <ScrollView>
         <VerticalStackLayout Padding="16,14,16,24" Spacing="14">
+            <VerticalStackLayout IsVisible="{Binding IsRegisterMode}" Spacing="12">
+                <Grid ColumnDefinitions="*,Auto">
+                    <Label Text="New Customer Registration"
+                           FontSize="35"
+                           FontAttributes="Bold"
+                           TextColor="{StaticResource TextMain}" />
+                    <Label Grid.Column="1"
+                           Text="Step 1 of 2"
+                           FontSize="12"
+                           TextColor="{StaticResource TextMuted}"
+                           VerticalTextAlignment="Center" />
+                </Grid>
+
+                <Border BackgroundColor="{StaticResource SurfaceCard}" Stroke="{StaticResource BorderSoft}" StrokeThickness="1" Padding="16,14">
+                    <Border.StrokeShape>
+                        <RoundRectangle CornerRadius="14" />
+                    </Border.StrokeShape>
+                    <VerticalStackLayout Spacing="12">
+                        <Label Text="Fill the steps below. ID verification is required before any meter can be installed."
+                               Style="{StaticResource HelperTextStyle}" />
+
+                        <Border BackgroundColor="{StaticResource SurfaceSection}" Stroke="{StaticResource BorderSoft}" StrokeThickness="1" Padding="14,12">
+                            <Border.StrokeShape>
+                                <RoundRectangle CornerRadius="12" />
+                            </Border.StrokeShape>
+                            <VerticalStackLayout Spacing="8">
+                                <Grid ColumnDefinitions="*,Auto">
+                                    <VerticalStackLayout Spacing="2">
+                                        <Label Text="APPLICANT DETAILS" FontSize="20" FontAttributes="Bold" TextColor="{StaticResource TextMain}" />
+                                        <Label Text="Basic information for identifying the new customer." Style="{StaticResource HelperTextStyle}" />
+                                    </VerticalStackLayout>
+                                    <Label Grid.Column="1"
+                                           Text="REQUIRED SECTION"
+                                           FontSize="11"
+                                           FontAttributes="Bold"
+                                           TextColor="#2D6DE2"
+                                           VerticalTextAlignment="Center" />
+                                </Grid>
+
+                                <Grid ColumnDefinitions="{OnIdiom Phone='*', Tablet='*,*', Desktop='*,*'}"
+                                      RowDefinitions="{OnIdiom Phone='Auto,Auto', Tablet='Auto', Desktop='Auto'}"
+                                      ColumnSpacing="10"
+                                      RowSpacing="10">
+                                    <VerticalStackLayout Spacing="4">
+                                        <Label Text="First Name" Style="{StaticResource FieldLabelStyle}" />
+                                        <Border BackgroundColor="White" Stroke="{StaticResource BorderStrong}" StrokeThickness="1" Padding="10,0">
+                                            <Border.StrokeShape>
+                                                <RoundRectangle CornerRadius="8" />
+                                            </Border.StrokeShape>
+                                            <Entry Text="{Binding RegistrationFirstName}" />
+                                        </Border>
+                                    </VerticalStackLayout>
+
+                                    <VerticalStackLayout Grid.Column="{OnIdiom Phone=0, Tablet=1, Desktop=1}"
+                                                         Grid.Row="{OnIdiom Phone=1, Tablet=0, Desktop=0}"
+                                                         Spacing="4">
+                                        <Label Text="Last Name" Style="{StaticResource FieldLabelStyle}" />
+                                        <Border BackgroundColor="White" Stroke="{StaticResource BorderStrong}" StrokeThickness="1" Padding="10,0">
+                                            <Border.StrokeShape>
+                                                <RoundRectangle CornerRadius="8" />
+                                            </Border.StrokeShape>
+                                            <Entry Text="{Binding RegistrationLastName}" />
+                                        </Border>
+                                    </VerticalStackLayout>
+                                </Grid>
+                            </VerticalStackLayout>
+                        </Border>
+
+                        <Border BackgroundColor="{StaticResource SurfaceSection}" Stroke="{StaticResource BorderSoft}" StrokeThickness="1" Padding="14,12">
+                            <Border.StrokeShape>
+                                <RoundRectangle CornerRadius="12" />
+                            </Border.StrokeShape>
+                            <VerticalStackLayout Spacing="8">
+                                <Grid ColumnDefinitions="*,Auto">
+                                    <VerticalStackLayout Spacing="2">
+                                        <Label Text="SERVICE ADDRESS" FontSize="20" FontAttributes="Bold" TextColor="{StaticResource TextMain}" />
+                                        <Label Text="Provide the full location where the service will be installed." Style="{StaticResource HelperTextStyle}" />
+                                    </VerticalStackLayout>
+                                    <Label Grid.Column="1"
+                                           Text="Optional fields help us locate the property faster."
+                                           FontSize="11"
+                                           TextColor="{StaticResource TextMuted}"
+                                           VerticalTextAlignment="Center" />
+                                </Grid>
+
+                                <Grid ColumnDefinitions="{OnIdiom Phone='*', Tablet='*,*,*', Desktop='*,*,*'}"
+                                      RowDefinitions="{OnIdiom Phone='Auto,Auto,Auto', Tablet='Auto', Desktop='Auto'}"
+                                      ColumnSpacing="10"
+                                      RowSpacing="10">
+                                    <VerticalStackLayout Spacing="4">
+                                        <Label Text="Barangay" Style="{StaticResource FieldLabelStyle}" />
+                                        <Border BackgroundColor="White" Stroke="{StaticResource BorderStrong}" StrokeThickness="1" Padding="10,0">
+                                            <Border.StrokeShape>
+                                                <RoundRectangle CornerRadius="8" />
+                                            </Border.StrokeShape>
+                                            <Entry Text="{Binding RegistrationBarangay}" />
+                                        </Border>
+                                    </VerticalStackLayout>
+
+                                    <VerticalStackLayout Grid.Column="{OnIdiom Phone=0, Tablet=1, Desktop=1}"
+                                                         Grid.Row="{OnIdiom Phone=1, Tablet=0, Desktop=0}"
+                                                         Spacing="4">
+                                        <Label Text="City / Municipality" Style="{StaticResource FieldLabelStyle}" />
+                                        <Border BackgroundColor="White" Stroke="{StaticResource BorderStrong}" StrokeThickness="1" Padding="10,0">
+                                            <Border.StrokeShape>
+                                                <RoundRectangle CornerRadius="8" />
+                                            </Border.StrokeShape>
+                                            <Entry Text="{Binding RegistrationCityMunicipality}" />
+                                        </Border>
+                                    </VerticalStackLayout>
+
+                                    <VerticalStackLayout Grid.Column="{OnIdiom Phone=0, Tablet=2, Desktop=2}"
+                                                         Grid.Row="{OnIdiom Phone=2, Tablet=0, Desktop=0}"
+                                                         Spacing="4">
+                                        <Label Text="Province" Style="{StaticResource FieldLabelStyle}" />
+                                        <Border BackgroundColor="White" Stroke="{StaticResource BorderStrong}" StrokeThickness="1" Padding="10,0">
+                                            <Border.StrokeShape>
+                                                <RoundRectangle CornerRadius="8" />
+                                            </Border.StrokeShape>
+                                            <Entry Text="{Binding RegistrationProvince}" />
+                                        </Border>
+                                    </VerticalStackLayout>
+                                </Grid>
+
+                                <Grid ColumnDefinitions="{OnIdiom Phone='*', Tablet='*,*,*', Desktop='*,*,*'}"
+                                      RowDefinitions="{OnIdiom Phone='Auto,Auto,Auto', Tablet='Auto', Desktop='Auto'}"
+                                      ColumnSpacing="10"
+                                      RowSpacing="10">
+                                    <VerticalStackLayout Spacing="4">
+                                        <Label Text="Street / Block &amp; Lot (optional)" Style="{StaticResource FieldLabelStyle}" />
+                                        <Border BackgroundColor="White" Stroke="{StaticResource BorderStrong}" StrokeThickness="1" Padding="10,0">
+                                            <Border.StrokeShape>
+                                                <RoundRectangle CornerRadius="8" />
+                                            </Border.StrokeShape>
+                                            <Entry Placeholder="e.g. Mabini St, Blk 3 Lot 12"
+                                                   Text="{Binding RegistrationStreetBlockLot}" />
+                                        </Border>
+                                    </VerticalStackLayout>
+
+                                    <VerticalStackLayout Grid.Column="{OnIdiom Phone=0, Tablet=1, Desktop=1}"
+                                                         Grid.Row="{OnIdiom Phone=1, Tablet=0, Desktop=0}"
+                                                         Spacing="4">
+                                        <Label Text="Purok" Style="{StaticResource FieldLabelStyle}" />
+                                        <Border BackgroundColor="White" Stroke="{StaticResource BorderStrong}" StrokeThickness="1" Padding="10,0">
+                                            <Border.StrokeShape>
+                                                <RoundRectangle CornerRadius="8" />
+                                            </Border.StrokeShape>
+                                            <Picker ItemsSource="{Binding PurokOptions}"
+                                                    SelectedItem="{Binding RegistrationSelectedPurok}" />
+                                        </Border>
+                                    </VerticalStackLayout>
+
+                                    <VerticalStackLayout Grid.Column="{OnIdiom Phone=0, Tablet=2, Desktop=2}"
+                                                         Grid.Row="{OnIdiom Phone=2, Tablet=0, Desktop=0}"
+                                                         Spacing="4">
+                                        <Label Text="Postal Code (optional)" Style="{StaticResource FieldLabelStyle}" />
+                                        <Border BackgroundColor="White" Stroke="{StaticResource BorderStrong}" StrokeThickness="1" Padding="10,0">
+                                            <Border.StrokeShape>
+                                                <RoundRectangle CornerRadius="8" />
+                                            </Border.StrokeShape>
+                                            <Entry Placeholder="e.g. 4271"
+                                                   Text="{Binding RegistrationPostalCode}" />
+                                        </Border>
+                                    </VerticalStackLayout>
+                                </Grid>
+                            </VerticalStackLayout>
+                        </Border>
+
+                        <Border BackgroundColor="{StaticResource SurfaceSection}" Stroke="{StaticResource BorderSoft}" StrokeThickness="1" Padding="14,12">
+                            <Border.StrokeShape>
+                                <RoundRectangle CornerRadius="12" />
+                            </Border.StrokeShape>
+                            <VerticalStackLayout Spacing="8">
+                                <Label Text="CONTACT DETAILS" FontSize="20" FontAttributes="Bold" TextColor="{StaticResource TextMain}" />
+                                <Label Text="We'll reach out using this information for updates and verification."
+                                       Style="{StaticResource HelperTextStyle}" />
+
+                                <VerticalStackLayout Spacing="4" WidthRequest="{OnIdiom Phone=-1, Tablet=650, Desktop=650}">
+                                    <Label Text="Contact Number (optional)" Style="{StaticResource FieldLabelStyle}" />
+                                    <Border BackgroundColor="White" Stroke="{StaticResource BorderStrong}" StrokeThickness="1" Padding="10,0">
+                                        <Border.StrokeShape>
+                                            <RoundRectangle CornerRadius="8" />
+                                        </Border.StrokeShape>
+                                        <Entry Placeholder="e.g. 09XX-XXX-XXXX"
+                                               Text="{Binding RegistrationContactNumber}" />
+                                    </Border>
+                                </VerticalStackLayout>
+                            </VerticalStackLayout>
+                        </Border>
+
+                        <Grid ColumnDefinitions="Auto,*,Auto" Margin="0,4,0,0">
+                            <Button Text="Back"
+                                    Clicked="OnRegisterBackClicked"
+                                    BackgroundColor="#EDF2FA"
+                                    TextColor="#8293A8"
+                                    Padding="16,10" />
+                            <Button Grid.Column="2"
+                                    Text="Next"
+                                    Command="{Binding RegisterCustomerCommand}"
+                                    BackgroundColor="{StaticResource PrimaryBlue}"
+                                    TextColor="White"
+                                    FontAttributes="Bold"
+                                    Padding="22,10" />
+                        </Grid>
+                    </VerticalStackLayout>
+                </Border>
+            </VerticalStackLayout>
+
+            <VerticalStackLayout IsVisible="{Binding IsManagementMode}" Spacing="14">
             <Border BackgroundColor="{StaticResource SurfaceCard}" Stroke="{StaticResource BorderSoft}" StrokeThickness="1" Padding="14,12">
                 <Border.StrokeShape>
                     <RoundRectangle CornerRadius="14" />
@@ -264,6 +474,7 @@
                             HorizontalOptions="End" />
                 </VerticalStackLayout>
             </Border>
+            </VerticalStackLayout>
 
             <Label Text="{Binding StatusMessage}" FontSize="12" TextColor="{StaticResource TextMuted}" />
             <Label Text="{Binding ErrorMessage}" FontSize="12" TextColor="#C12424" IsVisible="{Binding HasErrors}" />

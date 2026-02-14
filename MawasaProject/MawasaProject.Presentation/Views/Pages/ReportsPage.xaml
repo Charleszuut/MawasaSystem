@@ -2,41 +2,264 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="MawasaProject.Presentation.Views.Pages.ReportsPage"
-             Title="Reports">
+             Title="Reports"
+             Shell.NavBarIsVisible="False"
+             BackgroundColor="#E9EDF3">
+    <ContentPage.Resources>
+        <Color x:Key="SurfaceCard">#FFFFFF</Color>
+        <Color x:Key="TextMain">#1F2A37</Color>
+        <Color x:Key="TextMuted">#6F8093</Color>
+        <Color x:Key="BorderSoft">#D9E2EC</Color>
+        <Color x:Key="PrimaryBlue">#1C9FDA</Color>
+    </ContentPage.Resources>
+
     <ScrollView>
-        <VerticalStackLayout Padding="20" Spacing="10" MaximumWidthRequest="760" HorizontalOptions="Center">
-            <Label Text="Reports &amp; Analytics" FontSize="24" FontAttributes="Bold" />
+        <VerticalStackLayout Padding="16,14,16,24" Spacing="14">
+            <Border StrokeThickness="0" Padding="16,14">
+                <Border.Background>
+                    <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                        <GradientStop Color="#2F63E3" Offset="0.0" />
+                        <GradientStop Color="#1CA0DA" Offset="1.0" />
+                    </LinearGradientBrush>
+                </Border.Background>
+                <Border.StrokeShape>
+                    <RoundRectangle CornerRadius="18" />
+                </Border.StrokeShape>
+                <VerticalStackLayout Spacing="10">
+                    <Grid ColumnDefinitions="*,Auto" ColumnSpacing="10">
+                        <VerticalStackLayout Spacing="2">
+                            <Label Text="{Binding HeaderTitle}" FontSize="34" FontAttributes="Bold" TextColor="White" />
+                            <Label Text="{Binding HeaderSubtitle}" FontSize="13" TextColor="#DDEFFF" />
+                        </VerticalStackLayout>
+                        <Border Grid.Column="1" BackgroundColor="#3DA9E7" StrokeThickness="0" Padding="12,6" VerticalOptions="Start">
+                            <Border.StrokeShape><RoundRectangle CornerRadius="12" /></Border.StrokeShape>
+                            <Label Text="Reports Dashboard" FontSize="12" FontAttributes="Bold" TextColor="White" />
+                        </Border>
+                    </Grid>
 
-            <Grid ColumnDefinitions="*,*" ColumnSpacing="8">
-                <DatePicker Date="{Binding StartDateUtc}" />
-                <DatePicker Grid.Column="1" Date="{Binding EndDateUtc}" />
-            </Grid>
-
-            <Entry Placeholder="Customer ID (optional GUID)"
-                   Text="{Binding CustomerIdText}" />
-            <HorizontalStackLayout Spacing="8">
-                <Label Text="Overdue only" VerticalTextAlignment="Center" />
-                <Switch IsToggled="{Binding IncludeOverdueOnly}" />
-            </HorizontalStackLayout>
-
-            <HorizontalStackLayout Spacing="8">
-                <Button Text="Revenue CSV" Command="{Binding ExportRevenueCsvCommand}" />
-                <Button Text="Overdue CSV" Command="{Binding ExportOverdueCsvCommand}" />
-                <Button Text="Payments CSV" Command="{Binding ExportPaymentsCsvCommand}" />
-            </HorizontalStackLayout>
-
-            <Frame Padding="12" BorderColor="#D1D5DB">
-                <VerticalStackLayout Spacing="6">
-                    <Label Text="Last Export" FontAttributes="Bold" />
-                    <Label Text="{Binding LastExportType, StringFormat='Type: {0}'}" TextColor="#4B5563" />
-                    <Label Text="{Binding LastExportRowCount, StringFormat='Rows: {0}'}" TextColor="#4B5563" />
-                    <Label Text="{Binding LastExportedAtUtc, StringFormat='Generated (UTC): {0:yyyy-MM-dd HH:mm:ss}'}" TextColor="#4B5563" />
-                    <Label Text="{Binding LastExportPath}" FontSize="12" TextColor="#6B7280" />
+                    <HorizontalStackLayout Spacing="8">
+                        <Button Text="Customer Payment Report"
+                                Clicked="OnCustomerPaymentReportClicked"
+                                BackgroundColor="{Binding CustomerPaymentActionBackground}"
+                                TextColor="{Binding CustomerPaymentActionTextColor}"
+                                FontAttributes="Bold" />
+                        <Button Text="Issue Report"
+                                Clicked="OnIssueReportClicked"
+                                BackgroundColor="{Binding IssueActionBackground}"
+                                TextColor="{Binding IssueActionTextColor}"
+                                FontAttributes="Bold" />
+                        <Button Text="Print Reports"
+                                Clicked="OnPrintReportClicked"
+                                BackgroundColor="{Binding PrintActionBackground}"
+                                TextColor="{Binding PrintActionTextColor}"
+                                FontAttributes="Bold" />
+                    </HorizontalStackLayout>
                 </VerticalStackLayout>
-            </Frame>
+            </Border>
 
-            <Label Text="{Binding StatusMessage}" FontSize="12" TextColor="#6B7280" />
-            <Label Text="{Binding ErrorMessage}" FontSize="12" TextColor="#B91C1C" IsVisible="{Binding HasErrors}" />
+            <VerticalStackLayout IsVisible="{Binding IsCustomerPaymentMode}" Spacing="14">
+                <Border BackgroundColor="{StaticResource SurfaceCard}" Stroke="{StaticResource BorderSoft}" StrokeThickness="1" Padding="14,12">
+                    <Border.StrokeShape><RoundRectangle CornerRadius="14" /></Border.StrokeShape>
+                    <VerticalStackLayout Spacing="10">
+                        <Grid ColumnDefinitions="{OnIdiom Phone='*', Tablet='1.1*,1.1*,1*,1.6*', Desktop='1.1*,1.1*,1*,1.6*'}"
+                              RowDefinitions="{OnIdiom Phone='Auto,Auto,Auto,Auto', Tablet='Auto', Desktop='Auto'}"
+                              ColumnSpacing="8"
+                              RowSpacing="8">
+                            <DatePicker Date="{Binding StartDateUtc}" />
+                            <DatePicker Grid.Column="{OnIdiom Phone=0, Tablet=1, Desktop=1}" Grid.Row="{OnIdiom Phone=1, Tablet=0, Desktop=0}" Date="{Binding EndDateUtc}" />
+                            <Picker Grid.Column="{OnIdiom Phone=0, Tablet=2, Desktop=2}" Grid.Row="{OnIdiom Phone=2, Tablet=0, Desktop=0}" ItemsSource="{Binding GroupByOptions}" SelectedItem="{Binding GroupBySelection}" />
+                            <Entry Grid.Column="{OnIdiom Phone=0, Tablet=3, Desktop=3}" Grid.Row="{OnIdiom Phone=3, Tablet=0, Desktop=0}" Placeholder="Customer (optional)" Text="{Binding CustomerFilterText}" />
+                        </Grid>
+                        <Grid ColumnDefinitions="*,Auto,Auto" ColumnSpacing="8">
+                            <HorizontalStackLayout Spacing="8">
+                                <Button Text="Last 30 days" Command="{Binding SetLast30DaysCommand}" BackgroundColor="#EFF4FC" TextColor="#4A5D76" FontSize="12" />
+                                <Button Text="Last 90 days" Command="{Binding SetLast90DaysCommand}" BackgroundColor="#EFF4FC" TextColor="#4A5D76" FontSize="12" />
+                                <Button Text="Last 12 months" Command="{Binding SetLast12MonthsCommand}" BackgroundColor="#EFF4FC" TextColor="#4A5D76" FontSize="12" />
+                            </HorizontalStackLayout>
+                            <Button Grid.Column="1" Text="Apply filters" Command="{Binding ApplyFiltersCommand}" BackgroundColor="{StaticResource PrimaryBlue}" TextColor="White" FontAttributes="Bold" />
+                            <Button Grid.Column="2" Text="Reset" Command="{Binding ResetFiltersCommand}" BackgroundColor="#EEF3FB" TextColor="#4A5D76" />
+                        </Grid>
+                    </VerticalStackLayout>
+                </Border>
+
+                <Border BackgroundColor="{StaticResource SurfaceCard}" Stroke="{StaticResource BorderSoft}" StrokeThickness="1" Padding="14,12">
+                    <Border.StrokeShape><RoundRectangle CornerRadius="14" /></Border.StrokeShape>
+                    <VerticalStackLayout Spacing="10">
+                        <Grid ColumnDefinitions="*,Auto,Auto" ColumnSpacing="8">
+                            <Label Text="Collections overview" FontSize="24" FontAttributes="Bold" TextColor="{StaticResource TextMain}" />
+                            <Button Grid.Column="1" Text="Print summary" Command="{Binding PrintCurrentReportCommand}" BackgroundColor="#EEF3FB" TextColor="#4A5D76" />
+                            <Button Grid.Column="2" Text="Export CSV" Command="{Binding ExportCurrentReportCommand}" BackgroundColor="#EEF3FB" TextColor="#4A5D76" />
+                        </Grid>
+                        <Grid ColumnDefinitions="{OnIdiom Phone='*', Tablet='1*,1*,1*', Desktop='1*,1*,1*'}"
+                              RowDefinitions="{OnIdiom Phone='Auto,Auto,Auto', Tablet='Auto', Desktop='Auto'}"
+                              ColumnSpacing="10"
+                              RowSpacing="8">
+                            <Border BackgroundColor="#1488C6" StrokeThickness="0" Padding="12,10">
+                                <Border.StrokeShape><RoundRectangle CornerRadius="10" /></Border.StrokeShape>
+                                <VerticalStackLayout Spacing="2">
+                                    <Label Text="COLLECTED" FontSize="10" FontAttributes="Bold" TextColor="#CBEFFF" />
+                                    <Label Text="{Binding CollectedAmountText}" FontSize="30" FontAttributes="Bold" TextColor="White" />
+                                </VerticalStackLayout>
+                            </Border>
+                            <Border Grid.Column="{OnIdiom Phone=0, Tablet=1, Desktop=1}" Grid.Row="{OnIdiom Phone=1, Tablet=0, Desktop=0}" BackgroundColor="#EDF3FF" StrokeThickness="0" Padding="12,10">
+                                <Border.StrokeShape><RoundRectangle CornerRadius="10" /></Border.StrokeShape>
+                                <VerticalStackLayout Spacing="2">
+                                    <Label Text="TOTAL BILLED" FontSize="10" FontAttributes="Bold" TextColor="#5A74A1" />
+                                    <Label Text="{Binding TotalBilledAmountText}" FontSize="30" FontAttributes="Bold" TextColor="#264B84" />
+                                </VerticalStackLayout>
+                            </Border>
+                            <Border Grid.Column="{OnIdiom Phone=0, Tablet=2, Desktop=2}" Grid.Row="{OnIdiom Phone=2, Tablet=0, Desktop=0}" BackgroundColor="#FFF7E6" StrokeThickness="0" Padding="12,10">
+                                <Border.StrokeShape><RoundRectangle CornerRadius="10" /></Border.StrokeShape>
+                                <VerticalStackLayout Spacing="2">
+                                    <Label Text="VARIANCE" FontSize="10" FontAttributes="Bold" TextColor="#9E7820" />
+                                    <Label Text="{Binding VarianceAmountText}" FontSize="30" FontAttributes="Bold" TextColor="#8A641A" />
+                                </VerticalStackLayout>
+                            </Border>
+                        </Grid>
+                    </VerticalStackLayout>
+                </Border>
+
+                <Border BackgroundColor="{StaticResource SurfaceCard}" Stroke="{StaticResource BorderSoft}" StrokeThickness="1" Padding="14,12">
+                    <Border.StrokeShape><RoundRectangle CornerRadius="14" /></Border.StrokeShape>
+                    <VerticalStackLayout Spacing="10">
+                        <Label Text="Revenue breakdown" FontSize="24" FontAttributes="Bold" TextColor="{StaticResource TextMain}" />
+                        <Grid ColumnDefinitions="*,Auto,Auto" ColumnSpacing="8">
+                            <Entry Placeholder="{Binding SearchPlaceholder}" Text="{Binding SearchText}" />
+                            <Picker Grid.Column="1" ItemsSource="{Binding SortOptions}" SelectedItem="{Binding SelectedSortColumn}" WidthRequest="140" />
+                            <Picker Grid.Column="2" ItemsSource="{Binding SortDirections}" SelectedItem="{Binding SelectedSortDirection}" WidthRequest="140" />
+                        </Grid>
+                        <Grid ColumnDefinitions="2*,1.2*,1.2*,1.2*,1.8*" BackgroundColor="#1488C6" Padding="10,8">
+                            <Label Text="PERIOD" FontSize="10" FontAttributes="Bold" TextColor="White" />
+                            <Label Grid.Column="1" Text="BILLS" FontSize="10" FontAttributes="Bold" TextColor="White" />
+                            <Label Grid.Column="2" Text="PAID" FontSize="10" FontAttributes="Bold" TextColor="White" />
+                            <Label Grid.Column="3" Text="UNPAID" FontSize="10" FontAttributes="Bold" TextColor="White" />
+                            <Label Grid.Column="4" Text="REVENUE" FontSize="10" FontAttributes="Bold" TextColor="White" />
+                        </Grid>
+                        <CollectionView ItemsSource="{Binding RevenueBreakdownRows}" SelectionMode="None" HeightRequest="240">
+                            <CollectionView.ItemTemplate>
+                                <DataTemplate>
+                                    <Grid ColumnDefinitions="2*,1.2*,1.2*,1.2*,1.8*" Padding="10,9" BackgroundColor="{Binding RowBackground}">
+                                        <Label Text="{Binding Period}" />
+                                        <Label Grid.Column="1" Text="{Binding Bills}" />
+                                        <Label Grid.Column="2" Text="{Binding Paid}" />
+                                        <Label Grid.Column="3" Text="{Binding Unpaid}" />
+                                        <Label Grid.Column="4" Text="{Binding RevenueDisplay}" FontAttributes="Bold" />
+                                    </Grid>
+                                </DataTemplate>
+                            </CollectionView.ItemTemplate>
+                        </CollectionView>
+                    </VerticalStackLayout>
+                </Border>
+            </VerticalStackLayout>
+
+            <VerticalStackLayout IsVisible="{Binding IsIssueMode}" Spacing="14">
+                <Border BackgroundColor="{StaticResource SurfaceCard}" Stroke="{StaticResource BorderSoft}" StrokeThickness="1" Padding="14,12">
+                    <Border.StrokeShape><RoundRectangle CornerRadius="14" /></Border.StrokeShape>
+                    <Grid ColumnDefinitions="1*,1*,Auto,Auto" ColumnSpacing="8">
+                        <DatePicker Date="{Binding StartDateUtc}" />
+                        <DatePicker Grid.Column="1" Date="{Binding EndDateUtc}" />
+                        <Button Grid.Column="2" Text="Apply filters" Command="{Binding ApplyFiltersCommand}" BackgroundColor="{StaticResource PrimaryBlue}" TextColor="White" FontAttributes="Bold" />
+                        <Button Grid.Column="3" Text="Reset" Command="{Binding ResetFiltersCommand}" BackgroundColor="#EEF3FB" TextColor="#4A5D76" />
+                    </Grid>
+                </Border>
+
+                <FlexLayout Direction="Row" Wrap="Wrap" JustifyContent="Start">
+                    <Border WidthRequest="260" BackgroundColor="#1488C6" StrokeThickness="0" Padding="12,10" Margin="0,0,10,10"><Border.StrokeShape><RoundRectangle CornerRadius="12" /></Border.StrokeShape><VerticalStackLayout><Label Text="TOTAL ISSUES" FontSize="10" FontAttributes="Bold" TextColor="#CBEFFF" /><Label Text="{Binding TotalIssues}" FontSize="32" FontAttributes="Bold" TextColor="White" /></VerticalStackLayout></Border>
+                    <Border WidthRequest="260" BackgroundColor="#FFF3D9" StrokeThickness="0" Padding="12,10" Margin="0,0,10,10"><Border.StrokeShape><RoundRectangle CornerRadius="12" /></Border.StrokeShape><VerticalStackLayout><Label Text="PRIORITY" FontSize="10" FontAttributes="Bold" TextColor="#9E7820" /><Label Text="{Binding PriorityIssues}" FontSize="32" FontAttributes="Bold" TextColor="#8A641A" /></VerticalStackLayout></Border>
+                    <Border WidthRequest="260" BackgroundColor="#E8F8EE" StrokeThickness="0" Padding="12,10" Margin="0,0,0,10"><Border.StrokeShape><RoundRectangle CornerRadius="12" /></Border.StrokeShape><VerticalStackLayout><Label Text="COMPLETED" FontSize="10" FontAttributes="Bold" TextColor="#1F8A57" /><Label Text="{Binding CompletedIssues}" FontSize="32" FontAttributes="Bold" TextColor="#1F8A57" /></VerticalStackLayout></Border>
+                </FlexLayout>
+
+                <Grid ColumnDefinitions="{OnIdiom Phone='*', Tablet='1*,1*', Desktop='1*,1*'}" ColumnSpacing="10" RowSpacing="10">
+                    <Border BackgroundColor="{StaticResource SurfaceCard}" Stroke="{StaticResource BorderSoft}" StrokeThickness="1" Padding="14,12"><Border.StrokeShape><RoundRectangle CornerRadius="14" /></Border.StrokeShape><VerticalStackLayout><Label Text="Issues by status" FontSize="22" FontAttributes="Bold" TextColor="{StaticResource TextMain}" /><Label Text="{Binding IssueStatusSummary}" FontSize="12" TextColor="{StaticResource TextMuted}" /></VerticalStackLayout></Border>
+                    <Border Grid.Column="{OnIdiom Phone=0, Tablet=1, Desktop=1}" Grid.Row="{OnIdiom Phone=1, Tablet=0, Desktop=0}" BackgroundColor="{StaticResource SurfaceCard}" Stroke="{StaticResource BorderSoft}" StrokeThickness="1" Padding="14,12"><Border.StrokeShape><RoundRectangle CornerRadius="14" /></Border.StrokeShape><VerticalStackLayout><Label Text="Issues by category" FontSize="22" FontAttributes="Bold" TextColor="{StaticResource TextMain}" /><Label Text="{Binding IssueCategorySummary}" FontSize="12" TextColor="{StaticResource TextMuted}" /></VerticalStackLayout></Border>
+                </Grid>
+
+                <Grid ColumnDefinitions="{OnIdiom Phone='*', Tablet='1*,1*', Desktop='1*,1*'}" ColumnSpacing="10" RowSpacing="10">
+                    <Border BackgroundColor="{StaticResource SurfaceCard}" Stroke="{StaticResource BorderSoft}" StrokeThickness="1" Padding="14,12">
+                        <Border.StrokeShape><RoundRectangle CornerRadius="14" /></Border.StrokeShape>
+                        <VerticalStackLayout Spacing="10">
+                            <Label Text="Issue timeline" FontSize="22" FontAttributes="Bold" TextColor="{StaticResource TextMain}" />
+                            <Grid ColumnDefinitions="*,Auto,Auto" ColumnSpacing="8">
+                                <Entry Placeholder="{Binding SearchPlaceholder}" Text="{Binding SearchText}" />
+                                <Picker Grid.Column="1" ItemsSource="{Binding SortOptions}" SelectedItem="{Binding SelectedSortColumn}" WidthRequest="120" />
+                                <Picker Grid.Column="2" ItemsSource="{Binding SortDirections}" SelectedItem="{Binding SelectedSortDirection}" WidthRequest="120" />
+                            </Grid>
+                            <Grid ColumnDefinitions="2*,1*" BackgroundColor="#1488C6" Padding="10,8">
+                                <Label Text="DATE" FontSize="10" FontAttributes="Bold" TextColor="White" />
+                                <Label Grid.Column="1" Text="ISSUES" FontSize="10" FontAttributes="Bold" TextColor="White" />
+                            </Grid>
+                            <CollectionView ItemsSource="{Binding IssueTimelineRows}" SelectionMode="None" HeightRequest="210">
+                                <CollectionView.ItemTemplate>
+                                    <DataTemplate>
+                                        <Grid ColumnDefinitions="2*,1*" Padding="10,9" BackgroundColor="{Binding RowBackground}">
+                                            <Label Text="{Binding DateDisplay}" />
+                                            <Label Grid.Column="1" Text="{Binding IssueCount}" />
+                                        </Grid>
+                                    </DataTemplate>
+                                </CollectionView.ItemTemplate>
+                            </CollectionView>
+                        </VerticalStackLayout>
+                    </Border>
+
+                    <Border Grid.Column="{OnIdiom Phone=0, Tablet=1, Desktop=1}"
+                            Grid.Row="{OnIdiom Phone=1, Tablet=0, Desktop=0}"
+                            BackgroundColor="{StaticResource SurfaceCard}"
+                            Stroke="{StaticResource BorderSoft}"
+                            StrokeThickness="1"
+                            Padding="14,12">
+                        <Border.StrokeShape><RoundRectangle CornerRadius="14" /></Border.StrokeShape>
+                        <VerticalStackLayout Spacing="8">
+                            <Label Text="Recent issue submissions" FontSize="22" FontAttributes="Bold" TextColor="{StaticResource TextMain}" />
+                            <CollectionView ItemsSource="{Binding RecentIssueSubmissions}" SelectionMode="None" HeightRequest="260">
+                                <CollectionView.ItemTemplate>
+                                    <DataTemplate>
+                                        <Border BackgroundColor="#F7FAFF" Stroke="{StaticResource BorderSoft}" StrokeThickness="1" Padding="10,8" Margin="0,0,0,6">
+                                            <Border.StrokeShape><RoundRectangle CornerRadius="8" /></Border.StrokeShape>
+                                            <Label Text="{Binding .}" FontSize="12" TextColor="#41556D" LineBreakMode="TailTruncation" />
+                                        </Border>
+                                    </DataTemplate>
+                                </CollectionView.ItemTemplate>
+                            </CollectionView>
+                        </VerticalStackLayout>
+                    </Border>
+                </Grid>
+            </VerticalStackLayout>
+
+            <Border IsVisible="{Binding IsPrintMode}" BackgroundColor="{StaticResource SurfaceCard}" Stroke="{StaticResource BorderSoft}" StrokeThickness="1" Padding="14,12">
+                <Border.StrokeShape><RoundRectangle CornerRadius="14" /></Border.StrokeShape>
+                <VerticalStackLayout Spacing="10">
+                    <Grid ColumnDefinitions="*,Auto" ColumnSpacing="8">
+                        <Label Text="Printable Reports" FontSize="24" FontAttributes="Bold" TextColor="{StaticResource TextMain}" />
+                        <Button Grid.Column="1" Text="Print Reports" Command="{Binding PrintCurrentReportCommand}" BackgroundColor="#EEF3FB" TextColor="#2D6DE2" FontAttributes="Bold" />
+                    </Grid>
+                    <Grid ColumnDefinitions="*,Auto,Auto" ColumnSpacing="8">
+                        <Entry Placeholder="{Binding SearchPlaceholder}" Text="{Binding SearchText}" />
+                        <Picker Grid.Column="1" ItemsSource="{Binding SortOptions}" SelectedItem="{Binding SelectedSortColumn}" WidthRequest="140" />
+                        <Picker Grid.Column="2" ItemsSource="{Binding SortDirections}" SelectedItem="{Binding SelectedSortDirection}" WidthRequest="140" />
+                    </Grid>
+                    <Grid ColumnDefinitions="2*,1*,2.4*" BackgroundColor="#1488C6" Padding="10,8">
+                        <Label Text="METRIC" FontSize="10" FontAttributes="Bold" TextColor="White" />
+                        <Label Grid.Column="1" Text="VALUE" FontSize="10" FontAttributes="Bold" TextColor="White" />
+                        <Label Grid.Column="2" Text="NOTES" FontSize="10" FontAttributes="Bold" TextColor="White" />
+                    </Grid>
+                    <CollectionView ItemsSource="{Binding PrintableMetricRows}" SelectionMode="None" HeightRequest="340">
+                        <CollectionView.ItemTemplate>
+                            <DataTemplate>
+                                <Grid ColumnDefinitions="2*,1*,2.4*" Padding="10,9" BackgroundColor="{Binding RowBackground}">
+                                    <Label Text="{Binding Metric}" />
+                                    <Label Grid.Column="1" Text="{Binding Value}" />
+                                    <Label Grid.Column="2" Text="{Binding Notes}" />
+                                </Grid>
+                            </DataTemplate>
+                        </CollectionView.ItemTemplate>
+                    </CollectionView>
+                </VerticalStackLayout>
+            </Border>
+
+            <Label Text="{Binding StatusMessage}" FontSize="12" TextColor="{StaticResource TextMuted}" />
+            <Label Text="{Binding LastExportType, StringFormat='Last export type: {0}'}" FontSize="12" TextColor="{StaticResource TextMuted}" />
+            <Label Text="{Binding LastExportedAtUtc, StringFormat='Last exported UTC: {0:yyyy-MM-dd HH:mm:ss}'}" FontSize="12" TextColor="{StaticResource TextMuted}" />
+            <Label Text="{Binding ErrorMessage}" FontSize="12" TextColor="#C12424" IsVisible="{Binding HasErrors}" />
         </VerticalStackLayout>
     </ScrollView>
 </ContentPage>

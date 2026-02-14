@@ -21,6 +21,7 @@ public sealed class CustomersViewModel : BaseViewModel
 
     private readonly AsyncCommand _searchCommand;
     private readonly AsyncCommand _addCustomerCommand;
+    private readonly AsyncCommand _registerCustomerCommand;
     private readonly RelayCommand _previousPageCommand;
     private readonly RelayCommand _nextPageCommand;
 
@@ -31,6 +32,16 @@ public sealed class CustomersViewModel : BaseViewModel
     private string _address = string.Empty;
     private string _selectedSortColumn = "Name";
     private string _selectedSortDirection = "Ascending";
+    private bool _isRegisterMode;
+    private string _registrationFirstName = string.Empty;
+    private string _registrationLastName = string.Empty;
+    private string _registrationBarangay = string.Empty;
+    private string _registrationCityMunicipality = string.Empty;
+    private string _registrationProvince = string.Empty;
+    private string _registrationStreetBlockLot = string.Empty;
+    private string _registrationSelectedPurok = "Select Purok";
+    private string _registrationPostalCode = string.Empty;
+    private string _registrationContactNumber = string.Empty;
     private int _currentPage = 1;
     private int _totalPages = 1;
     private int _filteredCount;
@@ -56,6 +67,7 @@ public sealed class CustomersViewModel : BaseViewModel
 
         _searchCommand = new AsyncCommand(async () => await RunBusyAsync(SearchInternalAsync));
         _addCustomerCommand = new AsyncCommand(async () => await RunBusyAsync(AddCustomerInternalAsync));
+        _registerCustomerCommand = new AsyncCommand(async () => await RunBusyAsync(RegisterCustomerInternalAsync));
         _previousPageCommand = new RelayCommand(MoveToPreviousPage, () => CanGoPreviousPage);
         _nextPageCommand = new RelayCommand(MoveToNextPage, () => CanGoNextPage);
     }
@@ -65,6 +77,24 @@ public sealed class CustomersViewModel : BaseViewModel
     public IReadOnlyList<string> SortColumns { get; } = ["Account", "Name", "Created"];
 
     public IReadOnlyList<string> SortDirections { get; } = ["Ascending", "Descending"];
+
+    public IReadOnlyList<string> PurokOptions { get; } = ["Select Purok", "Purok 1", "Purok 2", "Purok 3", "Purok 4", "Purok 5", "Purok 6"];
+
+    public bool IsRegisterMode
+    {
+        get => _isRegisterMode;
+        private set
+        {
+            if (!SetProperty(ref _isRegisterMode, value))
+            {
+                return;
+            }
+
+            RaisePropertyChanged(nameof(IsManagementMode));
+        }
+    }
+
+    public bool IsManagementMode => !IsRegisterMode;
 
     public string SearchQuery
     {
@@ -132,6 +162,60 @@ public sealed class CustomersViewModel : BaseViewModel
         }
     }
 
+    public string RegistrationFirstName
+    {
+        get => _registrationFirstName;
+        set => SetProperty(ref _registrationFirstName, value);
+    }
+
+    public string RegistrationLastName
+    {
+        get => _registrationLastName;
+        set => SetProperty(ref _registrationLastName, value);
+    }
+
+    public string RegistrationBarangay
+    {
+        get => _registrationBarangay;
+        set => SetProperty(ref _registrationBarangay, value);
+    }
+
+    public string RegistrationCityMunicipality
+    {
+        get => _registrationCityMunicipality;
+        set => SetProperty(ref _registrationCityMunicipality, value);
+    }
+
+    public string RegistrationProvince
+    {
+        get => _registrationProvince;
+        set => SetProperty(ref _registrationProvince, value);
+    }
+
+    public string RegistrationStreetBlockLot
+    {
+        get => _registrationStreetBlockLot;
+        set => SetProperty(ref _registrationStreetBlockLot, value);
+    }
+
+    public string RegistrationSelectedPurok
+    {
+        get => _registrationSelectedPurok;
+        set => SetProperty(ref _registrationSelectedPurok, value);
+    }
+
+    public string RegistrationPostalCode
+    {
+        get => _registrationPostalCode;
+        set => SetProperty(ref _registrationPostalCode, value);
+    }
+
+    public string RegistrationContactNumber
+    {
+        get => _registrationContactNumber;
+        set => SetProperty(ref _registrationContactNumber, value);
+    }
+
     public int CurrentPage
     {
         get => _currentPage;
@@ -196,9 +280,16 @@ public sealed class CustomersViewModel : BaseViewModel
 
     public AsyncCommand AddCustomerCommand => _addCustomerCommand;
 
+    public AsyncCommand RegisterCustomerCommand => _registerCustomerCommand;
+
     public RelayCommand PreviousPageCommand => _previousPageCommand;
 
     public RelayCommand NextPageCommand => _nextPageCommand;
+
+    public void SetModeFromRoute(string? mode)
+    {
+        IsRegisterMode = string.Equals(mode, "register", StringComparison.OrdinalIgnoreCase);
+    }
 
     private async Task SearchInternalAsync()
     {
@@ -230,6 +321,35 @@ public sealed class CustomersViewModel : BaseViewModel
 
         await LoadCustomersAsync(SearchQuery);
         await _dialogService.AlertAsync("Customer", "Customer created successfully.");
+    }
+
+    private async Task RegisterCustomerInternalAsync()
+    {
+        if (string.IsNullOrWhiteSpace(RegistrationFirstName) || string.IsNullOrWhiteSpace(RegistrationLastName))
+        {
+            await _dialogService.AlertAsync("Validation", "First name and last name are required.");
+            return;
+        }
+
+        var fullName = $"{RegistrationFirstName.Trim()} {RegistrationLastName.Trim()}".Trim();
+        var address = BuildRegistrationAddress();
+        var contactNumber = string.IsNullOrWhiteSpace(RegistrationContactNumber)
+            ? null
+            : RegistrationContactNumber.Trim();
+
+        var customer = new Customer
+        {
+            Name = fullName,
+            PhoneNumber = contactNumber,
+            Address = address,
+            CreatedAtUtc = DateTime.UtcNow
+        };
+
+        await _customerService.CreateCustomerAsync(customer);
+        ClearRegistrationForm();
+
+        await LoadCustomersAsync(SearchQuery);
+        await _dialogService.AlertAsync("Customer Registration", "Customer registered successfully.");
     }
 
     private async Task LoadCustomersAsync(string? query)
@@ -391,5 +511,56 @@ public sealed class CustomersViewModel : BaseViewModel
     {
         _previousPageCommand.RaiseCanExecuteChanged();
         _nextPageCommand.RaiseCanExecuteChanged();
+    }
+
+    private string? BuildRegistrationAddress()
+    {
+        var parts = new List<string>();
+
+        if (!string.IsNullOrWhiteSpace(RegistrationStreetBlockLot))
+        {
+            parts.Add(RegistrationStreetBlockLot.Trim());
+        }
+
+        if (!string.IsNullOrWhiteSpace(RegistrationSelectedPurok)
+            && !string.Equals(RegistrationSelectedPurok, "Select Purok", StringComparison.OrdinalIgnoreCase))
+        {
+            parts.Add(RegistrationSelectedPurok.Trim());
+        }
+
+        if (!string.IsNullOrWhiteSpace(RegistrationBarangay))
+        {
+            parts.Add(RegistrationBarangay.Trim());
+        }
+
+        if (!string.IsNullOrWhiteSpace(RegistrationCityMunicipality))
+        {
+            parts.Add(RegistrationCityMunicipality.Trim());
+        }
+
+        if (!string.IsNullOrWhiteSpace(RegistrationProvince))
+        {
+            parts.Add(RegistrationProvince.Trim());
+        }
+
+        if (!string.IsNullOrWhiteSpace(RegistrationPostalCode))
+        {
+            parts.Add($"Postal {RegistrationPostalCode.Trim()}");
+        }
+
+        return parts.Count == 0 ? null : string.Join(", ", parts);
+    }
+
+    private void ClearRegistrationForm()
+    {
+        RegistrationFirstName = string.Empty;
+        RegistrationLastName = string.Empty;
+        RegistrationBarangay = string.Empty;
+        RegistrationCityMunicipality = string.Empty;
+        RegistrationProvince = string.Empty;
+        RegistrationStreetBlockLot = string.Empty;
+        RegistrationSelectedPurok = PurokOptions[0];
+        RegistrationPostalCode = string.Empty;
+        RegistrationContactNumber = string.Empty;
     }
 }
