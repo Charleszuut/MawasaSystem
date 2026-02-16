@@ -698,14 +698,14 @@
         }
       }
     },
-    "c:\\Projects\\MawasaSystem\\MawasaProject\\MawasaProject.Infrastructure\\MawasaProject.Infrastructure.csproj": {
+    "C:\\Projects\\MawasaSystem\\MawasaProject\\MawasaProject.Infrastructure\\MawasaProject.Infrastructure.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "c:\\Projects\\MawasaSystem\\MawasaProject\\MawasaProject.Infrastructure\\MawasaProject.Infrastructure.csproj",
+        "projectUniqueName": "C:\\Projects\\MawasaSystem\\MawasaProject\\MawasaProject.Infrastructure\\MawasaProject.Infrastructure.csproj",
         "projectName": "MawasaProject.Infrastructure",
-        "projectPath": "c:\\Projects\\MawasaSystem\\MawasaProject\\MawasaProject.Infrastructure\\MawasaProject.Infrastructure.csproj",
+        "projectPath": "C:\\Projects\\MawasaSystem\\MawasaProject\\MawasaProject.Infrastructure\\MawasaProject.Infrastructure.csproj",
         "packagesPath": "C:\\Users\\decay\\.nuget\\packages\\",
-        "outputPath": "c:\\Projects\\MawasaSystem\\MawasaProject\\MawasaProject.Infrastructure\\obj\\",
+        "outputPath": "C:\\Projects\\MawasaSystem\\MawasaProject\\MawasaProject.Infrastructure\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
@@ -1091,8 +1091,8 @@
               "C:\\Projects\\MawasaSystem\\MawasaProject\\MawasaProject.Application\\MawasaProject.Application.csproj": {
                 "projectPath": "C:\\Projects\\MawasaSystem\\MawasaProject\\MawasaProject.Application\\MawasaProject.Application.csproj"
               },
-              "c:\\Projects\\MawasaSystem\\MawasaProject\\MawasaProject.Infrastructure\\MawasaProject.Infrastructure.csproj": {
-                "projectPath": "c:\\Projects\\MawasaSystem\\MawasaProject\\MawasaProject.Infrastructure\\MawasaProject.Infrastructure.csproj"
+              "C:\\Projects\\MawasaSystem\\MawasaProject\\MawasaProject.Infrastructure\\MawasaProject.Infrastructure.csproj": {
+                "projectPath": "C:\\Projects\\MawasaSystem\\MawasaProject\\MawasaProject.Infrastructure\\MawasaProject.Infrastructure.csproj"
               }
             }
           }

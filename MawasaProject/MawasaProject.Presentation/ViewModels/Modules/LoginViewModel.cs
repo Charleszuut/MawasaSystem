@@ -14,8 +14,8 @@ public sealed class LoginViewModel(
     INavigationService navigationService,
     IDialogService dialogService) : BaseViewModel
 {
-    private string _username = "admin";
-    private string _password = "Admin@123";
+    private string _username = string.Empty;
+    private string _password = string.Empty;
     private bool _isPasswordHidden = true;
     private bool _rememberMe = true;
 
