@@ -1,5 +1,6 @@
 using MawasaProject.Application.Abstractions.Services;
 using MawasaProject.Infrastructure.Services.Backup;
+using System.Diagnostics;
 
 namespace MawasaProject.Presentation;
 
@@ -15,6 +16,37 @@ public partial class App : Microsoft.Maui.Controls.Application
 
         _serviceProvider = serviceProvider;
         Services = serviceProvider;
+
+        AppDomain.CurrentDomain.UnhandledException += static (_, e) =>
+        {
+            try
+            {
+                if (e.ExceptionObject is Exception ex)
+                {
+                    Debug.WriteLine(ex);
+                }
+                else
+                {
+                    Debug.WriteLine($"UnhandledException: {e.ExceptionObject}");
+                }
+            }
+            catch
+            {
+            }
+        };
+
+        TaskScheduler.UnobservedTaskException += static (_, e) =>
+        {
+            try
+            {
+                Debug.WriteLine(e.Exception);
+            }
+            catch
+            {
+            }
+
+            e.SetObserved();
+        };
     }
 
     protected override Window CreateWindow(IActivationState? activationState)

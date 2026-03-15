@@ -15,6 +15,18 @@
         <Color x:Key="BorderStrong">#C6D4E3</Color>
         <Color x:Key="PrimaryBlue">#1C9FDA</Color>
         <Color x:Key="PrimaryBlueDark">#167EAF</Color>
+
+        <Style TargetType="Entry">
+            <Setter Property="TextColor" Value="{StaticResource TextMain}" />
+            <Setter Property="PlaceholderColor" Value="{StaticResource TextMuted}" />
+            <Setter Property="BackgroundColor" Value="Transparent" />
+        </Style>
+
+        <Style TargetType="DatePicker">
+            <Setter Property="TextColor" Value="{StaticResource TextMain}" />
+            <Setter Property="BackgroundColor" Value="Transparent" />
+        </Style>
+
         <Style x:Key="SectionTitleStyle" TargetType="Label">
             <Setter Property="FontSize" Value="17" />
             <Setter Property="FontAttributes" Value="Bold" />

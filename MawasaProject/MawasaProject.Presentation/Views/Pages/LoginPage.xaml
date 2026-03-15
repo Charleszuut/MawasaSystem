@@ -22,7 +22,8 @@
 
         <ScrollView>
             <Grid Padding="24" MinimumHeightRequest="620">
-                <Border BackgroundColor="{StaticResource LoginCardBackground}"
+                <Border x:Name="LoginCard"
+                        BackgroundColor="{StaticResource LoginCardBackground}"
                         StrokeThickness="0"
                         Padding="24"
                         MaximumWidthRequest="420"
@@ -36,7 +37,7 @@
                     </Border.Shadow>
 
                     <VerticalStackLayout Spacing="14">
-                        <Grid HorizontalOptions="Center" Margin="0,2,0,8">
+                        <Grid x:Name="LogoContainer" HorizontalOptions="Center" Margin="0,2,0,8">
                             <Border WidthRequest="108"
                                     HeightRequest="108"
                                     BackgroundColor="#FFFFFF"
@@ -85,7 +86,9 @@
                                        FontAttributes="Bold" />
                                 <Entry Grid.Column="1"
                                        Placeholder="Enter your username"
+                                       PlaceholderColor="#8A97A6"
                                        Text="{Binding Username}"
+                                       TextColor="#1B2B3D"
                                         ReturnType="Next"
                                         IsSpellCheckEnabled="False"
                                         IsTextPredictionEnabled="False"
@@ -115,7 +118,9 @@
                                        FontAttributes="Bold" />
                                 <Entry Grid.Column="1"
                                        Placeholder="Enter your password"
+                                       PlaceholderColor="#8A97A6"
                                        Text="{Binding Password}"
+                                       TextColor="#1B2B3D"
                                        IsPassword="{Binding IsPasswordHidden}"
                                         ReturnType="Done"
                                         ReturnCommand="{Binding LoginCommand}"
@@ -135,7 +140,7 @@
 
                         <Grid ColumnDefinitions="Auto,*,Auto" Margin="0,2,0,2">
                             <HorizontalStackLayout Grid.Column="0" Grid.ColumnSpan="2" Spacing="6" VerticalOptions="Center">
-                                <CheckBox IsChecked="{Binding RememberMe}" Scale="0.85" />
+                                <CheckBox IsChecked="{Binding RememberMe}" Color="#2E6EEB" Scale="0.85" />
                                 <Label Text="Remember me"
                                        TextColor="{StaticResource LoginSubText}"
                                        FontSize="13"

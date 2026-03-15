@@ -9,6 +9,8 @@ public partial class AppShell : Microsoft.Maui.Controls.Shell
 {
     private readonly AppStateStore _stateStore;
     private readonly IRbacService _rbacService;
+    private bool _isNavigatingAnimationRunning;
+    private Page? _lastAnimatedPage;
     private static readonly Color ActiveMenuColor = Color.FromArgb("#22ABE8");
     private static readonly Color InactiveMenuColor = Colors.Transparent;
     private static readonly Color ReportsActionActiveColor = Color.FromArgb("#22ABE8");
@@ -91,9 +93,55 @@ public partial class AppShell : Microsoft.Maui.Controls.Shell
         await GoToAsync(route);
     }
 
-    private void OnShellNavigated(object? sender, ShellNavigatedEventArgs e)
+    private async void OnShellNavigated(object? sender, ShellNavigatedEventArgs e)
     {
         UpdateSidebarSelection();
+        await AnimateCurrentPageAsync();
+    }
+
+    private async Task AnimateCurrentPageAsync()
+    {
+        if (_isNavigatingAnimationRunning)
+        {
+            return;
+        }
+
+        var page = CurrentPage;
+        if (page is null || ReferenceEquals(page, _lastAnimatedPage))
+        {
+            return;
+        }
+
+        var root = (page as ContentPage)?.Content as VisualElement
+            ?? page as VisualElement;
+
+        if (root is null)
+        {
+            _lastAnimatedPage = page;
+            return;
+        }
+
+        _isNavigatingAnimationRunning = true;
+        _lastAnimatedPage = page;
+
+        try
+        {
+            root.AbortAnimation("ShellPageEnter");
+
+            var originalOpacity = root.Opacity;
+            var originalTranslationX = root.TranslationX;
+
+            root.Opacity = 0;
+            root.TranslationX = 18;
+
+            await Task.WhenAll(
+                root.FadeToAsync(originalOpacity, 160U, Easing.CubicOut),
+                root.TranslateToAsync(originalTranslationX, root.TranslationY, 180U, Easing.CubicOut));
+        }
+        finally
+        {
+            _isNavigatingAnimationRunning = false;
+        }
     }
 
     private void ApplyAccessPolicies()
