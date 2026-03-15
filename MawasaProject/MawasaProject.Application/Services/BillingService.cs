@@ -2,6 +2,7 @@ using MawasaProject.Application.Abstractions.Persistence;
 using MawasaProject.Application.Abstractions.Services;
 using MawasaProject.Application.Rules;
 using MawasaProject.Application.Validation;
+using MawasaProject.Domain.DTOs;
 using MawasaProject.Domain.Entities;
 using MawasaProject.Domain.Enums;
 
@@ -16,6 +17,11 @@ public sealed class BillingService(
     public Task<IReadOnlyList<Bill>> GetBillsAsync(CancellationToken cancellationToken = default)
     {
         return billRepository.ListAsync(cancellationToken);
+    }
+
+    public Task<IReadOnlyList<BillDto>> GetBillsByCustomerAsync(Guid customerId, CancellationToken cancellationToken = default)
+    {
+        return billRepository.GetBillsByCustomerAsync(customerId, cancellationToken);
     }
 
     public async Task<Bill> CreateBillAsync(Bill bill, CancellationToken cancellationToken = default)

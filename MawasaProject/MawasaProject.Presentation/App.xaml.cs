@@ -1,5 +1,6 @@
 using MawasaProject.Application.Abstractions.Services;
 using MawasaProject.Infrastructure.Services.Backup;
+using MawasaProject.Presentation.Diagnostics;
 using System.Diagnostics;
 
 namespace MawasaProject.Presentation;
@@ -23,11 +24,11 @@ public partial class App : Microsoft.Maui.Controls.Application
             {
                 if (e.ExceptionObject is Exception ex)
                 {
-                    Debug.WriteLine(ex);
+                    AppDiagnostics.LogException("AppDomain.UnhandledException", ex);
                 }
                 else
                 {
-                    Debug.WriteLine($"UnhandledException: {e.ExceptionObject}");
+                    AppDiagnostics.LogMessage($"AppDomain.UnhandledException: {e.ExceptionObject}");
                 }
             }
             catch
@@ -39,7 +40,7 @@ public partial class App : Microsoft.Maui.Controls.Application
         {
             try
             {
-                Debug.WriteLine(e.Exception);
+                AppDiagnostics.LogException("TaskScheduler.UnobservedTaskException", e.Exception);
             }
             catch
             {

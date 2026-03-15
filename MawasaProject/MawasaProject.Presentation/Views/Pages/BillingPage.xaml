@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:behaviors="clr-namespace:MawasaProject.Presentation.Behaviors"
              x:Class="MawasaProject.Presentation.Views.Pages.BillingPage"
+             x:Name="BillingPageRoot"
              Title="Billing"
              Shell.NavBarIsVisible="False"
              BackgroundColor="#E9EDF3">
@@ -48,7 +50,10 @@
             <Label Text="Generate a bill with invoice details, instant calculations, and save it directly to the billing records."
                    Style="{StaticResource HelperTextStyle}" />
 
-            <Border BackgroundColor="{StaticResource SurfaceCard}" Stroke="{StaticResource BorderSoft}" StrokeThickness="1" Padding="14,12">
+            <Border BackgroundColor="{StaticResource SurfaceCard}"
+                    Stroke="{StaticResource BorderSoft}"
+                    StrokeThickness="1"
+                    Padding="14,12">
                 <Border.StrokeShape>
                     <RoundRectangle CornerRadius="14" />
                 </Border.StrokeShape>
@@ -57,7 +62,7 @@
                       RowDefinitions="Auto,Auto"
                       ColumnSpacing="14"
                       RowSpacing="12">
-                    <VerticalStackLayout Grid.Column="0" Grid.Row="0" Spacing="10">
+                    <VerticalStackLayout Grid.Column="0" Grid.Row="0" Spacing="10" IsClippedToBounds="False">
                         <Grid ColumnDefinitions="*,Auto" ColumnSpacing="8">
                             <VerticalStackLayout Spacing="2">
                                 <Label Text="Generate Bill" FontSize="24" FontAttributes="Bold" TextColor="{StaticResource TextMain}" />
@@ -121,22 +126,83 @@
                         </VerticalStackLayout>
 
                         <Label Text="CUSTOMER NAME OR ACCOUNT NUMBER *" Style="{StaticResource FieldLabelStyle}" />
-                        <Border BackgroundColor="{StaticResource SurfaceInput}" Stroke="{StaticResource BorderStrong}" StrokeThickness="1" Padding="10,0">
-                            <Border.StrokeShape>
-                                <RoundRectangle CornerRadius="8" />
-                            </Border.StrokeShape>
-                            <Grid ColumnDefinitions="*,Auto">
-                                <Entry Placeholder="Paste customer GUID from customer records"
-                                       Text="{Binding CustomerIdText}" />
-                                <Label Grid.Column="1"
-                                       Text="Find"
-                                       TextColor="#7A8EA5"
-                                       FontSize="11"
-                                       VerticalTextAlignment="Center"
-                                       Margin="6,0,0,0" />
-                            </Grid>
-                        </Border>
-                        <Label Text="Format: customer GUID from customer records."
+                        <AbsoluteLayout HeightRequest="44" IsClippedToBounds="False" ZIndex="20">
+                            <Border BackgroundColor="{StaticResource SurfaceInput}"
+                                    Stroke="{StaticResource BorderStrong}"
+                                    StrokeThickness="1"
+                                    Padding="10,0"
+                                    AbsoluteLayout.LayoutBounds="0,0,1,44"
+                                    AbsoluteLayout.LayoutFlags="WidthProportional">
+                                <Border.StrokeShape>
+                                    <RoundRectangle CornerRadius="8" />
+                                </Border.StrokeShape>
+                                <Grid ColumnDefinitions="*,Auto">
+                                    <Entry Placeholder="Search by name, account no, or GUID"
+                                           Text="{Binding CustomerSearchText}">
+                                        <Entry.Behaviors>
+                                            <behaviors:FocusCommandBehavior FocusedCommand="{Binding OpenCustomerSuggestionsCommand}"
+                                                                           UnfocusedCommand="{Binding DismissCustomerSuggestionsCommand}" />
+                                        </Entry.Behaviors>
+                                    </Entry>
+                                    <Label Grid.Column="1"
+                                           Text="Find"
+                                           TextColor="#7A8EA5"
+                                           FontSize="11"
+                                           VerticalTextAlignment="Center"
+                                           Margin="6,0,0,0" />
+                                </Grid>
+                            </Border>
+                            <Border BackgroundColor="{StaticResource SurfaceCard}"
+                                    Stroke="{StaticResource BorderSoft}"
+                                    StrokeThickness="1"
+                                    Padding="6"
+                                    AbsoluteLayout.LayoutBounds="0,48,1,220"
+                                    AbsoluteLayout.LayoutFlags="WidthProportional"
+                                    IsVisible="{Binding IsCustomerSuggestionsOpen}"
+                                    ZIndex="10">
+                                <Border.StrokeShape>
+                                    <RoundRectangle CornerRadius="10" />
+                                </Border.StrokeShape>
+                                <VerticalStackLayout Spacing="4" BackgroundColor="{StaticResource SurfaceCard}">
+                                    <Label Text="No customers found."
+                                           FontSize="12"
+                                           TextColor="{StaticResource TextMuted}"
+                                           HorizontalTextAlignment="Center"
+                                           IsVisible="{Binding ShowNoCustomerSuggestions}" />
+                                    <CollectionView ItemsSource="{Binding CustomerSuggestions}"
+                                                    SelectionMode="None"
+                                                    IsVisible="{Binding HasCustomerSuggestions}"
+                                                    BackgroundColor="{StaticResource SurfaceCard}">
+                                        <CollectionView.ItemTemplate>
+                                            <DataTemplate>
+                                                <Border StrokeThickness="0" Padding="8,6" BackgroundColor="Transparent">
+                                                    <Border.Triggers>
+                                                        <DataTrigger TargetType="Border" Binding="{Binding IsHighlighted}" Value="True">
+                                                            <Setter Property="BackgroundColor" Value="#EAF4FF" />
+                                                        </DataTrigger>
+                                                    </Border.Triggers>
+                                                    <Border.GestureRecognizers>
+                                                        <TapGestureRecognizer Command="{Binding SelectCommand}" />
+                                                    </Border.GestureRecognizers>
+                                                    <Grid ColumnDefinitions="*,Auto" ColumnSpacing="8">
+                                                        <VerticalStackLayout Spacing="2">
+                                                            <Label Text="{Binding FullName}" FontAttributes="Bold" FontSize="13" TextColor="{StaticResource TextMain}" />
+                                                            <Label Text="Customer account" FontSize="11" TextColor="{StaticResource TextMuted}" />
+                                                        </VerticalStackLayout>
+                                                        <Label Grid.Column="1"
+                                                               Text="{Binding AccountNumber}"
+                                                               FontSize="11"
+                                                               TextColor="{StaticResource TextMuted}"
+                                                               VerticalTextAlignment="Center" />
+                                                    </Grid>
+                                                </Border>
+                                            </DataTemplate>
+                                        </CollectionView.ItemTemplate>
+                                    </CollectionView>
+                                </VerticalStackLayout>
+                            </Border>
+                        </AbsoluteLayout>
+                        <Label Text="Search by name, account number, or GUID."
                                FontSize="11"
                                TextColor="#97A6B8"
                                Margin="0,-2,0,0" />
@@ -293,7 +359,7 @@
                                                HorizontalTextAlignment="Center" />
                                     </Border>
                                     <Button Text="SAVE BILL"
-                                            Command="{Binding CreateBillCommand}"
+                                            Command="{Binding SaveBillCommand}"
                                             FontAttributes="Bold"
                                             BackgroundColor="{StaticResource PrimaryBlueDark}" />
                                 </VerticalStackLayout>

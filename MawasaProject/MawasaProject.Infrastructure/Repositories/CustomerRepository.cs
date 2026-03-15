@@ -57,7 +57,7 @@ public sealed class CustomerRepository(
         const string sql = """
             SELECT * FROM Customers
             WHERE IsDeleted = 0
-              AND (Name LIKE $Search OR PhoneNumber LIKE $Search OR Email LIKE $Search)
+              AND (Name LIKE $Search OR PhoneNumber LIKE $Search OR Email LIKE $Search OR Id LIKE $Search)
             ORDER BY Name;
             """;
 

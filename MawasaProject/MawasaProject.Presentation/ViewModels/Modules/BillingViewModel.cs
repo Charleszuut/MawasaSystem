@@ -11,6 +11,7 @@ namespace MawasaProject.Presentation.ViewModels.Modules;
 public sealed class BillingViewModel : BaseViewModel
 {
     private const int LedgerPageSize = 5;
+    private const int CustomerSuggestionLimit = 8;
     private readonly IBillingService _billingService;
     private readonly ICustomerService _customerService;
     private readonly AppStateStore _stateStore;
@@ -26,9 +27,15 @@ public sealed class BillingViewModel : BaseViewModel
     private readonly RelayCommand _setAllFilterCommand;
     private readonly RelayCommand _setPendingFilterCommand;
     private readonly RelayCommand _setPrintedFilterCommand;
+    private readonly RelayCommand _openCustomerSuggestionsCommand;
+    private readonly RelayCommand _dismissCustomerSuggestionsCommand;
+    private readonly RelayCommand _moveCustomerSuggestionUpCommand;
+    private readonly RelayCommand _moveCustomerSuggestionDownCommand;
+    private readonly RelayCommand _commitHighlightedCustomerSuggestionCommand;
+    private readonly RelayCommandOfT<CustomerSuggestionItem> _selectCustomerSuggestionCommand;
 
     private string _billNumber = string.Empty;
-    private string _customerIdText = string.Empty;
+    private string _customerSearchText = string.Empty;
     private DateTime _invoiceDateUtc = DateTime.UtcNow;
     private string _personInCharge = "Staff";
     private decimal _previousReading;
@@ -48,6 +55,11 @@ public sealed class BillingViewModel : BaseViewModel
     private int _totalPages = 1;
     private int _filteredLedgerCount;
     private BillingLedgerFilter _selectedLedgerFilter = BillingLedgerFilter.All;
+    private bool _isCustomerSuggestionsOpen;
+    private CustomerSuggestionItem? _highlightedCustomerSuggestion;
+    private CancellationTokenSource? _customerSearchCts;
+    private bool _suppressCustomerSearch;
+    private Guid _selectedCustomerId;
 
     public BillingViewModel()
         : this(
@@ -76,8 +88,15 @@ public sealed class BillingViewModel : BaseViewModel
         _setAllFilterCommand = new RelayCommand(() => SetFilter(BillingLedgerFilter.All));
         _setPendingFilterCommand = new RelayCommand(() => SetFilter(BillingLedgerFilter.PendingPrint));
         _setPrintedFilterCommand = new RelayCommand(() => SetFilter(BillingLedgerFilter.Printed));
+        _openCustomerSuggestionsCommand = new RelayCommand(OpenCustomerSuggestions);
+        _dismissCustomerSuggestionsCommand = new RelayCommand(DismissCustomerSuggestions);
+        _moveCustomerSuggestionUpCommand = new RelayCommand(MoveCustomerSuggestionUp);
+        _moveCustomerSuggestionDownCommand = new RelayCommand(MoveCustomerSuggestionDown);
+        _commitHighlightedCustomerSuggestionCommand = new RelayCommand(CommitHighlightedCustomerSuggestion);
+        _selectCustomerSuggestionCommand = new RelayCommandOfT<CustomerSuggestionItem>(SelectCustomerSuggestion);
 
         LedgerRows = [];
+        CustomerSuggestions = [];
         PersonInCharge = _stateStore.Session?.Username ?? "Staff";
         BillNumber = GenerateBillNumber();
         RecalculateComputedTotals();
@@ -85,6 +104,7 @@ public sealed class BillingViewModel : BaseViewModel
     }
 
     public ObservableCollection<BillingLedgerRowItem> LedgerRows { get; }
+    public ObservableCollection<CustomerSuggestionItem> CustomerSuggestions { get; }
 
     public string BillNumber
     {
@@ -92,10 +112,24 @@ public sealed class BillingViewModel : BaseViewModel
         set => SetProperty(ref _billNumber, value);
     }
 
-    public string CustomerIdText
+    public string CustomerSearchText
     {
-        get => _customerIdText;
-        set => SetProperty(ref _customerIdText, value);
+        get => _customerSearchText;
+        set
+        {
+            if (!SetProperty(ref _customerSearchText, value))
+            {
+                return;
+            }
+
+            if (_suppressCustomerSearch)
+            {
+                return;
+            }
+
+            _selectedCustomerId = Guid.Empty;
+            QueueCustomerSearch();
+        }
     }
 
     public DateTime InvoiceDateUtc
@@ -330,6 +364,8 @@ public sealed class BillingViewModel : BaseViewModel
 
     public AsyncCommand CreateBillCommand => _createBillCommand;
 
+    public AsyncCommand SaveBillCommand => _createBillCommand;
+
     public AsyncCommand RefreshLedgerCommand => _refreshLedgerCommand;
 
     public RelayCommand PreviousPageCommand => _previousPageCommand;
@@ -342,78 +378,124 @@ public sealed class BillingViewModel : BaseViewModel
 
     public RelayCommand SetPrintedFilterCommand => _setPrintedFilterCommand;
 
-    private async Task CreateBillInternalAsync()
+    public RelayCommand OpenCustomerSuggestionsCommand => _openCustomerSuggestionsCommand;
+
+    public RelayCommand DismissCustomerSuggestionsCommand => _dismissCustomerSuggestionsCommand;
+
+    public RelayCommand MoveCustomerSuggestionUpCommand => _moveCustomerSuggestionUpCommand;
+
+    public RelayCommand MoveCustomerSuggestionDownCommand => _moveCustomerSuggestionDownCommand;
+
+    public RelayCommand CommitHighlightedCustomerSuggestionCommand => _commitHighlightedCustomerSuggestionCommand;
+
+    public RelayCommandOfT<CustomerSuggestionItem> SelectCustomerSuggestionCommand => _selectCustomerSuggestionCommand;
+
+    public bool IsCustomerSuggestionsOpen
     {
-        if (!Guid.TryParse(CustomerIdText.Trim(), out var customerId))
+        get => _isCustomerSuggestionsOpen;
+        private set
         {
-            await _dialogService.AlertAsync("Validation", "Customer account must be a valid customer GUID.");
-            return;
+            if (SetProperty(ref _isCustomerSuggestionsOpen, value))
+            {
+                RaisePropertyChanged(nameof(ShowNoCustomerSuggestions));
+            }
         }
-
-        if (CurrentReading < PreviousReading)
-        {
-            await _dialogService.AlertAsync("Validation", "Current reading cannot be less than previous reading.");
-            return;
-        }
-
-        if (TotalAmountDue <= 0m)
-        {
-            await _dialogService.AlertAsync("Validation", "Total amount due must be greater than zero.");
-            return;
-        }
-
-        if (string.IsNullOrWhiteSpace(BillNumber))
-        {
-            BillNumber = GenerateBillNumber();
-        }
-
-        var userId = _stateStore.Session?.UserId ?? Guid.Empty;
-        var bill = new Bill
-        {
-            Id = Guid.NewGuid(),
-            BillNumber = BillNumber.Trim(),
-            CustomerId = customerId,
-            Amount = TotalAmountDue,
-            Balance = TotalAmountDue,
-            DueDateUtc = DueDateUtc,
-            CreatedByUserId = userId,
-            CreatedAtUtc = DateTime.UtcNow
-        };
-
-        await _billingService.CreateBillAsync(bill);
-        await _dialogService.AlertAsync("Billing", $"Bill {bill.BillNumber} was saved.");
-
-        BillNumber = GenerateBillNumber();
-        InvoiceDateUtc = DateTime.UtcNow;
-        PreviousReading = CurrentReading;
-        StatusMessage = "Bill saved successfully.";
-
-        await LoadLedgerAsync();
     }
 
-    private async Task LoadLedgerAsync()
+    public bool HasCustomerSuggestions => CustomerSuggestions.Count > 0;
+
+    public bool ShowNoCustomerSuggestions => IsCustomerSuggestionsOpen && !HasCustomerSuggestions;
+
+    private async Task CreateBillInternalAsync(CancellationToken token)
+    {
+        try
+        {
+            if (!TryResolveCustomerId(out var customerId))
+            {
+                await _dialogService.AlertAsync("Validation", "Select a customer or enter a valid customer GUID.");
+                return;
+            }
+
+            if (CurrentReading < PreviousReading)
+            {
+                await _dialogService.AlertAsync("Validation", "Current reading cannot be less than previous reading.");
+                return;
+            }
+
+            if (TotalAmountDue <= 0m)
+            {
+                await _dialogService.AlertAsync("Validation", "Total amount due must be greater than zero.");
+                return;
+            }
+
+            var existingBills = await RunOnBackgroundAsync(
+                ct => _billingService.GetBillsByCustomerAsync(customerId, ct),
+                token);
+
+            if (existingBills.Any(bill => bill.Status != BillStatus.Paid))
+            {
+                await _dialogService.AlertAsync(
+                    "Duplicate bill",
+                    "This customer already has an active or unpaid bill. Please settle it before creating a new one.");
+                return;
+            }
+
+            if (string.IsNullOrWhiteSpace(BillNumber))
+            {
+                BillNumber = GenerateBillNumber();
+            }
+
+            var userId = _stateStore.Session?.UserId ?? Guid.Empty;
+            var bill = new Bill
+            {
+                Id = Guid.NewGuid(),
+                BillNumber = BillNumber.Trim(),
+                CustomerId = customerId,
+                Amount = TotalAmountDue,
+                Balance = TotalAmountDue,
+                DueDateUtc = DueDateUtc,
+                CreatedByUserId = userId,
+                CreatedAtUtc = DateTime.UtcNow
+            };
+
+            await RunOnBackgroundAsync(ct => _billingService.CreateBillAsync(bill, ct), token);
+            await _dialogService.AlertAsync("Billing", $"Bill {bill.BillNumber} was saved.");
+
+            BillNumber = GenerateBillNumber();
+            InvoiceDateUtc = DateTime.UtcNow;
+            PreviousReading = CurrentReading;
+            StatusMessage = "Bill saved successfully.";
+
+            await LoadLedgerAsync(token);
+        }
+        catch (OperationCanceledException)
+        {
+            throw;
+        }
+        catch (Exception exception)
+        {
+            ErrorMessage = exception.Message;
+            await _dialogService.AlertAsync("Billing", $"Failed to save bill: {exception.Message}");
+            throw;
+        }
+    }
+
+    private async Task LoadLedgerAsync(CancellationToken token)
     {
         PersonInCharge = _stateStore.Session?.Username ?? "Staff";
 
-        var bills = await _billingService.GetBillsAsync();
-        var customers = await _customerService.SearchCustomersAsync(null);
-        var customerById = customers.ToDictionary(c => c.Id, c => c);
+        var billsTask = RunOnBackgroundAsync(ct => _billingService.GetBillsAsync(ct), token);
+        var customersTask = RunOnBackgroundAsync(ct => _customerService.SearchCustomersAsync(null, ct), token);
+        await Task.WhenAll(billsTask, customersTask);
 
-        _allLedgerRows.Clear();
-        foreach (var bill in bills)
-        {
-            _allLedgerRows.Add(MapLedgerRow(bill, customerById));
-        }
+        var bills = await billsTask;
+        var customers = await customersTask;
 
-        PendingPrintCount = bills.Count(b => b.Status != BillStatus.Paid);
-        PrintedLockedCount = bills.Count(b => b.Status == BillStatus.Paid);
-        CollectionsToday = bills
-            .Where(b => b.PaidAtUtc.HasValue && b.PaidAtUtc.Value.Date == DateTime.UtcNow.Date)
-            .Sum(b => b.Amount);
-        OutstandingBalance = bills.Sum(b => b.Balance);
+        var snapshot = await Task.Run(
+            () => BuildLedgerSnapshot(bills, customers, token),
+            token);
 
-        ApplyLedgerFilters(resetToFirstPage: true);
-        StatusMessage = $"Loaded {_allLedgerRows.Count} ledger row(s).";
+        ApplyLedgerSnapshot(snapshot);
     }
 
     private BillingLedgerRowItem MapLedgerRow(Bill bill, IReadOnlyDictionary<Guid, Customer> customerById)
@@ -449,6 +531,20 @@ public sealed class BillingViewModel : BaseViewModel
             PrintStatusBackground = printStatusBackground,
             PrintStatusForeground = printStatusForeground
         };
+    }
+
+    private void ApplyLedgerSnapshot(LedgerSnapshot snapshot)
+    {
+        _allLedgerRows.Clear();
+        _allLedgerRows.AddRange(snapshot.AllRows);
+
+        PendingPrintCount = snapshot.PendingPrintCount;
+        PrintedLockedCount = snapshot.PrintedLockedCount;
+        CollectionsToday = snapshot.CollectionsToday;
+        OutstandingBalance = snapshot.OutstandingBalance;
+
+        ApplyLedgerFilters(resetToFirstPage: true);
+        StatusMessage = $"Loaded {_allLedgerRows.Count} ledger row(s).";
     }
 
     private static (string Text, string Background, string Foreground) ResolveBillStatusAppearance(BillStatus status)
@@ -581,10 +677,293 @@ public sealed class BillingViewModel : BaseViewModel
         _nextPageCommand.RaiseCanExecuteChanged();
     }
 
+    private void OpenCustomerSuggestions()
+    {
+        IsCustomerSuggestionsOpen = true;
+        StartImmediateCustomerSearch();
+    }
+
+    private void DismissCustomerSuggestions()
+    {
+        if (!IsCustomerSuggestionsOpen)
+        {
+            return;
+        }
+
+        IsCustomerSuggestionsOpen = false;
+        _customerSearchCts?.Cancel();
+        _customerSearchCts = null;
+        ClearCustomerSuggestions();
+    }
+
+    private void QueueCustomerSearch()
+    {
+        IsCustomerSuggestionsOpen = true;
+        StartDebouncedCustomerSearch(CustomerSearchText);
+    }
+
+    private void StartDebouncedCustomerSearch(string? term)
+    {
+        _customerSearchCts?.Cancel();
+        var cts = new CancellationTokenSource();
+        _customerSearchCts = cts;
+        _ = DebouncedCustomerSearchAsync(term, cts.Token);
+    }
+
+    private async Task DebouncedCustomerSearchAsync(string? term, CancellationToken token)
+    {
+        try
+        {
+            await Task.Delay(300, token);
+            await LoadCustomerSuggestionsAsync(term, token);
+        }
+        catch (OperationCanceledException)
+        {
+            // Intentionally ignored.
+        }
+    }
+
+    private void StartImmediateCustomerSearch()
+    {
+        _customerSearchCts?.Cancel();
+        var cts = new CancellationTokenSource();
+        _customerSearchCts = cts;
+        _ = LoadCustomerSuggestionsAsync(CustomerSearchText, cts.Token);
+    }
+
+    private async Task LoadCustomerSuggestionsAsync(string? term, CancellationToken token)
+    {
+        var query = string.IsNullOrWhiteSpace(term) ? null : term.Trim();
+        var customers = await _customerService.SearchCustomersAsync(query, token);
+        if (token.IsCancellationRequested || !IsCustomerSuggestionsOpen)
+        {
+            return;
+        }
+
+        var suggestions = BuildCustomerSuggestions(customers, query);
+        UpdateCustomerSuggestions(suggestions);
+    }
+
+    private IReadOnlyList<CustomerSuggestionItem> BuildCustomerSuggestions(
+        IReadOnlyList<Customer> customers,
+        string? term)
+    {
+        IEnumerable<Customer> filtered = customers;
+        if (!string.IsNullOrWhiteSpace(term))
+        {
+            var trimmed = term.Trim();
+            var compact = trimmed.Replace("-", string.Empty, StringComparison.Ordinal);
+            filtered = customers.Where(customer =>
+            {
+                var nameMatch = customer.Name.Contains(trimmed, StringComparison.OrdinalIgnoreCase);
+                var accountNumber = GetAccountNumber(customer.Id);
+                var accountMatch = accountNumber.Contains(compact, StringComparison.OrdinalIgnoreCase);
+                var guidMatch = customer.Id.ToString().Contains(trimmed, StringComparison.OrdinalIgnoreCase);
+                return nameMatch || accountMatch || guidMatch;
+            });
+        }
+
+        return filtered
+            .OrderBy(customer => customer.Name)
+            .ThenBy(customer => customer.Id)
+            .Take(CustomerSuggestionLimit)
+            .Select(CreateCustomerSuggestion)
+            .ToList();
+    }
+
+    private CustomerSuggestionItem CreateCustomerSuggestion(Customer customer)
+    {
+        CustomerSuggestionItem? item = null;
+        item = new CustomerSuggestionItem
+        {
+            CustomerId = customer.Id,
+            FullName = customer.Name,
+            AccountNumber = GetAccountNumber(customer.Id),
+            SelectCommand = new RelayCommand(() =>
+            {
+                if (item is not null)
+                {
+                    SelectCustomerSuggestion(item);
+                }
+            })
+        };
+
+        return item;
+    }
+
+    private void UpdateCustomerSuggestions(IReadOnlyList<CustomerSuggestionItem> suggestions)
+    {
+        CustomerSuggestions.Clear();
+        foreach (var suggestion in suggestions)
+        {
+            CustomerSuggestions.Add(suggestion);
+        }
+
+        RaisePropertyChanged(nameof(HasCustomerSuggestions));
+        RaisePropertyChanged(nameof(ShowNoCustomerSuggestions));
+        SetHighlightedSuggestion(CustomerSuggestions.FirstOrDefault());
+    }
+
+    private void ClearCustomerSuggestions()
+    {
+        CustomerSuggestions.Clear();
+        SetHighlightedSuggestion(null);
+        RaisePropertyChanged(nameof(HasCustomerSuggestions));
+        RaisePropertyChanged(nameof(ShowNoCustomerSuggestions));
+    }
+
+    private void MoveCustomerSuggestionUp()
+    {
+        if (!IsCustomerSuggestionsOpen || CustomerSuggestions.Count == 0)
+        {
+            return;
+        }
+
+        var index = GetHighlightedSuggestionIndex();
+        var nextIndex = index <= 0 ? CustomerSuggestions.Count - 1 : index - 1;
+        SetHighlightedSuggestion(CustomerSuggestions[nextIndex]);
+    }
+
+    private void MoveCustomerSuggestionDown()
+    {
+        if (!IsCustomerSuggestionsOpen || CustomerSuggestions.Count == 0)
+        {
+            return;
+        }
+
+        var index = GetHighlightedSuggestionIndex();
+        var nextIndex = index >= CustomerSuggestions.Count - 1 ? 0 : index + 1;
+        SetHighlightedSuggestion(CustomerSuggestions[nextIndex]);
+    }
+
+    private void CommitHighlightedCustomerSuggestion()
+    {
+        if (!IsCustomerSuggestionsOpen || _highlightedCustomerSuggestion is null)
+        {
+            return;
+        }
+
+        ApplyCustomerSuggestion(_highlightedCustomerSuggestion);
+    }
+
+    private void SelectCustomerSuggestion(CustomerSuggestionItem? suggestion)
+    {
+        if (suggestion is null)
+        {
+            return;
+        }
+
+        ApplyCustomerSuggestion(suggestion);
+    }
+
+    private void ApplyCustomerSuggestion(CustomerSuggestionItem suggestion)
+    {
+        _selectedCustomerId = suggestion.CustomerId;
+        _suppressCustomerSearch = true;
+        CustomerSearchText = $"{suggestion.FullName} ({suggestion.AccountNumber})";
+        _suppressCustomerSearch = false;
+        StatusMessage = $"Selected {suggestion.FullName}.";
+        DismissCustomerSuggestions();
+    }
+
+    private int GetHighlightedSuggestionIndex()
+    {
+        if (_highlightedCustomerSuggestion is null)
+        {
+            return -1;
+        }
+
+        return CustomerSuggestions.IndexOf(_highlightedCustomerSuggestion);
+    }
+
+    private void SetHighlightedSuggestion(CustomerSuggestionItem? suggestion)
+    {
+        if (_highlightedCustomerSuggestion == suggestion)
+        {
+            return;
+        }
+
+        if (_highlightedCustomerSuggestion is not null)
+        {
+            _highlightedCustomerSuggestion.IsHighlighted = false;
+        }
+
+        _highlightedCustomerSuggestion = suggestion;
+
+        if (_highlightedCustomerSuggestion is not null)
+        {
+            _highlightedCustomerSuggestion.IsHighlighted = true;
+        }
+    }
+
+    private bool TryResolveCustomerId(out Guid customerId)
+    {
+        if (_selectedCustomerId != Guid.Empty)
+        {
+            customerId = _selectedCustomerId;
+            return true;
+        }
+
+        if (Guid.TryParse(CustomerSearchText.Trim(), out var parsed))
+        {
+            customerId = parsed;
+            return true;
+        }
+
+        customerId = Guid.Empty;
+        return false;
+    }
+
+    private static string GetAccountNumber(Guid id)
+    {
+        return id.ToString("N")[..8].ToUpperInvariant();
+    }
+
     private static string GenerateBillNumber()
     {
         return $"INV-{DateTime.UtcNow:yyyyMMdd-HHmmssfff}";
     }
+
+    private static async Task<T> RunOnBackgroundAsync<T>(Func<CancellationToken, Task<T>> work, CancellationToken token)
+    {
+        return await Task.Run(() => work(token), token);
+    }
+
+    private LedgerSnapshot BuildLedgerSnapshot(
+        IReadOnlyList<Bill> bills,
+        IReadOnlyList<Customer> customers,
+        CancellationToken token)
+    {
+        var customerById = customers.ToDictionary(c => c.Id, c => c);
+        var rows = new List<BillingLedgerRowItem>(bills.Count);
+
+        foreach (var bill in bills)
+        {
+            token.ThrowIfCancellationRequested();
+            rows.Add(MapLedgerRow(bill, customerById));
+        }
+
+        var pendingPrintCount = bills.Count(b => b.Status != BillStatus.Paid);
+        var printedLockedCount = bills.Count(b => b.Status == BillStatus.Paid);
+        var collectionsToday = bills
+            .Where(b => b.PaidAtUtc.HasValue && b.PaidAtUtc.Value.Date == DateTime.UtcNow.Date)
+            .Sum(b => b.Amount);
+        var outstandingBalance = bills.Sum(b => b.Balance);
+
+        return new LedgerSnapshot(
+            rows,
+            pendingPrintCount,
+            printedLockedCount,
+            collectionsToday,
+            outstandingBalance);
+    }
+
+    private sealed record LedgerSnapshot(
+        List<BillingLedgerRowItem> AllRows,
+        int PendingPrintCount,
+        int PrintedLockedCount,
+        decimal CollectionsToday,
+        decimal OutstandingBalance);
 
     private enum BillingLedgerFilter
     {
