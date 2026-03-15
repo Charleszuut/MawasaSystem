@@ -17,7 +17,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("MawasaProject.Presentation")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0+de1d6fc08c7d789dc5fea608b258e0508c35d5e1")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0+cb21f084f9b25c2a1309b1668022868e18b855f7")]
 [assembly: System.Reflection.AssemblyProductAttribute("MawasaProject.Presentation")]
 [assembly: System.Reflection.AssemblyTitleAttribute("MawasaProject.Presentation")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

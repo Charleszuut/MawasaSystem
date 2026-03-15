@@ -25,7 +25,8 @@ public sealed class SqliteDatabaseInitializer(
         new("004", "MawasaProject.Infrastructure.Data.Sql.004_phase6_audit_hardening.sql", "Phase 6 audit hardening"),
         new("005", "MawasaProject.Infrastructure.Data.Sql.005_phase12_backup_hardening.sql", "Phase 12 backup and restore hardening"),
         new("006", "MawasaProject.Infrastructure.Data.Sql.006_phase13_printer_hardening.sql", "Phase 13 printer integration hardening"),
-        new("007", "MawasaProject.Infrastructure.Data.Sql.007_phase14_documents_hardening.sql", "Phase 14 receipt and invoice hardening")
+        new("007", "MawasaProject.Infrastructure.Data.Sql.007_phase14_documents_hardening.sql", "Phase 14 receipt and invoice hardening"),
+        new("008", "MawasaProject.Infrastructure.Data.Sql.008_billing_table_alias.sql", "Billing table mirror")
     ];
 
     private static readonly Guid AdminRoleId = Guid.Parse("7D089763-EBB9-4F5D-909F-02CB685EF65D");
@@ -63,6 +64,7 @@ public sealed class SqliteDatabaseInitializer(
                     await ValidateDatabaseIntegrityAsync(connection, cancellationToken);
                 }
 
+                await EnsureBillingMirrorAsync(connection, cancellationToken);
                 await SeedAsync(connection, cancellationToken);
             }
             finally
@@ -303,6 +305,91 @@ public sealed class SqliteDatabaseInitializer(
             var table = reader.IsDBNull(0) ? "unknown" : reader.GetString(0);
             var rowId = reader.IsDBNull(1) ? "unknown" : reader.GetValue(1).ToString();
             throw new InvalidOperationException($"Foreign key integrity violation detected in table {table}, rowid {rowId}.");
+        }
+    }
+
+    private static async Task EnsureBillingMirrorAsync(SqliteConnection connection, CancellationToken cancellationToken)
+    {
+        const string createTable = """
+            CREATE TABLE IF NOT EXISTS Billing (
+                Id TEXT PRIMARY KEY,
+                CustomerId TEXT NOT NULL,
+                BillNumber TEXT NOT NULL UNIQUE,
+                Amount REAL NOT NULL CHECK(Amount >= 0),
+                Balance REAL NOT NULL CHECK(Balance >= 0 AND Balance <= Amount),
+                DueDateUtc TEXT NOT NULL,
+                PaidAtUtc TEXT NULL,
+                Status INTEGER NOT NULL CHECK(Status IN (1,2,3)),
+                CreatedByUserId TEXT NOT NULL,
+                CreatedAtUtc TEXT NOT NULL,
+                UpdatedAtUtc TEXT NULL,
+                IsDeleted INTEGER NOT NULL DEFAULT 0 CHECK(IsDeleted IN (0,1)),
+                DeletedAtUtc TEXT NULL,
+                CONSTRAINT FK_Billing_Customer FOREIGN KEY (CustomerId) REFERENCES Customers(Id) ON DELETE RESTRICT
+            );
+            """;
+
+        using (var create = connection.CreateCommand())
+        {
+            create.CommandText = createTable;
+            await create.ExecuteNonQueryAsync(cancellationToken);
+        }
+
+        const string backfill = """
+            INSERT INTO Billing (Id, CustomerId, BillNumber, Amount, Balance, DueDateUtc, PaidAtUtc, Status, CreatedByUserId, CreatedAtUtc, UpdatedAtUtc, IsDeleted, DeletedAtUtc)
+            SELECT Id, CustomerId, BillNumber, Amount, Balance, DueDateUtc, PaidAtUtc, Status, CreatedByUserId, CreatedAtUtc, UpdatedAtUtc, IsDeleted, DeletedAtUtc
+            FROM Bills
+            WHERE Id NOT IN (SELECT Id FROM Billing);
+            """;
+
+        using (var insert = connection.CreateCommand())
+        {
+            insert.CommandText = backfill;
+            await insert.ExecuteNonQueryAsync(cancellationToken);
+        }
+
+        const string insertTrigger = """
+            CREATE TRIGGER IF NOT EXISTS trg_Bills_Insert_Billing
+            AFTER INSERT ON Bills
+            BEGIN
+                INSERT OR REPLACE INTO Billing (Id, CustomerId, BillNumber, Amount, Balance, DueDateUtc, PaidAtUtc, Status, CreatedByUserId, CreatedAtUtc, UpdatedAtUtc, IsDeleted, DeletedAtUtc)
+                VALUES (NEW.Id, NEW.CustomerId, NEW.BillNumber, NEW.Amount, NEW.Balance, NEW.DueDateUtc, NEW.PaidAtUtc, NEW.Status, NEW.CreatedByUserId, NEW.CreatedAtUtc, NEW.UpdatedAtUtc, NEW.IsDeleted, NEW.DeletedAtUtc);
+            END;
+            """;
+
+        using (var trigger = connection.CreateCommand())
+        {
+            trigger.CommandText = insertTrigger;
+            await trigger.ExecuteNonQueryAsync(cancellationToken);
+        }
+
+        const string updateTrigger = """
+            CREATE TRIGGER IF NOT EXISTS trg_Bills_Update_Billing
+            AFTER UPDATE ON Bills
+            BEGIN
+                INSERT OR REPLACE INTO Billing (Id, CustomerId, BillNumber, Amount, Balance, DueDateUtc, PaidAtUtc, Status, CreatedByUserId, CreatedAtUtc, UpdatedAtUtc, IsDeleted, DeletedAtUtc)
+                VALUES (NEW.Id, NEW.CustomerId, NEW.BillNumber, NEW.Amount, NEW.Balance, NEW.DueDateUtc, NEW.PaidAtUtc, NEW.Status, NEW.CreatedByUserId, NEW.CreatedAtUtc, NEW.UpdatedAtUtc, NEW.IsDeleted, NEW.DeletedAtUtc);
+            END;
+            """;
+
+        using (var trigger = connection.CreateCommand())
+        {
+            trigger.CommandText = updateTrigger;
+            await trigger.ExecuteNonQueryAsync(cancellationToken);
+        }
+
+        const string deleteTrigger = """
+            CREATE TRIGGER IF NOT EXISTS trg_Bills_Delete_Billing
+            AFTER DELETE ON Bills
+            BEGIN
+                DELETE FROM Billing WHERE Id = OLD.Id;
+            END;
+            """;
+
+        using (var trigger = connection.CreateCommand())
+        {
+            trigger.CommandText = deleteTrigger;
+            await trigger.ExecuteNonQueryAsync(cancellationToken);
         }
     }
 
