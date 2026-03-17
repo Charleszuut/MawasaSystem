@@ -2,7 +2,6 @@ using System.Collections.ObjectModel;
 using MawasaProject.Application.Abstractions.Services;
 using MawasaProject.Domain.Entities;
 using MawasaProject.Domain.Enums;
-using MawasaProject.Presentation.Diagnostics;
 using MawasaProject.Presentation.Services.Dialogs;
 using MawasaProject.Presentation.ViewModels.Core;
 using MawasaProject.Presentation.ViewModels.Models;
@@ -12,7 +11,6 @@ namespace MawasaProject.Presentation.ViewModels.Modules;
 public sealed class PaymentsViewModel : BaseViewModel
 {
     private const int CustomerSuggestionLimit = 8;
-    private const int CustomerSuggestionMinLength = 2;
 
     private readonly IPaymentService _paymentService;
     private readonly IBillingService _billingService;
@@ -249,9 +247,8 @@ public sealed class PaymentsViewModel : BaseViewModel
             return;
         }
 
-        if (term.Length < CustomerSuggestionMinLength)
+        if (term.Length < 2)
         {
-            ClearCustomerSuggestions();
             return;
         }
 
@@ -276,7 +273,7 @@ public sealed class PaymentsViewModel : BaseViewModel
         QueueCustomerSuggestions(term);
     }
 
-    private async Task LoadBillSnapshotAsync(CancellationToken token)
+    private async Task LoadBillSnapshotAsync()
     {
         var term = BillSearchText.Trim();
         if (string.IsNullOrWhiteSpace(term))
@@ -285,21 +282,17 @@ public sealed class PaymentsViewModel : BaseViewModel
             return;
         }
 
-        var billsTask = RunOnBackgroundAsync(ct => _billingService.GetBillsAsync(ct), token);
-        var customersTask = RunOnBackgroundAsync(ct => _customerService.SearchCustomersAsync(null, ct), token);
-        await Task.WhenAll(billsTask, customersTask);
-
-        var bills = await billsTask;
+        var bills = await _billingService.GetBillsAsync();
         if (bills.Count == 0)
         {
             await _dialogService.AlertAsync("Search", "No bills are available yet.");
             return;
         }
 
-        var customers = await customersTask;
+        var customers = await _customerService.SearchCustomersAsync(null);
         var customersById = customers.ToDictionary(x => x.Id, x => x);
 
-        var selected = await Task.Run(() => ResolveBillBySearch(term, bills, customersById), token);
+        var selected = ResolveBillBySearch(term, bills, customersById);
         if (selected is null)
         {
             ResetSelectedBillState();
@@ -309,20 +302,13 @@ public sealed class PaymentsViewModel : BaseViewModel
         }
 
         ApplySelectedBill(selected, bills, customersById);
-        await RefreshHistoryForBillAsync(selected.Id, token);
+        await RefreshHistoryForBillAsync(selected.Id);
         StatusMessage = $"Loaded bill {selected.BillNumber}.";
     }
 
     private void OpenCustomerSuggestions()
     {
         IsCustomerSuggestionsOpen = true;
-        var term = BillSearchText?.Trim() ?? string.Empty;
-        if (term.Length < CustomerSuggestionMinLength)
-        {
-            ClearCustomerSuggestions();
-            return;
-        }
-
         StartImmediateCustomerSearch();
     }
 
@@ -350,9 +336,7 @@ public sealed class PaymentsViewModel : BaseViewModel
         _customerSuggestionCts?.Cancel();
         var cts = new CancellationTokenSource();
         _customerSuggestionCts = cts;
-        FireAndForget(
-            DebouncedCustomerSearchAsync(term, cts.Token),
-            "PaymentsViewModel.DebouncedCustomerSearchAsync");
+        _ = DebouncedCustomerSearchAsync(term, cts.Token);
     }
 
     private async Task DebouncedCustomerSearchAsync(string? term, CancellationToken token)
@@ -373,64 +357,19 @@ public sealed class PaymentsViewModel : BaseViewModel
         _customerSuggestionCts?.Cancel();
         var cts = new CancellationTokenSource();
         _customerSuggestionCts = cts;
-        FireAndForget(
-            LoadCustomerSuggestionsAsync(BillSearchText, cts.Token),
-            "PaymentsViewModel.LoadCustomerSuggestionsAsync");
+        _ = LoadCustomerSuggestionsAsync(BillSearchText, cts.Token);
     }
 
     private async Task LoadCustomerSuggestionsAsync(string? term, CancellationToken token)
     {
-        var query = string.IsNullOrWhiteSpace(term) ? string.Empty : term.Trim();
-        if (query.Length < CustomerSuggestionMinLength)
-        {
-            if (IsCustomerSuggestionsOpen && !token.IsCancellationRequested)
-            {
-                ClearCustomerSuggestions();
-            }
-
-            return;
-        }
-
-        IReadOnlyList<Customer> customers;
-        try
-        {
-            customers = await RunOnBackgroundAsync(ct => _customerService.SearchCustomersAsync(query, ct), token);
-        }
-        catch (OperationCanceledException)
-        {
-            return;
-        }
-        catch (Exception exception)
-        {
-            AppDiagnostics.LogException("PaymentsViewModel.LoadCustomerSuggestionsAsync", exception);
-            if (IsCustomerSuggestionsOpen && !token.IsCancellationRequested)
-            {
-                ClearCustomerSuggestions();
-            }
-
-            return;
-        }
-
+        var query = string.IsNullOrWhiteSpace(term) ? null : term.Trim();
+        var customers = await _customerService.SearchCustomersAsync(query, token);
         if (token.IsCancellationRequested || !IsCustomerSuggestionsOpen)
         {
             return;
         }
 
-        IReadOnlyList<CustomerSuggestionItem> suggestions;
-        try
-        {
-            suggestions = await Task.Run(() => BuildCustomerSuggestions(customers, query), token);
-        }
-        catch (OperationCanceledException)
-        {
-            return;
-        }
-
-        if (token.IsCancellationRequested || !IsCustomerSuggestionsOpen)
-        {
-            return;
-        }
-
+        var suggestions = BuildCustomerSuggestions(customers, query);
         UpdateCustomerSuggestions(suggestions);
     }
 
@@ -517,7 +456,7 @@ public sealed class PaymentsViewModel : BaseViewModel
         BillSearchText = suggestion.FullName;
         StatusMessage = $"Selected {suggestion.FullName}.";
         DismissCustomerSuggestions();
-        _ = RunBusyAsync(ct => LoadBillSnapshotSilentAsync(suggestion.FullName, ct));
+        _ = RunBusyAsync(async () => await LoadBillSnapshotSilentAsync(suggestion.FullName));
     }
 
     private void SetHighlightedSuggestion(CustomerSuggestionItem? suggestion)
@@ -540,13 +479,9 @@ public sealed class PaymentsViewModel : BaseViewModel
         }
     }
 
-    private async Task LoadBillSnapshotSilentAsync(string term, CancellationToken token)
+    private async Task LoadBillSnapshotSilentAsync(string term)
     {
-        var billsTask = RunOnBackgroundAsync(ct => _billingService.GetBillsAsync(ct), token);
-        var customersTask = RunOnBackgroundAsync(ct => _customerService.SearchCustomersAsync(null, ct), token);
-        await Task.WhenAll(billsTask, customersTask);
-
-        var bills = await billsTask;
+        var bills = await _billingService.GetBillsAsync();
         if (bills.Count == 0)
         {
             ResetSelectedBillState();
@@ -554,10 +489,10 @@ public sealed class PaymentsViewModel : BaseViewModel
             return;
         }
 
-        var customers = await customersTask;
+        var customers = await _customerService.SearchCustomersAsync(null);
         var customersById = customers.ToDictionary(x => x.Id, x => x);
 
-        var selected = await Task.Run(() => ResolveBillBySearch(term, bills, customersById), token);
+        var selected = ResolveBillBySearch(term, bills, customersById);
         if (selected is null)
         {
             ResetSelectedBillState();
@@ -566,7 +501,7 @@ public sealed class PaymentsViewModel : BaseViewModel
         }
 
         ApplySelectedBill(selected, bills, customersById);
-        await RefreshHistoryForBillAsync(selected.Id, token);
+        await RefreshHistoryForBillAsync(selected.Id);
         StatusMessage = $"Loaded bill {selected.BillNumber}.";
     }
 
@@ -611,12 +546,12 @@ public sealed class PaymentsViewModel : BaseViewModel
             return;
         }
 
-        await RefreshHistoryForBillAsync(_selectedBillId, CancellationToken.None);
+        await RefreshHistoryForBillAsync(_selectedBillId);
     }
 
     private async Task RefreshSelectedBillByIdAsync(Guid billId)
     {
-        var bills = await RunOnBackgroundAsync(ct => _billingService.GetBillsAsync(ct), CancellationToken.None);
+        var bills = await _billingService.GetBillsAsync();
         var selected = bills.FirstOrDefault(x => x.Id == billId);
         if (selected is null)
         {
@@ -624,15 +559,15 @@ public sealed class PaymentsViewModel : BaseViewModel
             return;
         }
 
-        var customers = await RunOnBackgroundAsync(ct => _customerService.SearchCustomersAsync(null, ct), CancellationToken.None);
+        var customers = await _customerService.SearchCustomersAsync(null);
         var customersById = customers.ToDictionary(x => x.Id, x => x);
         ApplySelectedBill(selected, bills, customersById);
-        await RefreshHistoryForBillAsync(billId, CancellationToken.None);
+        await RefreshHistoryForBillAsync(billId);
     }
 
-    private async Task RefreshHistoryForBillAsync(Guid billId, CancellationToken token)
+    private async Task RefreshHistoryForBillAsync(Guid billId)
     {
-        var payments = await RunOnBackgroundAsync(ct => _paymentService.GetPaymentsByBillAsync(billId, ct), token);
+        var payments = await _paymentService.GetPaymentsByBillAsync(billId);
 
         PaymentHistory.Clear();
         foreach (var row in payments
@@ -748,14 +683,13 @@ public sealed class PaymentsViewModel : BaseViewModel
             return containsBillNumber;
         }
 
-        var compactTerm = term.Replace("-", string.Empty);
         var matchedCustomerIds = customersById.Values
             .Where(x => x.Name.Contains(term, StringComparison.OrdinalIgnoreCase)
                         || (!string.IsNullOrWhiteSpace(x.PhoneNumber) && x.PhoneNumber.Contains(term, StringComparison.OrdinalIgnoreCase))
                         || (!string.IsNullOrWhiteSpace(x.Email) && x.Email.Contains(term, StringComparison.OrdinalIgnoreCase))
-                        || GetAccountNumber(x.Id).Contains(compactTerm, StringComparison.OrdinalIgnoreCase)
+                        || GetAccountNumber(x.Id).Contains(term.Replace("-", string.Empty, StringComparison.OrdinalIgnoreCase), StringComparison.OrdinalIgnoreCase))
                         || x.Id.ToString().Contains(term, StringComparison.OrdinalIgnoreCase))
-            .Select(x => x.Id)
+            .Select(x => x.Id)  
             .ToHashSet();
 
         if (matchedCustomerIds.Count == 0)
@@ -815,25 +749,5 @@ public sealed class PaymentsViewModel : BaseViewModel
     private static string GetAccountNumber(Guid id)
     {
         return id.ToString("N")[..8].ToUpperInvariant();
-    }
-
-    private static async Task<T> RunOnBackgroundAsync<T>(Func<CancellationToken, Task<T>> work, CancellationToken token)
-    {
-        return await Task.Run(() => work(token), token);
-    }
-
-    private static void FireAndForget(Task task, string context)
-    {
-        _ = task.ContinueWith(
-            completed =>
-            {
-                if (completed.Exception is null)
-                {
-                    return;
-                }
-
-                AppDiagnostics.LogException(context, completed.Exception.GetBaseException());
-            },
-            TaskContinuationOptions.OnlyOnFaulted);
     }
 }
