@@ -12,6 +12,19 @@
                 <Setter Property="CornerRadius" Value="8" />
                 <Setter Property="Padding" Value="12,8" />
             </Style>
+            <Style TargetType="Entry">
+                <Setter Property="TextColor" Value="#20354A" />
+                <Setter Property="PlaceholderColor" Value="#8CA0B5" />
+                <Setter Property="BackgroundColor" Value="Transparent" />
+            </Style>
+            <Style TargetType="Picker">
+                <Setter Property="TextColor" Value="#20354A" />
+                <Setter Property="BackgroundColor" Value="Transparent" />
+            </Style>
+            <Style TargetType="DatePicker">
+                <Setter Property="TextColor" Value="#20354A" />
+                <Setter Property="BackgroundColor" Value="Transparent" />
+            </Style>
         </ResourceDictionary>
     </Application.Resources>
 </Application>

@@ -48,12 +48,32 @@ public partial class App : Microsoft.Maui.Controls.Application
 
             e.SetObserved();
         };
+
+#if WINDOWS
+        Microsoft.UI.Xaml.Application.Current.UnhandledException += (_, e) =>
+        {
+            try
+            {
+                AppDiagnostics.LogException("WinUI.UnhandledException", e.Exception);
+            }
+            catch
+            {
+            }
+        };
+#endif
+
+        AppDiagnostics.LogMessage($"App started. Log file: {AppDiagnostics.LogPath}");
     }
 
     protected override Window CreateWindow(IActivationState? activationState)
     {
         var loadingPage = CreateLoadingPage("Starting Mawasa Project...");
         var window = new Window(loadingPage);
+        window.Destroying += (_, _) =>
+        {
+            // Forcefully terminate to avoid background host lingering.
+            Process.GetCurrentProcess().Kill();
+        };
 
         _ = InitializeAsync(window);
         return window;

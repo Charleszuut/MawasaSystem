@@ -1,5 +1,6 @@
 using Microsoft.Extensions.DependencyInjection;
 using MawasaProject.Application.Abstractions.Security;
+using MawasaProject.Presentation.Diagnostics;
 using MawasaProject.Presentation.Services.Navigation;
 using MawasaProject.Presentation.ViewModels.Core;
 
@@ -52,9 +53,16 @@ public partial class AppShell : Microsoft.Maui.Controls.Shell
         Dispatcher.Dispatch(() =>
         {
             ApplyAccessPolicies();
+            var route = CurrentState?.Location?.OriginalString ?? string.Empty;
             if (_stateStore.Session is null)
             {
                 _ = GoToAsync(RouteMap.LoginRoot);
+                return;
+            }
+
+            if (route.Contains("login", StringComparison.OrdinalIgnoreCase))
+            {
+                _ = GoToAsync(RouteMap.DashboardHome);
             }
         });
     }
@@ -90,7 +98,14 @@ public partial class AppShell : Microsoft.Maui.Controls.Shell
             return;
         }
 
-        await GoToAsync(route);
+        try
+        {
+            await GoToAsync(route);
+        }
+        catch (Exception exception)
+        {
+            AppDiagnostics.LogException($"Navigation failed: {route}", exception);
+        }
     }
 
     private async void OnShellNavigated(object? sender, ShellNavigatedEventArgs e)

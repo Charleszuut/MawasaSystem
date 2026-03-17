@@ -1,7 +1,6 @@
 using MawasaProject.Application.Abstractions.Security;
 using MawasaProject.Application.Abstractions.Services;
 using MawasaProject.Presentation.Services.Dialogs;
-using MawasaProject.Presentation.Services.Navigation;
 using MawasaProject.Presentation.Validation;
 using MawasaProject.Presentation.ViewModels.Core;
 
@@ -11,7 +10,6 @@ public sealed class LoginViewModel(
     IAuthService authService,
     ISessionService sessionService,
     AppStateStore appStateStore,
-    INavigationService navigationService,
     IDialogService dialogService) : BaseViewModel
 {
     private string _username = string.Empty;
@@ -23,7 +21,6 @@ public sealed class LoginViewModel(
         App.Services.GetRequiredService<IAuthService>(),
         App.Services.GetRequiredService<ISessionService>(),
         App.Services.GetRequiredService<AppStateStore>(),
-        App.Services.GetRequiredService<INavigationService>(),
         App.Services.GetRequiredService<IDialogService>())
     {
     }
@@ -93,6 +90,5 @@ public sealed class LoginViewModel(
 
         appStateStore.Session = sessionService.CurrentSession;
         StatusMessage = "Login successful.";
-        await navigationService.GoToAsync(RouteMap.DashboardHome);
     }));
 }

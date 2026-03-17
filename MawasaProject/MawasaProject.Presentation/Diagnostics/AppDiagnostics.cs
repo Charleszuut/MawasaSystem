@@ -5,6 +5,7 @@ namespace MawasaProject.Presentation.Diagnostics;
 public static class AppDiagnostics
 {
     private static readonly object FileLock = new();
+    public static string LogPath => Path.Combine(FileSystem.AppDataDirectory, "mawasa.crash.log");
 
     public static void LogException(string context, Exception exception)
     {
@@ -34,10 +35,9 @@ public static class AppDiagnostics
 
     private static void AppendLog(string content)
     {
-        var path = Path.Combine(FileSystem.AppDataDirectory, "mawasa.crash.log");
         lock (FileLock)
         {
-            File.AppendAllText(path, content);
+            File.AppendAllText(LogPath, content);
         }
     }
 }

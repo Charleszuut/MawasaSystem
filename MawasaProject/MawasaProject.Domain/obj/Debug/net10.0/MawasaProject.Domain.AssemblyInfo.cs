@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("MawasaProject.Domain")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+cb21f084f9b25c2a1309b1668022868e18b855f7")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+0c5414bdf87dd954c97f13387dce9de4ed6f8fb4")]
 [assembly: System.Reflection.AssemblyProductAttribute("MawasaProject.Domain")]
 [assembly: System.Reflection.AssemblyTitleAttribute("MawasaProject.Domain")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:behaviors="clr-namespace:MawasaProject.Presentation.Behaviors"
              x:Class="MawasaProject.Presentation.Views.Pages.PaymentsPage"
              Title="Payments"
              Shell.NavBarIsVisible="False"
@@ -47,21 +48,95 @@
                        Style="{StaticResource HelperTextStyle}" />
             </Grid>
 
-            <Border BackgroundColor="{StaticResource SurfaceCard}" Stroke="{StaticResource BorderSoft}" StrokeThickness="1" Padding="14,12">
+            <Border BackgroundColor="{StaticResource SurfaceCard}"
+                    Stroke="{StaticResource BorderSoft}"
+                    StrokeThickness="1"
+                    Padding="14,12"
+                    IsClippedToBounds="False">
                 <Border.StrokeShape>
                     <RoundRectangle CornerRadius="14" />
                 </Border.StrokeShape>
 
-                <Grid ColumnDefinitions="3.2*,Auto,Auto" ColumnSpacing="10" VerticalOptions="Center">
-                    <VerticalStackLayout Spacing="4">
+                <Grid ColumnDefinitions="3.2*,Auto,Auto"
+                      ColumnSpacing="10"
+                      VerticalOptions="Center"
+                      IsClippedToBounds="False">
+                    <VerticalStackLayout Spacing="4" IsClippedToBounds="False">
                         <Label Text="Search Customer" FontSize="24" FontAttributes="Bold" TextColor="{StaticResource TextMain}" />
-                        <Border BackgroundColor="White" Stroke="{StaticResource BorderStrong}" StrokeThickness="1" Padding="10,0">
-                            <Border.StrokeShape>
-                                <RoundRectangle CornerRadius="8" />
-                            </Border.StrokeShape>
-                            <Entry Placeholder="Bill number, bill GUID, customer name, phone, or email"
-                                   Text="{Binding BillSearchText}" />
-                        </Border>
+                        <AbsoluteLayout HeightRequest="44"
+                                        IsClippedToBounds="False"
+                                        ZIndex="40">
+                            <Border BackgroundColor="White" Stroke="{StaticResource BorderStrong}" StrokeThickness="1" Padding="10,0"
+                                    AbsoluteLayout.LayoutBounds="0,0,1,44"
+                                    AbsoluteLayout.LayoutFlags="WidthProportional">
+                                <Border.StrokeShape>
+                                    <RoundRectangle CornerRadius="8" />
+                                </Border.StrokeShape>
+                                <Entry Placeholder="Bill number, bill GUID, customer name, phone, or email"
+                                       Text="{Binding BillSearchText}"
+                                       BackgroundColor="Transparent"
+                                       TextColor="#20354A"
+                                       PlaceholderColor="#8CA0B5"
+                                       ClearButtonVisibility="WhileEditing"
+                                       Focused="OnEntryFocused"
+                                       Unfocused="OnEntryUnfocused"
+                                       TextChanged="OnSearchTextChanged">
+                                    <Entry.Behaviors>
+                                        <behaviors:FocusCommandBehavior FocusedCommand="{Binding OpenCustomerSuggestionsCommand}"
+                                                                       UnfocusedCommand="{Binding DismissCustomerSuggestionsCommand}" />
+                                    </Entry.Behaviors>
+                                </Entry>
+                            </Border>
+                            <Border BackgroundColor="{StaticResource SurfaceCard}"
+                                    Stroke="{StaticResource BorderSoft}"
+                                    StrokeThickness="1"
+                                    Padding="6"
+                                    AbsoluteLayout.LayoutBounds="0,48,1,220"
+                                    AbsoluteLayout.LayoutFlags="WidthProportional"
+                                    IsVisible="{Binding IsCustomerSuggestionsOpen}"
+                                    ZIndex="60">
+                                <Border.StrokeShape>
+                                    <RoundRectangle CornerRadius="10" />
+                                </Border.StrokeShape>
+                                <VerticalStackLayout Spacing="4" BackgroundColor="{StaticResource SurfaceCard}">
+                                    <Label Text="No customers found."
+                                           FontSize="12"
+                                           TextColor="{StaticResource TextMuted}"
+                                           HorizontalTextAlignment="Center"
+                                           IsVisible="{Binding ShowNoCustomerSuggestions}" />
+                                    <CollectionView ItemsSource="{Binding CustomerSuggestions}"
+                                                    SelectionMode="None"
+                                                    IsVisible="{Binding HasCustomerSuggestions}"
+                                                    BackgroundColor="{StaticResource SurfaceCard}">
+                                        <CollectionView.ItemTemplate>
+                                            <DataTemplate>
+                                                <Border StrokeThickness="0" Padding="8,6" BackgroundColor="Transparent">
+                                                    <Border.Triggers>
+                                                        <DataTrigger TargetType="Border" Binding="{Binding IsHighlighted}" Value="True">
+                                                            <Setter Property="BackgroundColor" Value="#EAF4FF" />
+                                                        </DataTrigger>
+                                                    </Border.Triggers>
+                                                    <Border.GestureRecognizers>
+                                                        <TapGestureRecognizer Command="{Binding SelectCommand}" />
+                                                    </Border.GestureRecognizers>
+                                                    <Grid ColumnDefinitions="*,Auto" ColumnSpacing="8">
+                                                        <VerticalStackLayout Spacing="2">
+                                                            <Label Text="{Binding FullName}" FontAttributes="Bold" FontSize="13" TextColor="{StaticResource TextMain}" />
+                                                            <Label Text="Customer account" FontSize="11" TextColor="{StaticResource TextMuted}" />
+                                                        </VerticalStackLayout>
+                                                        <Label Grid.Column="1"
+                                                               Text="{Binding AccountNumber}"
+                                                               FontSize="11"
+                                                               TextColor="{StaticResource TextMuted}"
+                                                               VerticalTextAlignment="Center" />
+                                                    </Grid>
+                                                </Border>
+                                            </DataTemplate>
+                                        </CollectionView.ItemTemplate>
+                                    </CollectionView>
+                                </VerticalStackLayout>
+                            </Border>
+                        </AbsoluteLayout>
                         <Label Text="Tip: use a bill number for exact match, or customer details for nearest unpaid bill."
                                Style="{StaticResource HelperTextStyle}" />
                     </VerticalStackLayout>
@@ -194,7 +269,12 @@
                                         <RoundRectangle CornerRadius="8" />
                                     </Border.StrokeShape>
                                     <Entry Placeholder="Optional external transaction reference"
-                                           Text="{Binding Reference}" />
+                                           Text="{Binding Reference}"
+                                           BackgroundColor="Transparent"
+                                           TextColor="#20354A"
+                                           PlaceholderColor="#8CA0B5"
+                                           Focused="OnEntryFocused"
+                                           Unfocused="OnEntryUnfocused" />
                                 </Border>
                                 <Label Text="{Binding HistorySummary}" Style="{StaticResource HelperTextStyle}" />
                             </VerticalStackLayout>
@@ -223,7 +303,12 @@
                                 </Border.StrokeShape>
                                 <Entry Placeholder="Enter amount tendered"
                                        Keyboard="Numeric"
-                                       Text="{Binding AmountTendered}" />
+                                       Text="{Binding AmountTendered}"
+                                       BackgroundColor="Transparent"
+                                       TextColor="#20354A"
+                                       PlaceholderColor="#8CA0B5"
+                                       Focused="OnEntryFocused"
+                                       Unfocused="OnEntryUnfocused" />
                             </Border>
                         </VerticalStackLayout>
 
