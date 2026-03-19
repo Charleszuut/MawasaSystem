@@ -4,6 +4,7 @@ using MawasaProject.Presentation.Services.Messaging;
 using MawasaProject.Presentation.Services.Navigation;
 using MawasaProject.Presentation.ViewModels.Core;
 using MawasaProject.Presentation.ViewModels.Modules;
+using MawasaProject.Presentation.Views.Pages;
 
 namespace MawasaProject.Presentation;
 
@@ -29,7 +30,6 @@ public static class DependencyInjection
         services.AddTransient<PrintQueueViewModel>();
         services.AddTransient<ReceiptViewModel>();
         services.AddTransient<InvoiceViewModel>();
-
         return services;
     }
 }

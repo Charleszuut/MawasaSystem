@@ -1,4 +1,4 @@
-namespace MawasaProject.Presentation.Services.Navigation;
+    namespace MawasaProject.Presentation.Services.Navigation;
 
 public sealed class NavigationService : INavigationService
 {

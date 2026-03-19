@@ -199,29 +199,252 @@ public sealed class SqliteDatabaseInitializer(
     {
         var statements = new List<string>();
         var builder = new StringBuilder();
-        using var reader = new StringReader(script);
-        string? line;
+        var token = new StringBuilder();
 
-        while ((line = reader.ReadLine()) is not null)
+        var inSingleQuote = false;
+        var inDoubleQuote = false;
+        var inBracket = false;
+        var inLineComment = false;
+        var inBlockComment = false;
+
+        var triggerMode = false;
+        var detectTrigger = true;
+        var tokenCount = 0;
+        string? firstToken = null;
+        string? secondToken = null;
+        string? lastToken = null;
+
+        void ResetStatementState()
         {
-            var trimmed = line.Trim();
-            if (trimmed.StartsWith("--", StringComparison.Ordinal))
+            builder.Clear();
+            token.Clear();
+            inSingleQuote = false;
+            inDoubleQuote = false;
+            inBracket = false;
+            inLineComment = false;
+            inBlockComment = false;
+            triggerMode = false;
+            detectTrigger = true;
+            tokenCount = 0;
+            firstToken = null;
+            secondToken = null;
+            lastToken = null;
+        }
+
+        void ConsiderTriggerToken(string value)
+        {
+            if (!detectTrigger || triggerMode)
             {
+                return;
+            }
+
+            tokenCount++;
+
+            if (tokenCount == 1)
+            {
+                firstToken = value;
+                if (!string.Equals(firstToken, "create", StringComparison.OrdinalIgnoreCase))
+                {
+                    detectTrigger = false;
+                }
+
+                return;
+            }
+
+            if (tokenCount == 2)
+            {
+                secondToken = value;
+                if (string.Equals(firstToken, "create", StringComparison.OrdinalIgnoreCase))
+                {
+                    if (string.Equals(secondToken, "trigger", StringComparison.OrdinalIgnoreCase))
+                    {
+                        triggerMode = true;
+                        detectTrigger = false;
+                    }
+                    else if (string.Equals(secondToken, "temp", StringComparison.OrdinalIgnoreCase)
+                        || string.Equals(secondToken, "temporary", StringComparison.OrdinalIgnoreCase))
+                    {
+                        // Wait for third token.
+                    }
+                    else
+                    {
+                        detectTrigger = false;
+                    }
+                }
+                else
+                {
+                    detectTrigger = false;
+                }
+
+                return;
+            }
+
+            if (tokenCount == 3)
+            {
+                if (string.Equals(firstToken, "create", StringComparison.OrdinalIgnoreCase)
+                    && (string.Equals(secondToken, "temp", StringComparison.OrdinalIgnoreCase)
+                        || string.Equals(secondToken, "temporary", StringComparison.OrdinalIgnoreCase))
+                    && string.Equals(value, "trigger", StringComparison.OrdinalIgnoreCase))
+                {
+                    triggerMode = true;
+                }
+
+                detectTrigger = false;
+            }
+        }
+
+        void FlushToken()
+        {
+            if (token.Length == 0)
+            {
+                return;
+            }
+
+            var value = token.ToString();
+            lastToken = value;
+            ConsiderTriggerToken(value);
+            token.Clear();
+        }
+
+        for (var i = 0; i < script.Length; i++)
+        {
+            var c = script[i];
+            var next = i + 1 < script.Length ? script[i + 1] : '\0';
+
+            if (inLineComment)
+            {
+                if (c == '\n')
+                {
+                    inLineComment = false;
+                    builder.Append(c);
+                }
+
                 continue;
             }
 
-            builder.AppendLine(line);
-            if (trimmed.EndsWith(';'))
+            if (inBlockComment)
             {
-                var statement = builder.ToString().Trim();
-                if (!string.IsNullOrWhiteSpace(statement))
+                if (c == '*' && next == '/')
                 {
-                    statements.Add(statement);
+                    inBlockComment = false;
+                    i++;
+                    builder.Append(' ');
                 }
 
-                builder.Clear();
+                continue;
             }
+
+            if (!inSingleQuote && !inDoubleQuote && !inBracket)
+            {
+                if (c == '-' && next == '-')
+                {
+                    FlushToken();
+                    inLineComment = true;
+                    builder.Append(' ');
+                    i++;
+                    continue;
+                }
+
+                if (c == '/' && next == '*')
+                {
+                    FlushToken();
+                    inBlockComment = true;
+                    builder.Append(' ');
+                    i++;
+                    continue;
+                }
+            }
+
+            if (inSingleQuote)
+            {
+                builder.Append(c);
+                if (c == '\'' && next == '\'')
+                {
+                    builder.Append(next);
+                    i++;
+                }
+                else if (c == '\'')
+                {
+                    inSingleQuote = false;
+                }
+
+                continue;
+            }
+
+            if (inDoubleQuote)
+            {
+                builder.Append(c);
+                if (c == '"')
+                {
+                    inDoubleQuote = false;
+                }
+
+                continue;
+            }
+
+            if (inBracket)
+            {
+                builder.Append(c);
+                if (c == ']')
+                {
+                    inBracket = false;
+                }
+
+                continue;
+            }
+
+            if (c == '\'')
+            {
+                FlushToken();
+                inSingleQuote = true;
+                builder.Append(c);
+                continue;
+            }
+
+            if (c == '"')
+            {
+                FlushToken();
+                inDoubleQuote = true;
+                builder.Append(c);
+                continue;
+            }
+
+            if (c == '[')
+            {
+                FlushToken();
+                inBracket = true;
+                builder.Append(c);
+                continue;
+            }
+
+            if (char.IsLetterOrDigit(c) || c == '_')
+            {
+                token.Append(c);
+                builder.Append(c);
+                continue;
+            }
+
+            FlushToken();
+
+            if (c == ';')
+            {
+                if (!triggerMode || string.Equals(lastToken, "end", StringComparison.OrdinalIgnoreCase))
+                {
+                    var statement = builder.ToString().Trim();
+                    if (!string.IsNullOrWhiteSpace(statement))
+                    {
+                        statements.Add(statement);
+                    }
+
+                    ResetStatementState();
+                    continue;
+                }
+            }
+
+            builder.Append(c);
         }
+
+        FlushToken();
 
         var tail = builder.ToString().Trim();
         if (!string.IsNullOrWhiteSpace(tail))

@@ -35,16 +35,16 @@ public static class DependencyInjection
         });
 
         services.AddSingleton<ISqliteConnectionManager, SqliteConnectionManager>();
-        services.AddScoped<SqliteDatabaseService>();
+        services.AddTransient<SqliteDatabaseService>();
 
-        services.AddScoped<IDatabaseInitializer, SqliteDatabaseInitializer>();
+        services.AddTransient<IDatabaseInitializer, SqliteDatabaseInitializer>();
 
-        services.AddScoped<IUnitOfWork, SqliteUnitOfWork>();
-        services.AddScoped<IUserRepository, UserRepository>();
-        services.AddScoped<ICustomerRepository, CustomerRepository>();
-        services.AddScoped<IBillRepository, BillRepository>();
-        services.AddScoped<IPaymentRepository, PaymentRepository>();
-        services.AddScoped<IAuditRepository, AuditRepository>();
+        services.AddTransient<IUnitOfWork, SqliteUnitOfWork>();
+        services.AddTransient<IUserRepository, UserRepository>();
+        services.AddTransient<ICustomerRepository, CustomerRepository>();
+        services.AddTransient<IBillRepository, BillRepository>();
+        services.AddTransient<IPaymentRepository, PaymentRepository>();
+        services.AddTransient<IAuditRepository, AuditRepository>();
 
         services.AddSingleton<IPasswordHasher, Pbkdf2PasswordHasher>();
         services.AddSingleton<ISessionService, InMemorySessionService>();
@@ -52,13 +52,13 @@ public static class DependencyInjection
         services.AddSingleton<RoleManager>();
         services.AddSingleton<PermissionService>();
 
-        services.AddScoped<IBackupService, BackupService>();
-        services.AddScoped<IRestoreService, RestoreService>();
+        services.AddTransient<IBackupService, BackupService>();
+        services.AddTransient<IRestoreService, RestoreService>();
         services.AddSingleton<BackupIntegrityChecker>();
         services.AddSingleton<BackupScheduler>();
 
         services.AddSingleton<PrintQueueService>();
-        services.AddScoped<IPrinterService, PrinterService>();
+        services.AddTransient<IPrinterService, PrinterService>();
 
         services.AddSingleton<DocumentNumberService>();
         services.AddSingleton<TemplateEngine>();
@@ -67,12 +67,12 @@ public static class DependencyInjection
         services.AddSingleton<DocumentArtifactWriter>();
         services.AddSingleton<ReceiptNumberGenerator>();
         services.AddSingleton<InvoiceNumberGenerator>();
-        services.AddScoped<IReceiptService, ReceiptService>();
-        services.AddScoped<IInvoiceService, InvoiceService>();
-        services.AddScoped<IReportFileWriter, OfflineReportFileWriter>();
+        services.AddTransient<IReceiptService, ReceiptService>();
+        services.AddTransient<IInvoiceService, InvoiceService>();
+        services.AddTransient<IReportFileWriter, OfflineReportFileWriter>();
 
-        services.AddScoped<EntityDiffService>();
-        services.AddScoped<IAuditInterceptor, AuditInterceptor>();
+        services.AddTransient<EntityDiffService>();
+        services.AddTransient<IAuditInterceptor, AuditInterceptor>();
         services.AddSingleton<IAuditContextProvider, RuntimeAuditContextProvider>();
 
         services.AddSingleton(typeof(IAppLogger<>), typeof(AppLogger<>));

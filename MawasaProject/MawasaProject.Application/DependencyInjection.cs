@@ -11,14 +11,14 @@ public static class DependencyInjection
     {
         services.AddSingleton<BusinessRuleEngine>();
 
-        services.AddScoped<IAuthService, AuthService>();
-        services.AddScoped<IBillingService, BillingService>();
-        services.AddScoped<IPaymentService, PaymentService>();
-        services.AddScoped<ICustomerService, CustomerService>();
-        services.AddScoped<IDashboardService, DashboardService>();
-        services.AddScoped<IReportService, ReportService>();
-        services.AddScoped<IAuditService, AuditService>();
-        services.AddScoped<IUserService, UserService>();
+        services.AddTransient<IAuthService, AuthService>();
+        services.AddTransient<IBillingService, BillingService>();
+        services.AddTransient<IPaymentService, PaymentService>();
+        services.AddTransient<ICustomerService, CustomerService>();
+        services.AddTransient<IDashboardService, DashboardService>();
+        services.AddTransient<IReportService, ReportService>();
+        services.AddTransient<IAuditService, AuditService>();
+        services.AddTransient<IUserService, UserService>();
 
         return services;
     }

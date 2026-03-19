@@ -19,6 +19,11 @@ public sealed class BillingService(
         return billRepository.ListAsync(cancellationToken);
     }
 
+    public Task<Bill?> GetBillByIdAsync(Guid billId, CancellationToken cancellationToken = default)
+    {
+        return billRepository.GetByIdAsync(billId, cancellationToken);
+    }
+
     public Task<IReadOnlyList<BillDto>> GetBillsByCustomerAsync(Guid customerId, CancellationToken cancellationToken = default)
     {
         return billRepository.GetBillsByCustomerAsync(customerId, cancellationToken);
