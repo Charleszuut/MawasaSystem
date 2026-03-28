@@ -2,42 +2,151 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="MawasaProject.Presentation.Views.Pages.BackupPage"
-             Title="Backup &amp; Restore">
+             Title="Backup &amp; Restore"
+             Shell.NavBarIsVisible="False"
+             BackgroundColor="#E9EDF3">
+    <ContentPage.Resources>
+        <Color x:Key="SurfaceCard">#FFFFFF</Color>
+        <Color x:Key="TextMain">#1F2A37</Color>
+        <Color x:Key="TextMuted">#6F8093</Color>
+        <Color x:Key="BorderSoft">#D9E2EC</Color>
+        <Color x:Key="BorderStrong">#C6D4E3</Color>
+        <Color x:Key="PrimaryBlue">#1A9EDB</Color>
+    </ContentPage.Resources>
+
     <ScrollView>
-        <VerticalStackLayout Padding="20" Spacing="10" MaximumWidthRequest="780" HorizontalOptions="Center">
-            <Label Text="Backup &amp; Restore" FontSize="24" FontAttributes="Bold" />
+        <VerticalStackLayout Padding="16,14,16,32" Spacing="14">
+
+            <!-- Header -->
+            <VerticalStackLayout Spacing="2">
+                <Label Text="Backup &amp; Restore"
+                       FontSize="30"
+                       FontAttributes="Bold"
+                       TextColor="{StaticResource TextMain}" />
+                <Label Text="Export system data or restore from a previous backup."
+                       FontSize="13"
+                       TextColor="{StaticResource TextMuted}" />
+            </VerticalStackLayout>
+
+            <!-- Action Buttons -->
             <HorizontalStackLayout Spacing="8">
-                <Button Text="Refresh" Command="{Binding RefreshCommand}" />
-                <Button Text="Create Backup" Command="{Binding CreateBackupCommand}" />
-                <Button Text="Validate Backup" Command="{Binding ValidateBackupCommand}" />
+                <Button Text="Refresh"
+                        Command="{Binding RefreshCommand}"
+                        BackgroundColor="#EEF4FB"
+                        TextColor="#2D5279"
+                        FontAttributes="Bold"
+                        FontSize="13"
+                        Padding="16,8" />
+                <Button Text="Create Backup"
+                        Command="{Binding CreateBackupCommand}"
+                        BackgroundColor="{StaticResource PrimaryBlue}"
+                        TextColor="White"
+                        FontAttributes="Bold"
+                        FontSize="13"
+                        Padding="16,8" />
+                <Button Text="Validate"
+                        Command="{Binding ValidateBackupCommand}"
+                        BackgroundColor="#EEF4FB"
+                        TextColor="#2D5279"
+                        FontAttributes="Bold"
+                        FontSize="13"
+                        Padding="16,8" />
             </HorizontalStackLayout>
 
-            <Entry Placeholder="Restore file path" Text="{Binding RestorePath}" />
-            <Button Text="Restore Selected Backup"
-                    Command="{Binding RestoreCommand}"
-                    IsEnabled="{Binding CanRestore}"
-                    BackgroundColor="#B91C1C"
-                    TextColor="White" />
-            <Label Text="{Binding ValidationSummary}" FontSize="12" TextColor="#6B7280" />
+            <!-- Restore card -->
+            <Border BackgroundColor="#FFF8E8"
+                    Stroke="#F2CF7A"
+                    StrokeThickness="1"
+                    Padding="16,14">
+                <Border.StrokeShape>
+                    <RoundRectangle CornerRadius="14" />
+                </Border.StrokeShape>
+                <VerticalStackLayout Spacing="10">
+                    <Label Text="RESTORE FROM FILE"
+                           FontSize="13"
+                           FontAttributes="Bold"
+                           TextColor="#8B5D00" />
+                    <Label Text="This will overwrite all current data. Use with caution."
+                           FontSize="12"
+                           TextColor="#9A7030" />
+                    <Border BackgroundColor="White"
+                            Stroke="{StaticResource BorderStrong}"
+                            StrokeThickness="1"
+                            Padding="10,0">
+                        <Border.StrokeShape>
+                            <RoundRectangle CornerRadius="8" />
+                        </Border.StrokeShape>
+                        <Entry Placeholder="Restore file path"
+                               Text="{Binding RestorePath}"
+                               PlaceholderColor="#8A97A6"
+                               TextColor="{StaticResource TextMain}"
+                               BackgroundColor="Transparent"
+                               HeightRequest="42" />
+                    </Border>
+                    <Button Text="Restore Selected Backup"
+                            Command="{Binding RestoreCommand}"
+                            IsEnabled="{Binding CanRestore}"
+                            BackgroundColor="#D93025"
+                            TextColor="White"
+                            FontAttributes="Bold"
+                            HorizontalOptions="Start"
+                            Padding="22,10" />
+                    <Label Text="{Binding ValidationSummary}"
+                           FontSize="12"
+                           TextColor="{StaticResource TextMuted}" />
+                </VerticalStackLayout>
+            </Border>
 
-            <CollectionView ItemsSource="{Binding History}"
-                            SelectionMode="Single"
-                            SelectedItem="{Binding SelectedBackup, Mode=TwoWay}">
-                <CollectionView.ItemTemplate>
-                    <DataTemplate>
-                        <Frame Padding="8" Margin="0,4" BorderColor="#D1D5DB">
-                            <VerticalStackLayout>
-                                <Label Text="{Binding FileName}" FontAttributes="Bold" />
-                                <Label Text="{Binding FilePath}" FontSize="12" />
-                                <Label Text="{Binding Version, StringFormat='Version: {0}'}" FontSize="12" TextColor="#6B7280" />
-                                <Label Text="{Binding IsAutomatic, StringFormat='Automatic: {0}'}" FontSize="12" TextColor="#6B7280" />
-                                <Label Text="{Binding IntegrityVerifiedAtUtc, StringFormat='Verified: {0:yyyy-MM-dd HH:mm:ss} UTC'}" FontSize="12" TextColor="#6B7280" />
-                                <Label Text="{Binding CreatedAtUtc}" FontSize="12" TextColor="#6B7280" />
-                            </VerticalStackLayout>
-                        </Frame>
-                    </DataTemplate>
-                </CollectionView.ItemTemplate>
-            </CollectionView>
+            <!-- Backup History -->
+            <Border BackgroundColor="{StaticResource SurfaceCard}"
+                    Stroke="{StaticResource BorderSoft}"
+                    StrokeThickness="1"
+                    Padding="16,14">
+                <Border.StrokeShape>
+                    <RoundRectangle CornerRadius="14" />
+                </Border.StrokeShape>
+                <VerticalStackLayout Spacing="10">
+                    <Label Text="Backup History"
+                           FontSize="17"
+                           FontAttributes="Bold"
+                           TextColor="{StaticResource TextMain}" />
+                    <CollectionView ItemsSource="{Binding History}"
+                                    SelectionMode="Single"
+                                    SelectedItem="{Binding SelectedBackup, Mode=TwoWay}"
+                                    HeightRequest="340">
+                        <CollectionView.ItemTemplate>
+                            <DataTemplate>
+                                <Border Margin="0,0,0,6"
+                                        BackgroundColor="#F7F9FC"
+                                        Stroke="#D9E2EC"
+                                        StrokeThickness="1"
+                                        Padding="14,12">
+                                    <Border.StrokeShape>
+                                        <RoundRectangle CornerRadius="10" />
+                                    </Border.StrokeShape>
+                                    <VerticalStackLayout Spacing="2">
+                                        <Label Text="{Binding FileName}"
+                                               FontAttributes="Bold"
+                                               FontSize="14"
+                                               TextColor="{StaticResource TextMain}" />
+                                        <Label Text="{Binding FilePath}"
+                                               FontSize="11"
+                                               TextColor="{StaticResource TextMuted}"
+                                               LineBreakMode="TailTruncation" />
+                                        <Label Text="{Binding Version, StringFormat='Version: {0}'}"
+                                               FontSize="11"
+                                               TextColor="{StaticResource TextMuted}" />
+                                        <Label Text="{Binding CreatedAtUtc, StringFormat='Created: {0:yyyy-MM-dd HH:mm}'}"
+                                               FontSize="11"
+                                               TextColor="#3D7ABF" />
+                                    </VerticalStackLayout>
+                                </Border>
+                            </DataTemplate>
+                        </CollectionView.ItemTemplate>
+                    </CollectionView>
+                </VerticalStackLayout>
+            </Border>
+
         </VerticalStackLayout>
     </ScrollView>
 </ContentPage>

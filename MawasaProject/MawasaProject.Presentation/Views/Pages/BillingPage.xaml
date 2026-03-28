@@ -62,7 +62,7 @@
                       RowDefinitions="Auto,Auto"
                       ColumnSpacing="14"
                       RowSpacing="12">
-                    <VerticalStackLayout Grid.Column="0" Grid.Row="0" Spacing="10" IsClippedToBounds="False">
+                    <VerticalStackLayout Grid.Column="0" Grid.Row="0" Spacing="10">
                         <Grid ColumnDefinitions="*,Auto" ColumnSpacing="8">
                             <VerticalStackLayout Spacing="2">
                                 <Label Text="Generate Bill" FontSize="24" FontAttributes="Bold" TextColor="{StaticResource TextMain}" />
@@ -126,7 +126,7 @@
                         </VerticalStackLayout>
 
                         <Label Text="CUSTOMER NAME OR ACCOUNT NUMBER *" Style="{StaticResource FieldLabelStyle}" />
-                        <AbsoluteLayout HeightRequest="44" IsClippedToBounds="False" ZIndex="20">
+                        <AbsoluteLayout HeightRequest="44" ZIndex="20">
                             <Border BackgroundColor="{StaticResource SurfaceInput}"
                                     Stroke="{StaticResource BorderStrong}"
                                     StrokeThickness="1"

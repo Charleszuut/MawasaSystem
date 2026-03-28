@@ -17,60 +17,9 @@
         <Color x:Key="MetricBlueDark">#148BC2</Color>
     </ContentPage.Resources>
 
-    <Grid ColumnSpacing="0">
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="0" />
-            <ColumnDefinition Width="*" />
-        </Grid.ColumnDefinitions>
+    <Grid><!-- single column; sidebar is in AppShell FlyoutContent -->
 
-        <Grid Grid.Column="0" BackgroundColor="{StaticResource SidebarBlue}" IsVisible="False">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="*" />
-            </Grid.RowDefinitions>
-
-            <VerticalStackLayout Padding="14,18,12,14" Spacing="10" BackgroundColor="{StaticResource SidebarBlueDark}">
-                <HorizontalStackLayout Spacing="10">
-                    <Border WidthRequest="48" HeightRequest="48" BackgroundColor="#FFFFFF" StrokeThickness="0">
-                        <Border.StrokeShape>
-                            <RoundRectangle CornerRadius="8" />
-                        </Border.StrokeShape>
-                        <Image Source="mawasa_logo.png" Margin="6" Aspect="AspectFit" />
-                    </Border>
-                    <VerticalStackLayout Spacing="0" VerticalOptions="Center" IsVisible="{OnIdiom Phone=False, Tablet=True, Desktop=True}">
-                        <Label Text="MAWASA" TextColor="#FFFFFF" FontAttributes="Bold" FontSize="18" />
-                        <Label Text="Brgy. Manambulan, Tugbok&#10;District, Davao City"
-                               TextColor="#D9F2FF"
-                               FontSize="11" />
-                    </VerticalStackLayout>
-                </HorizontalStackLayout>
-            </VerticalStackLayout>
-
-            <ScrollView Grid.Row="1">
-                <VerticalStackLayout Padding="12,14,12,24" Spacing="8">
-                    <Label Text="ADMIN MENU"
-                           TextColor="#D7F0FF"
-                           FontSize="12"
-                           FontAttributes="Bold"
-                           IsVisible="{OnIdiom Phone=False, Tablet=True, Desktop=True}" />
-                    <Border BackgroundColor="{StaticResource SidebarItemActive}" StrokeThickness="0" Padding="12,10">
-                        <Border.StrokeShape>
-                            <RoundRectangle CornerRadius="10" />
-                        </Border.StrokeShape>
-                        <Label Text="Main" TextColor="{StaticResource SidebarText}" FontSize="15" FontAttributes="Bold" />
-                    </Border>
-                    <Label Text="Customers" TextColor="{StaticResource SidebarText}" FontSize="15" Margin="12,8,0,0" />
-                    <Label Text="Meter Management" TextColor="{StaticResource SidebarText}" FontSize="15" Margin="12,8,0,0" />
-                    <Label Text="Billing Management" TextColor="{StaticResource SidebarText}" FontSize="15" Margin="12,8,0,0" />
-                    <Label Text="Notice to Staff" TextColor="{StaticResource SidebarText}" FontSize="15" Margin="12,8,0,0" />
-                    <Label Text="Reports" TextColor="{StaticResource SidebarText}" FontSize="15" Margin="12,8,0,0" />
-                    <Label Text="Issue Complaints" TextColor="{StaticResource SidebarText}" FontSize="15" Margin="12,8,0,0" />
-                    <Label Text="Activity Log" TextColor="{StaticResource SidebarText}" FontSize="15" Margin="12,8,0,0" />
-                </VerticalStackLayout>
-            </ScrollView>
-        </Grid>
-
-        <ScrollView Grid.Column="0" Grid.ColumnSpan="2">
+        <ScrollView>
             <VerticalStackLayout Padding="16,14,16,24" Spacing="14">
                 <Border BackgroundColor="#F8FBFF" Stroke="#D6DEE7" StrokeThickness="1" Padding="12,10">
                     <Border.StrokeShape>
@@ -102,8 +51,9 @@
                                        HorizontalTextAlignment="Center" VerticalTextAlignment="Center" />
                             </Border>
                             <VerticalStackLayout Spacing="0">
-                                <Label Text="Administrator" FontAttributes="Bold" FontSize="13" TextColor="{StaticResource TextMain}" />
-                                <Label Text="Admin User" FontSize="11" TextColor="{StaticResource TextMuted}" />
+                            <Label Text="{Binding CurrentUsername, StringFormat='Hi, {0}'}"
+                                           FontAttributes="Bold" FontSize="13" TextColor="{StaticResource TextMain}" />
+                                <Label Text="{Binding CurrentRoleDisplay}" FontSize="11" TextColor="{StaticResource TextMuted}" />
                             </VerticalStackLayout>
                         </HorizontalStackLayout>
                     </Grid>
@@ -163,11 +113,6 @@
                     <VerticalStackLayout Spacing="10">
                         <Grid ColumnDefinitions="Auto,*" RowDefinitions="Auto,Auto">
                             <Label Text="Insights" FontSize="22" FontAttributes="Bold" TextColor="{StaticResource TextMain}" />
-                            <HorizontalStackLayout Grid.Column="1" HorizontalOptions="End" Spacing="8">
-                                <Label Text="Metric:" TextColor="{StaticResource TextMuted}" VerticalTextAlignment="Center" />
-                                <Button Text="Revenue" FontSize="12" Padding="12,8" BackgroundColor="{StaticResource MetricBlueDark}" />
-                                <Button Text="Customers" FontSize="12" Padding="12,8" BackgroundColor="#ECF2FB" TextColor="#42586F" />
-                            </HorizontalStackLayout>
                             <HorizontalStackLayout Grid.Row="1" Grid.ColumnSpan="2" HorizontalOptions="End" Spacing="8" Margin="0,8,0,0">
                                 <DatePicker Date="{Binding StartDateUtc}" />
                                 <DatePicker Date="{Binding EndDateUtc}" />
@@ -175,22 +120,11 @@
                             </HorizontalStackLayout>
                         </Grid>
 
-                        <Border BackgroundColor="#F8FBFF" Stroke="#D9E2EC" StrokeThickness="1" Padding="10">
-                            <Border.StrokeShape><RoundRectangle CornerRadius="10" /></Border.StrokeShape>
-                            <CollectionView ItemsSource="{Binding RevenueSeries}" HeightRequest="250" SelectionMode="None">
-                                <CollectionView.ItemTemplate>
-                                    <DataTemplate>
-                                        <Grid ColumnDefinitions="88,*,95" Padding="0,5">
-                                            <Label Text="{Binding Label}" VerticalTextAlignment="Center" TextColor="#54677A" FontSize="12" />
-                                            <ProgressBar Grid.Column="1" Progress="{Binding RelativeHeight}" HeightRequest="10"
-                                                         ProgressColor="#2A77E8" BackgroundColor="#DBE8FB" VerticalOptions="Center" />
-                                            <Label Grid.Column="2" Text="{Binding Revenue, StringFormat='P{0:N2}'}" HorizontalTextAlignment="End"
-                                                   VerticalTextAlignment="Center" FontSize="12" FontAttributes="Bold" TextColor="#31465D" />
-                                        </Grid>
-                                    </DataTemplate>
-                                </CollectionView.ItemTemplate>
-                            </CollectionView>
-                        </Border>
+                        <WebView x:Name="RevenueChartView"
+                                 HeightRequest="260"
+                                 HorizontalOptions="Fill"
+                                 Source="revenue_chart.html"
+                                 Navigated="OnChartNavigated" />
                     </VerticalStackLayout>
                 </Border>
 
@@ -204,19 +138,19 @@
                                 <Border BackgroundColor="#FFF8E8" Stroke="#F2CF7A" StrokeThickness="1" Padding="10,8">
                                     <Border.StrokeShape><RoundRectangle CornerRadius="12" /></Border.StrokeShape>
                                     <VerticalStackLayout>
-                                        <Label Text="NEED APPROVAL" FontSize="10" FontAttributes="Bold" TextColor="#B9871B" />
+                                        <Label Text="PENDING BILLS" FontSize="10" FontAttributes="Bold" TextColor="#B9871B" />
                                         <Label Text="{Binding PendingBills}" FontSize="28" FontAttributes="Bold" TextColor="#8B5D00" />
                                     </VerticalStackLayout>
                                 </Border>
-                                <Border Grid.Column="1" BackgroundColor="#ECF8FF" Stroke="#8DCCF3" StrokeThickness="1" Padding="10,8">
+                                <Border Grid.Column="1" BackgroundColor="#FFF1F0" Stroke="#FFC1C0" StrokeThickness="1" Padding="10,8">
                                     <Border.StrokeShape><RoundRectangle CornerRadius="12" /></Border.StrokeShape>
                                     <VerticalStackLayout>
-                                        <Label Text="NEED INSTALLATION" FontSize="10" FontAttributes="Bold" TextColor="#1971A2" />
-                                        <Label Text="{Binding OverdueBills}" FontSize="28" FontAttributes="Bold" TextColor="#0F5A83" />
+                                        <Label Text="OVERDUE BILLS" FontSize="10" FontAttributes="Bold" TextColor="#D32F2F" />
+                                        <Label Text="{Binding OverdueBills}" FontSize="28" FontAttributes="Bold" TextColor="#B71C1C" />
                                     </VerticalStackLayout>
                                 </Border>
                             </Grid>
-                            <Label Text="No applications awaiting approval." FontSize="13" TextColor="{StaticResource TextMuted}" />
+                            <Label Text="Prioritize follow-ups for overdue accounts to improve collection rate." FontSize="13" TextColor="{StaticResource TextMuted}" />
                         </VerticalStackLayout>
                     </Border>
 
@@ -227,15 +161,10 @@
                         <VerticalStackLayout Spacing="10">
                             <Label Text="Connection Analytics" FontSize="20" FontAttributes="Bold" TextColor="{StaticResource TextMain}" />
                             <Grid HorizontalOptions="Center">
-                                <Border WidthRequest="170" HeightRequest="170" BackgroundColor="Transparent" Stroke="#2D67E1" StrokeThickness="20">
-                                    <Border.StrokeShape><RoundRectangle CornerRadius="85" /></Border.StrokeShape>
-                                </Border>
-                                <Label Text="{Binding CollectionRate, StringFormat='{0:P0}'}"
-                                       FontSize="20"
-                                       FontAttributes="Bold"
-                                       TextColor="#2D67E1"
-                                       HorizontalTextAlignment="Center"
-                                       VerticalTextAlignment="Center" />
+                                <WebView x:Name="AnalyticsChartView"
+                                         WidthRequest="180" HeightRequest="180"
+                                         Source="analytics_chart.html"
+                                         Navigated="OnAnalyticsChartNavigated" />
                             </Grid>
                             <Label Text="{Binding TotalCustomers, StringFormat='Residential: {0}'}" FontSize="13" TextColor="#41556D" />
                         </VerticalStackLayout>

@@ -2,14 +2,169 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="MawasaProject.Presentation.Views.Pages.SettingsPage"
-             Title="Settings">
+             Title="Settings"
+             Shell.NavBarIsVisible="False"
+             BackgroundColor="#E9EDF3">
+    <ContentPage.Resources>
+        <Color x:Key="SurfaceCard">#FFFFFF</Color>
+        <Color x:Key="TextMain">#1F2A37</Color>
+        <Color x:Key="TextMuted">#6B7E8F</Color>
+        <Color x:Key="BorderSoft">#D9E2EC</Color>
+        <Color x:Key="PrimaryBlue">#1A9EDB</Color>
+        <Color x:Key="DangerRed">#D93025</Color>
+    </ContentPage.Resources>
+
     <ScrollView>
-        <VerticalStackLayout Padding="20" Spacing="10" MaximumWidthRequest="600" HorizontalOptions="Center">
-            <Label Text="Settings" FontSize="24" FontAttributes="Bold" />
-            <Button Text="Backup &amp; Restore" Command="{Binding OpenBackupCommand}" />
-            <Button Text="Printer Settings" Command="{Binding OpenPrinterSettingsCommand}" />
-            <Button Text="Print Queue" Command="{Binding OpenPrintQueueCommand}" />
-            <Button Text="Logout" Command="{Binding LogoutCommand}" />
+        <VerticalStackLayout Padding="24,18,24,36" Spacing="6">
+
+            <!-- Page Title -->
+            <Label Text="Settings"
+                   FontSize="30"
+                   FontAttributes="Bold"
+                   TextColor="{StaticResource TextMain}"
+                   Margin="0,0,0,2" />
+            <Label Text="System preferences and account options"
+                   FontSize="13"
+                   TextColor="{StaticResource TextMuted}"
+                   Margin="0,0,0,16" />
+
+            <!-- SYSTEM section label -->
+            <Label Text="SYSTEM"
+                   FontSize="11"
+                   FontAttributes="Bold"
+                   TextColor="#8FA9BA"
+                   Margin="4,0,0,4" />
+
+            <!-- Settings card -->
+            <Border BackgroundColor="{StaticResource SurfaceCard}"
+                    Stroke="{StaticResource BorderSoft}"
+                    StrokeThickness="1"
+                    Padding="0">
+                <Border.StrokeShape>
+                    <RoundRectangle CornerRadius="12" />
+                </Border.StrokeShape>
+                <VerticalStackLayout Spacing="0">
+
+                    <!-- Backup & Restore row -->
+                    <Grid ColumnDefinitions="*,Auto"
+                          Padding="18,14"
+                          BackgroundColor="Transparent">
+                        <Grid.GestureRecognizers>
+                            <TapGestureRecognizer Command="{Binding OpenBackupCommand}" />
+                        </Grid.GestureRecognizers>
+                        <VerticalStackLayout Grid.Column="0" Spacing="2" VerticalOptions="Center">
+                            <Label Text="Backup &amp; Restore"
+                                   FontSize="15"
+                                   FontAttributes="Bold"
+                                   TextColor="{StaticResource TextMain}" />
+                            <Label Text="Export or import system data"
+                                   FontSize="12"
+                                   TextColor="{StaticResource TextMuted}" />
+                        </VerticalStackLayout>
+                        <Label Grid.Column="1"
+                               Text=">"
+                               FontSize="18"
+                               TextColor="#B0C4D8"
+                               VerticalTextAlignment="Center" />
+                    </Grid>
+
+                    <BoxView HeightRequest="1" BackgroundColor="{StaticResource BorderSoft}" Margin="18,0" />
+
+                    <!-- Printer Settings row -->
+                    <Grid ColumnDefinitions="*,Auto"
+                          Padding="18,14"
+                          BackgroundColor="Transparent">
+                        <Grid.GestureRecognizers>
+                            <TapGestureRecognizer Command="{Binding OpenPrinterSettingsCommand}" />
+                        </Grid.GestureRecognizers>
+                        <VerticalStackLayout Grid.Column="0" Spacing="2" VerticalOptions="Center">
+                            <Label Text="Printer Settings"
+                                   FontSize="15"
+                                   FontAttributes="Bold"
+                                   TextColor="{StaticResource TextMain}" />
+                            <Label Text="Configure connected printers"
+                                   FontSize="12"
+                                   TextColor="{StaticResource TextMuted}" />
+                        </VerticalStackLayout>
+                        <Label Grid.Column="1"
+                               Text=">"
+                               FontSize="18"
+                               TextColor="#B0C4D8"
+                               VerticalTextAlignment="Center" />
+                    </Grid>
+
+                    <BoxView HeightRequest="1" BackgroundColor="{StaticResource BorderSoft}" Margin="18,0" />
+
+                    <!-- Print Queue row -->
+                    <Grid ColumnDefinitions="*,Auto"
+                          Padding="18,14"
+                          BackgroundColor="Transparent">
+                        <Grid.GestureRecognizers>
+                            <TapGestureRecognizer Command="{Binding OpenPrintQueueCommand}" />
+                        </Grid.GestureRecognizers>
+                        <VerticalStackLayout Grid.Column="0" Spacing="2" VerticalOptions="Center">
+                            <Label Text="Print Queue"
+                                   FontSize="15"
+                                   FontAttributes="Bold"
+                                   TextColor="{StaticResource TextMain}" />
+                            <Label Text="View and manage queued print jobs"
+                                   FontSize="12"
+                                   TextColor="{StaticResource TextMuted}" />
+                        </VerticalStackLayout>
+                        <Label Grid.Column="1"
+                               Text=">"
+                               FontSize="18"
+                               TextColor="#B0C4D8"
+                               VerticalTextAlignment="Center" />
+                    </Grid>
+
+                </VerticalStackLayout>
+            </Border>
+
+            <!-- ACCOUNT section label -->
+            <Label Text="ACCOUNT"
+                   FontSize="11"
+                   FontAttributes="Bold"
+                   TextColor="#8FA9BA"
+                   Margin="4,14,0,4" />
+
+            <!-- Logout card -->
+            <Border BackgroundColor="{StaticResource SurfaceCard}"
+                    Stroke="{StaticResource BorderSoft}"
+                    StrokeThickness="1"
+                    Padding="0">
+                <Border.StrokeShape>
+                    <RoundRectangle CornerRadius="12" />
+                </Border.StrokeShape>
+                <Grid ColumnDefinitions="*,Auto"
+                      Padding="18,14"
+                      BackgroundColor="Transparent">
+                    <Grid.GestureRecognizers>
+                        <TapGestureRecognizer Command="{Binding LogoutCommand}" />
+                    </Grid.GestureRecognizers>
+                    <VerticalStackLayout Grid.Column="0" Spacing="2" VerticalOptions="Center">
+                        <Label Text="Logout"
+                               FontSize="15"
+                               FontAttributes="Bold"
+                               TextColor="{StaticResource DangerRed}" />
+                        <Label Text="Sign out from this device"
+                               FontSize="12"
+                               TextColor="#C07070" />
+                    </VerticalStackLayout>
+                    <Label Grid.Column="1"
+                           Text=">"
+                           FontSize="18"
+                           TextColor="#E8A09A"
+                           VerticalTextAlignment="Center" />
+                </Grid>
+            </Border>
+
+            <!-- Status -->
+            <Label Text="{Binding StatusMessage}"
+                   FontSize="12"
+                   TextColor="{StaticResource TextMuted}"
+                   Margin="4,8,0,0" />
+
         </VerticalStackLayout>
     </ScrollView>
 </ContentPage>

@@ -1,0 +1,168 @@
+﻿On branch main
+Your branch is behind 'origin/main' by 1 commit, and can be fast-forwarded.
+  (use "git pull" to update your local branch)
+
+Changes not staged for commit:
+  (use "git add <file>..." to update what will be committed)
+  (use "git restore <file>..." to discard changes in working directory)
+	modified:   MawasaProject/MawasaProject.Application/bin/Debug/net10.0/MawasaProject.Application.dll
+	modified:   MawasaProject/MawasaProject.Application/bin/Debug/net10.0/MawasaProject.Application.pdb
+	modified:   MawasaProject/MawasaProject.Application/bin/Debug/net10.0/MawasaProject.Domain.dll
+	modified:   MawasaProject/MawasaProject.Application/bin/Debug/net10.0/MawasaProject.Domain.pdb
+	modified:   MawasaProject/MawasaProject.Application/obj/Debug/net10.0/MawasaProject.Application.AssemblyInfo.cs
+	modified:   MawasaProject/MawasaProject.Application/obj/Debug/net10.0/MawasaProject.Application.AssemblyInfoInputs.cache
+	modified:   MawasaProject/MawasaProject.Application/obj/Debug/net10.0/MawasaProject.Application.GeneratedMSBuildEditorConfig.editorconfig
+	modified:   MawasaProject/MawasaProject.Application/obj/Debug/net10.0/MawasaProject.Application.assets.cache
+	modified:   MawasaProject/MawasaProject.Application/obj/Debug/net10.0/MawasaProject.Application.csproj.AssemblyReference.cache
+	modified:   MawasaProject/MawasaProject.Application/obj/Debug/net10.0/MawasaProject.Application.csproj.CoreCompileInputs.cache
+	modified:   MawasaProject/MawasaProject.Application/obj/Debug/net10.0/MawasaProject.Application.csproj.FileListAbsolute.txt
+	modified:   MawasaProject/MawasaProject.Application/obj/Debug/net10.0/MawasaProject.Application.dll
+	modified:   MawasaProject/MawasaProject.Application/obj/Debug/net10.0/MawasaProject.Application.pdb
+	modified:   MawasaProject/MawasaProject.Application/obj/Debug/net10.0/MawasaProject.Application.sourcelink.json
+	modified:   MawasaProject/MawasaProject.Application/obj/Debug/net10.0/ref/MawasaProject.Application.dll
+	modified:   MawasaProject/MawasaProject.Application/obj/Debug/net10.0/refint/MawasaProject.Application.dll
+	modified:   MawasaProject/MawasaProject.Application/obj/MawasaProject.Application.csproj.nuget.dgspec.json
+	modified:   MawasaProject/MawasaProject.Application/obj/MawasaProject.Application.csproj.nuget.g.props
+	modified:   MawasaProject/MawasaProject.Application/obj/project.assets.json
+	modified:   MawasaProject/MawasaProject.Application/obj/project.nuget.cache
+	modified:   MawasaProject/MawasaProject.Domain/bin/Debug/net10.0/MawasaProject.Domain.dll
+	modified:   MawasaProject/MawasaProject.Domain/bin/Debug/net10.0/MawasaProject.Domain.pdb
+	modified:   MawasaProject/MawasaProject.Domain/obj/Debug/net10.0/MawasaProject.Domain.AssemblyInfo.cs
+	modified:   MawasaProject/MawasaProject.Domain/obj/Debug/net10.0/MawasaProject.Domain.AssemblyInfoInputs.cache
+	modified:   MawasaProject/MawasaProject.Domain/obj/Debug/net10.0/MawasaProject.Domain.GeneratedMSBuildEditorConfig.editorconfig
+	modified:   MawasaProject/MawasaProject.Domain/obj/Debug/net10.0/MawasaProject.Domain.assets.cache
+	modified:   MawasaProject/MawasaProject.Domain/obj/Debug/net10.0/MawasaProject.Domain.csproj.FileListAbsolute.txt
+	modified:   MawasaProject/MawasaProject.Domain/obj/Debug/net10.0/MawasaProject.Domain.dll
+	modified:   MawasaProject/MawasaProject.Domain/obj/Debug/net10.0/MawasaProject.Domain.pdb
+	modified:   MawasaProject/MawasaProject.Domain/obj/Debug/net10.0/MawasaProject.Domain.sourcelink.json
+	modified:   MawasaProject/MawasaProject.Domain/obj/Debug/net10.0/ref/MawasaProject.Domain.dll
+	modified:   MawasaProject/MawasaProject.Domain/obj/Debug/net10.0/refint/MawasaProject.Domain.dll
+	modified:   MawasaProject/MawasaProject.Domain/obj/MawasaProject.Domain.csproj.nuget.dgspec.json
+	modified:   MawasaProject/MawasaProject.Domain/obj/MawasaProject.Domain.csproj.nuget.g.props
+	modified:   MawasaProject/MawasaProject.Domain/obj/project.assets.json
+	modified:   MawasaProject/MawasaProject.Domain/obj/project.nuget.cache
+	modified:   MawasaProject/MawasaProject.Infrastructure/bin/Debug/net10.0/MawasaProject.Application.dll
+	modified:   MawasaProject/MawasaProject.Infrastructure/bin/Debug/net10.0/MawasaProject.Application.pdb
+	modified:   MawasaProject/MawasaProject.Infrastructure/bin/Debug/net10.0/MawasaProject.Domain.dll
+	modified:   MawasaProject/MawasaProject.Infrastructure/bin/Debug/net10.0/MawasaProject.Domain.pdb
+	modified:   MawasaProject/MawasaProject.Infrastructure/bin/Debug/net10.0/MawasaProject.Infrastructure.dll
+	modified:   MawasaProject/MawasaProject.Infrastructure/bin/Debug/net10.0/MawasaProject.Infrastructure.pdb
+	modified:   MawasaProject/MawasaProject.Infrastructure/obj/Debug/net10.0/MawasaProject.Infrastructure.AssemblyInfo.cs
+	modified:   MawasaProject/MawasaProject.Infrastructure/obj/Debug/net10.0/MawasaProject.Infrastructure.AssemblyInfoInputs.cache
+	modified:   MawasaProject/MawasaProject.Infrastructure/obj/Debug/net10.0/MawasaProject.Infrastructure.GeneratedMSBuildEditorConfig.editorconfig
+	modified:   MawasaProject/MawasaProject.Infrastructure/obj/Debug/net10.0/MawasaProject.Infrastructure.assets.cache
+	modified:   MawasaProject/MawasaProject.Infrastructure/obj/Debug/net10.0/MawasaProject.Infrastructure.csproj.AssemblyReference.cache
+	modified:   MawasaProject/MawasaProject.Infrastructure/obj/Debug/net10.0/MawasaProject.Infrastructure.csproj.CoreCompileInputs.cache
+	modified:   MawasaProject/MawasaProject.Infrastructure/obj/Debug/net10.0/MawasaProject.Infrastructure.csproj.FileListAbsolute.txt
+	modified:   MawasaProject/MawasaProject.Infrastructure/obj/Debug/net10.0/MawasaProject.Infrastructure.dll
+	modified:   MawasaProject/MawasaProject.Infrastructure/obj/Debug/net10.0/MawasaProject.Infrastructure.pdb
+	modified:   MawasaProject/MawasaProject.Infrastructure/obj/Debug/net10.0/MawasaProject.Infrastructure.sourcelink.json
+	modified:   MawasaProject/MawasaProject.Infrastructure/obj/Debug/net10.0/ref/MawasaProject.Infrastructure.dll
+	modified:   MawasaProject/MawasaProject.Infrastructure/obj/Debug/net10.0/refint/MawasaProject.Infrastructure.dll
+	modified:   MawasaProject/MawasaProject.Infrastructure/obj/MawasaProject.Infrastructure.csproj.nuget.dgspec.json
+	modified:   MawasaProject/MawasaProject.Infrastructure/obj/MawasaProject.Infrastructure.csproj.nuget.g.props
+	modified:   MawasaProject/MawasaProject.Infrastructure/obj/project.assets.json
+	modified:   MawasaProject/MawasaProject.Infrastructure/obj/project.nuget.cache
+	modified:   MawasaProject/MawasaProject.Presentation/App.xaml.cs
+	modified:   MawasaProject/MawasaProject.Presentation/ViewModels/Modules/PaymentsViewModel.cs
+	modified:   MawasaProject/MawasaProject.Presentation/bin/Debug/net10.0-windows10.0.19041.0/win-x64/MawasaProject.Application.dll
+	modified:   MawasaProject/MawasaProject.Presentation/bin/Debug/net10.0-windows10.0.19041.0/win-x64/MawasaProject.Application.pdb
+	modified:   MawasaProject/MawasaProject.Presentation/bin/Debug/net10.0-windows10.0.19041.0/win-x64/MawasaProject.Domain.dll
+	modified:   MawasaProject/MawasaProject.Presentation/bin/Debug/net10.0-windows10.0.19041.0/win-x64/MawasaProject.Domain.pdb
+	modified:   MawasaProject/MawasaProject.Presentation/bin/Debug/net10.0-windows10.0.19041.0/win-x64/MawasaProject.Infrastructure.dll
+	modified:   MawasaProject/MawasaProject.Presentation/bin/Debug/net10.0-windows10.0.19041.0/win-x64/MawasaProject.Infrastructure.pdb
+	modified:   MawasaProject/MawasaProject.Presentation/bin/Debug/net10.0-windows10.0.19041.0/win-x64/MawasaProject.Presentation.deps.json
+	modified:   MawasaProject/MawasaProject.Presentation/bin/Debug/net10.0-windows10.0.19041.0/win-x64/MawasaProject.Presentation.dll
+	modified:   MawasaProject/MawasaProject.Presentation/bin/Debug/net10.0-windows10.0.19041.0/win-x64/MawasaProject.Presentation.exe
+	modified:   MawasaProject/MawasaProject.Presentation/bin/Debug/net10.0-windows10.0.19041.0/win-x64/MawasaProject.Presentation.pdb
+	modified:   MawasaProject/MawasaProject.Presentation/bin/Debug/net10.0-windows10.0.19041.0/win-x64/Microsoft.Maui.Controls.Xaml.dll
+	modified:   MawasaProject/MawasaProject.Presentation/bin/Debug/net10.0-windows10.0.19041.0/win-x64/Microsoft.Maui.Controls.dll
+	modified:   MawasaProject/MawasaProject.Presentation/bin/Debug/net10.0-windows10.0.19041.0/win-x64/Microsoft.Maui.Essentials.dll
+	modified:   MawasaProject/MawasaProject.Presentation/bin/Debug/net10.0-windows10.0.19041.0/win-x64/Microsoft.Maui.Graphics.Win2D.WinUI.Desktop.dll
+	modified:   MawasaProject/MawasaProject.Presentation/bin/Debug/net10.0-windows10.0.19041.0/win-x64/Microsoft.Maui.Graphics.dll
+	modified:   MawasaProject/MawasaProject.Presentation/bin/Debug/net10.0-windows10.0.19041.0/win-x64/Microsoft.Maui.dll
+	modified:   MawasaProject/MawasaProject.Presentation/bin/Debug/net10.0-windows10.0.19041.0/win-x64/ar/Microsoft.Maui.Controls.resources.dll
+	modified:   MawasaProject/MawasaProject.Presentation/bin/Debug/net10.0-windows10.0.19041.0/win-x64/ca/Microsoft.Maui.Controls.resources.dll
+	modified:   MawasaProject/MawasaProject.Presentation/bin/Debug/net10.0-windows10.0.19041.0/win-x64/cs/Microsoft.Maui.Controls.resources.dll
+	modified:   MawasaProject/MawasaProject.Presentation/bin/Debug/net10.0-windows10.0.19041.0/win-x64/da/Microsoft.Maui.Controls.resources.dll
+	modified:   MawasaProject/MawasaProject.Presentation/bin/Debug/net10.0-windows10.0.19041.0/win-x64/de/Microsoft.Maui.Controls.resources.dll
+	modified:   MawasaProject/MawasaProject.Presentation/bin/Debug/net10.0-windows10.0.19041.0/win-x64/el/Microsoft.Maui.Controls.resources.dll
+	modified:   MawasaProject/MawasaProject.Presentation/bin/Debug/net10.0-windows10.0.19041.0/win-x64/es/Microsoft.Maui.Controls.resources.dll
+	modified:   MawasaProject/MawasaProject.Presentation/bin/Debug/net10.0-windows10.0.19041.0/win-x64/fi/Microsoft.Maui.Controls.resources.dll
+	modified:   MawasaProject/MawasaProject.Presentation/bin/Debug/net10.0-windows10.0.19041.0/win-x64/fr/Microsoft.Maui.Controls.resources.dll
+	modified:   MawasaProject/MawasaProject.Presentation/bin/Debug/net10.0-windows10.0.19041.0/win-x64/he/Microsoft.Maui.Controls.resources.dll
+	modified:   MawasaProject/MawasaProject.Presentation/bin/Debug/net10.0-windows10.0.19041.0/win-x64/hi/Microsoft.Maui.Controls.resources.dll
+	modified:   MawasaProject/MawasaProject.Presentation/bin/Debug/net10.0-windows10.0.19041.0/win-x64/hr/Microsoft.Maui.Controls.resources.dll
+	modified:   MawasaProject/MawasaProject.Presentation/bin/Debug/net10.0-windows10.0.19041.0/win-x64/hu/Microsoft.Maui.Controls.resources.dll
+	modified:   MawasaProject/MawasaProject.Presentation/bin/Debug/net10.0-windows10.0.19041.0/win-x64/id/Microsoft.Maui.Controls.resources.dll
+	modified:   MawasaProject/MawasaProject.Presentation/bin/Debug/net10.0-windows10.0.19041.0/win-x64/it/Microsoft.Maui.Controls.resources.dll
+	modified:   MawasaProject/MawasaProject.Presentation/bin/Debug/net10.0-windows10.0.19041.0/win-x64/ja/Microsoft.Maui.Controls.resources.dll
+	modified:   MawasaProject/MawasaProject.Presentation/bin/Debug/net10.0-windows10.0.19041.0/win-x64/ko/Microsoft.Maui.Controls.resources.dll
+	modified:   MawasaProject/MawasaProject.Presentation/bin/Debug/net10.0-windows10.0.19041.0/win-x64/ms/Microsoft.Maui.Controls.resources.dll
+	modified:   MawasaProject/MawasaProject.Presentation/bin/Debug/net10.0-windows10.0.19041.0/win-x64/nb/Microsoft.Maui.Controls.resources.dll
+	modified:   MawasaProject/MawasaProject.Presentation/bin/Debug/net10.0-windows10.0.19041.0/win-x64/nl/Microsoft.Maui.Controls.resources.dll
+	modified:   MawasaProject/MawasaProject.Presentation/bin/Debug/net10.0-windows10.0.19041.0/win-x64/pl/Microsoft.Maui.Controls.resources.dll
+	modified:   MawasaProject/MawasaProject.Presentation/bin/Debug/net10.0-windows10.0.19041.0/win-x64/pt-BR/Microsoft.Maui.Controls.resources.dll
+	modified:   MawasaProject/MawasaProject.Presentation/bin/Debug/net10.0-windows10.0.19041.0/win-x64/pt/Microsoft.Maui.Controls.resources.dll
+	modified:   MawasaProject/MawasaProject.Presentation/bin/Debug/net10.0-windows10.0.19041.0/win-x64/resources.pri
+	modified:   MawasaProject/MawasaProject.Presentation/bin/Debug/net10.0-windows10.0.19041.0/win-x64/ro/Microsoft.Maui.Controls.resources.dll
+	modified:   MawasaProject/MawasaProject.Presentation/bin/Debug/net10.0-windows10.0.19041.0/win-x64/ru/Microsoft.Maui.Controls.resources.dll
+	modified:   MawasaProject/MawasaProject.Presentation/bin/Debug/net10.0-windows10.0.19041.0/win-x64/sk/Microsoft.Maui.Controls.resources.dll
+	modified:   MawasaProject/MawasaProject.Presentation/bin/Debug/net10.0-windows10.0.19041.0/win-x64/sv/Microsoft.Maui.Controls.resources.dll
+	modified:   MawasaProject/MawasaProject.Presentation/bin/Debug/net10.0-windows10.0.19041.0/win-x64/th/Microsoft.Maui.Controls.resources.dll
+	modified:   MawasaProject/MawasaProject.Presentation/bin/Debug/net10.0-windows10.0.19041.0/win-x64/tr/Microsoft.Maui.Controls.resources.dll
+	modified:   MawasaProject/MawasaProject.Presentation/bin/Debug/net10.0-windows10.0.19041.0/win-x64/uk/Microsoft.Maui.Controls.resources.dll
+	modified:   MawasaProject/MawasaProject.Presentation/bin/Debug/net10.0-windows10.0.19041.0/win-x64/vi/Microsoft.Maui.Controls.resources.dll
+	modified:   MawasaProject/MawasaProject.Presentation/bin/Debug/net10.0-windows10.0.19041.0/win-x64/zh-HK/Microsoft.Maui.Controls.resources.dll
+	modified:   MawasaProject/MawasaProject.Presentation/bin/Debug/net10.0-windows10.0.19041.0/win-x64/zh-Hans/Microsoft.Maui.Controls.resources.dll
+	modified:   MawasaProject/MawasaProject.Presentation/bin/Debug/net10.0-windows10.0.19041.0/win-x64/zh-Hant/Microsoft.Maui.Controls.resources.dll
+	modified:   MawasaProject/MawasaProject.Presentation/obj/Debug/net10.0-windows10.0.19041.0/win-x64/Manifests/WindowsAppSDK.manifest
+	modified:   MawasaProject/MawasaProject.Presentation/obj/Debug/net10.0-windows10.0.19041.0/win-x64/MawasaProject.Presentation.AssemblyInfo.cs
+	modified:   MawasaProject/MawasaProject.Presentation/obj/Debug/net10.0-windows10.0.19041.0/win-x64/MawasaProject.Presentation.AssemblyInfoInputs.cache
+	modified:   MawasaProject/MawasaProject.Presentation/obj/Debug/net10.0-windows10.0.19041.0/win-x64/MawasaProject.Presentation.GeneratedMSBuildEditorConfig.editorconfig
+	modified:   MawasaProject/MawasaProject.Presentation/obj/Debug/net10.0-windows10.0.19041.0/win-x64/MawasaProject.Presentation.assets.cache
+	modified:   MawasaProject/MawasaProject.Presentation/obj/Debug/net10.0-windows10.0.19041.0/win-x64/MawasaProject.Presentation.csproj.AssemblyReference.cache
+	modified:   MawasaProject/MawasaProject.Presentation/obj/Debug/net10.0-windows10.0.19041.0/win-x64/MawasaProject.Presentation.csproj.CoreCompileInputs.cache
+	modified:   MawasaProject/MawasaProject.Presentation/obj/Debug/net10.0-windows10.0.19041.0/win-x64/MawasaProject.Presentation.csproj.FileListAbsolute.txt
+	modified:   MawasaProject/MawasaProject.Presentation/obj/Debug/net10.0-windows10.0.19041.0/win-x64/MawasaProject.Presentation.dll
+	modified:   MawasaProject/MawasaProject.Presentation/obj/Debug/net10.0-windows10.0.19041.0/win-x64/MawasaProject.Presentation.genruntimeconfig.cache
+	modified:   MawasaProject/MawasaProject.Presentation/obj/Debug/net10.0-windows10.0.19041.0/win-x64/MawasaProject.Presentation.pdb
+	modified:   MawasaProject/MawasaProject.Presentation/obj/Debug/net10.0-windows10.0.19041.0/win-x64/MawasaProject.Presentation.sourcelink.json
+	modified:   MawasaProject/MawasaProject.Presentation/obj/Debug/net10.0-windows10.0.19041.0/win-x64/Platforms/Windows/App.g.cs
+	modified:   MawasaProject/MawasaProject.Presentation/obj/Debug/net10.0-windows10.0.19041.0/win-x64/Platforms/Windows/App.g.i.cs
+	modified:   MawasaProject/MawasaProject.Presentation/obj/Debug/net10.0-windows10.0.19041.0/win-x64/XamlSaveStateFile.xml
+	modified:   MawasaProject/MawasaProject.Presentation/obj/Debug/net10.0-windows10.0.19041.0/win-x64/apphost.exe
+	modified:   MawasaProject/MawasaProject.Presentation/obj/Debug/net10.0-windows10.0.19041.0/win-x64/input.json
+	modified:   MawasaProject/MawasaProject.Presentation/obj/Debug/net10.0-windows10.0.19041.0/win-x64/intermediatexaml/MawasaProject.Presentation.dll
+	modified:   MawasaProject/MawasaProject.Presentation/obj/Debug/net10.0-windows10.0.19041.0/win-x64/mauiimage.outputs
+	modified:   MawasaProject/MawasaProject.Presentation/obj/Debug/net10.0-windows10.0.19041.0/win-x64/output.json
+	modified:   MawasaProject/MawasaProject.Presentation/obj/Debug/net10.0-windows10.0.19041.0/win-x64/pri.resfiles
+	modified:   MawasaProject/MawasaProject.Presentation/obj/Debug/net10.0-windows10.0.19041.0/win-x64/pri.resfiles.intermediate
+	modified:   MawasaProject/MawasaProject.Presentation/obj/Debug/net10.0-windows10.0.19041.0/win-x64/ref/MawasaProject.Presentation.dll
+	modified:   MawasaProject/MawasaProject.Presentation/obj/Debug/net10.0-windows10.0.19041.0/win-x64/refint/MawasaProject.Presentation.dll
+	modified:   MawasaProject/MawasaProject.Presentation/obj/MawasaProject.Presentation.csproj.nuget.dgspec.json
+	modified:   MawasaProject/MawasaProject.Presentation/obj/MawasaProject.Presentation.csproj.nuget.g.props
+	modified:   MawasaProject/MawasaProject.Presentation/obj/MawasaProject.Presentation.csproj.nuget.g.targets
+	modified:   MawasaProject/MawasaProject.Presentation/obj/project.assets.json
+	modified:   MawasaProject/MawasaProject.Presentation/obj/project.nuget.cache
+
+Untracked files:
+  (use "git add <file>..." to include in what will be committed)
+	MawasaProject/.vs/
+	MawasaProject/MawasaProject.Application/obj/Release/
+	MawasaProject/MawasaProject.Domain/obj/Release/
+	MawasaProject/MawasaProject.Infrastructure/obj/Release/
+	MawasaProject/MawasaProject.Presentation/.vs/
+	MawasaProject/MawasaProject.Presentation/obj/Debug/net10.0-windows10.0.19041.0/.NETCoreApp,Version=v10.0.AssemblyAttributes.cs
+	MawasaProject/MawasaProject.Presentation/obj/Debug/net10.0-windows10.0.19041.0/MawasaProject.Presentation.AssemblyInfo.cs
+	MawasaProject/MawasaProject.Presentation/obj/Debug/net10.0-windows10.0.19041.0/MawasaProject.Presentation.AssemblyInfoInputs.cache
+	MawasaProject/MawasaProject.Presentation/obj/Debug/net10.0-windows10.0.19041.0/MawasaProject.Presentation.GeneratedMSBuildEditorConfig.editorconfig
+	MawasaProject/MawasaProject.Presentation/obj/Debug/net10.0-windows10.0.19041.0/MawasaProject.Presentation.GlobalUsings.g.cs
+	MawasaProject/MawasaProject.Presentation/obj/Debug/net10.0-windows10.0.19041.0/MawasaProject.Presentation.assets.cache
+	MawasaProject/MawasaProject.Presentation/obj/Debug/net10.0-windows10.0.19041.0/MawasaProject.Presentation.csproj.AssemblyReference.cache
+	MawasaProject/MawasaProject.Presentation/obj/Release/
+	MawasaProject/MawasaProject.Presentation/obj/Win32/
+	MawasaProject/MawasaProject.Presentation/obj/arm64ec/
+	git_status.txt
+
+no changes added to commit (use "git add" and/or "git commit -a")

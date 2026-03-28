@@ -2,62 +2,185 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="MawasaProject.Presentation.Views.Pages.PrinterSettingsPage"
-             Title="Printer Settings">
-    <ScrollView>
-        <VerticalStackLayout Padding="20" Spacing="10" MaximumWidthRequest="860" HorizontalOptions="Center">
-            <Label Text="Printer Settings" FontSize="24" FontAttributes="Bold" />
+             Title="Printer Settings"
+             Shell.NavBarIsVisible="False"
+             BackgroundColor="#E9EDF3">
+    <ContentPage.Resources>
+        <Color x:Key="SurfaceCard">#FFFFFF</Color>
+        <Color x:Key="TextMain">#1F2A37</Color>
+        <Color x:Key="TextMuted">#6F8093</Color>
+        <Color x:Key="BorderSoft">#D9E2EC</Color>
+        <Color x:Key="BorderStrong">#C6D4E3</Color>
+        <Color x:Key="PrimaryBlue">#1A9EDB</Color>
+        <Style x:Key="FieldLabel" TargetType="Label">
+            <Setter Property="FontSize" Value="11" />
+            <Setter Property="FontAttributes" Value="Bold" />
+            <Setter Property="TextColor" Value="#60758C" />
+            <Setter Property="Margin" Value="0,8,0,2" />
+        </Style>
+        <Style x:Key="InputBorder" TargetType="Border">
+            <Setter Property="BackgroundColor" Value="White" />
+            <Setter Property="Stroke" Value="{StaticResource BorderStrong}" />
+            <Setter Property="StrokeThickness" Value="1" />
+            <Setter Property="Padding" Value="10,0" />
+        </Style>
+    </ContentPage.Resources>
 
+    <ScrollView>
+        <VerticalStackLayout Padding="16,14,16,32" Spacing="14">
+
+            <!-- Header -->
+            <VerticalStackLayout Spacing="2">
+                <Label Text="Printer Settings"
+                       FontSize="30"
+                       FontAttributes="Bold"
+                       TextColor="{StaticResource TextMain}" />
+                <Label Text="Configure printers and manage print profiles."
+                       FontSize="13"
+                       TextColor="{StaticResource TextMuted}" />
+            </VerticalStackLayout>
+
+            <!-- Action Buttons -->
             <HorizontalStackLayout Spacing="8">
-                <Button Text="Refresh" Command="{Binding RefreshCommand}" />
-                <Button Text="Set Default Printer" Command="{Binding SetDefaultCommand}" />
-                <Button Text="Test Print" Command="{Binding TestPrintCommand}" />
+                <Button Text="Refresh"
+                        Command="{Binding RefreshCommand}"
+                        BackgroundColor="#EEF4FB"
+                        TextColor="#2D5279"
+                        FontAttributes="Bold"
+                        FontSize="13"
+                        Padding="16,8" />
+                <Button Text="Set Default"
+                        Command="{Binding SetDefaultCommand}"
+                        BackgroundColor="{StaticResource PrimaryBlue}"
+                        TextColor="White"
+                        FontAttributes="Bold"
+                        FontSize="13"
+                        Padding="16,8" />
+                <Button Text="Test Print"
+                        Command="{Binding TestPrintCommand}"
+                        BackgroundColor="#EEF4FB"
+                        TextColor="#2D5279"
+                        FontAttributes="Bold"
+                        FontSize="13"
+                        Padding="16,8" />
             </HorizontalStackLayout>
 
-            <Grid ColumnDefinitions="*,*" ColumnSpacing="8">
-                <VerticalStackLayout Spacing="8">
-                    <Label Text="Printer Device" />
-                    <Picker Title="Select Printer"
-                            ItemsSource="{Binding Printers}"
-                            SelectedItem="{Binding SelectedPrinter}" />
-                    <Label Text="Profile Name" />
-                    <Entry Text="{Binding ProfileName}" Placeholder="e.g. MainOffice-A4" />
-                    <Label Text="Paper Size" />
-                    <Picker ItemsSource="{Binding PaperSizes}" SelectedItem="{Binding PaperSize}" />
-                    <HorizontalStackLayout Spacing="16">
-                        <HorizontalStackLayout Spacing="6">
-                            <CheckBox IsChecked="{Binding IsDefaultProfile}" />
-                            <Label Text="Default" VerticalTextAlignment="Center" />
-                        </HorizontalStackLayout>
-                        <HorizontalStackLayout Spacing="6">
-                            <CheckBox IsChecked="{Binding IsActiveProfile}" />
-                            <Label Text="Active" VerticalTextAlignment="Center" />
-                        </HorizontalStackLayout>
-                    </HorizontalStackLayout>
-                    <Button Text="Save Profile" Command="{Binding SaveProfileCommand}" />
-                </VerticalStackLayout>
+            <Grid ColumnDefinitions="{OnIdiom Phone='*', Tablet='1.2*,1*', Desktop='1.2*,1*'}"
+                  ColumnSpacing="14">
 
-                <VerticalStackLayout Grid.Column="1" Spacing="8">
-                    <Label Text="Printer Profiles" FontAttributes="Bold" />
-                    <CollectionView ItemsSource="{Binding Profiles}" SelectedItem="{Binding SelectedProfile}">
-                        <CollectionView.ItemTemplate>
-                            <DataTemplate>
-                                <Frame Padding="8" Margin="0,3" BorderColor="#D1D5DB">
-                                    <VerticalStackLayout Spacing="2">
-                                        <Label Text="{Binding Name}" FontAttributes="Bold" />
-                                        <Label Text="{Binding DeviceName}" FontSize="12" />
-                                        <Label Text="{Binding PaperSize, StringFormat='Paper: {0}'}" FontSize="12" />
-                                        <Label Text="{Binding IsDefault, StringFormat='Default: {0}'}" FontSize="12" TextColor="#6B7280" />
-                                        <Label Text="{Binding IsActive, StringFormat='Active: {0}'}" FontSize="12" TextColor="#6B7280" />
-                                    </VerticalStackLayout>
-                                </Frame>
-                            </DataTemplate>
-                        </CollectionView.ItemTemplate>
-                    </CollectionView>
-                </VerticalStackLayout>
+                <!-- Left: Config panel -->
+                <Border BackgroundColor="{StaticResource SurfaceCard}"
+                        Stroke="{StaticResource BorderSoft}"
+                        StrokeThickness="1"
+                        Padding="16,14">
+                    <Border.StrokeShape>
+                        <RoundRectangle CornerRadius="14" />
+                    </Border.StrokeShape>
+                    <VerticalStackLayout Spacing="0">
+                        <Label Text="PRINTER DEVICE" Style="{StaticResource FieldLabel}" Margin="0,0,0,4" />
+                        <Border Style="{StaticResource InputBorder}">
+                            <Border.StrokeShape><RoundRectangle CornerRadius="8" /></Border.StrokeShape>
+                            <Picker Title="Select Printer"
+                                    ItemsSource="{Binding Printers}"
+                                    SelectedItem="{Binding SelectedPrinter}"
+                                    HeightRequest="42"
+                                    TextColor="{StaticResource TextMain}" />
+                        </Border>
+
+                        <Label Text="PROFILE NAME" Style="{StaticResource FieldLabel}" />
+                        <Border Style="{StaticResource InputBorder}">
+                            <Border.StrokeShape><RoundRectangle CornerRadius="8" /></Border.StrokeShape>
+                            <Entry Text="{Binding ProfileName}"
+                                   Placeholder="e.g. MainOffice-A4"
+                                   PlaceholderColor="#8A97A6"
+                                   TextColor="{StaticResource TextMain}"
+                                   BackgroundColor="Transparent"
+                                   HeightRequest="42" />
+                        </Border>
+
+                        <Label Text="PAPER SIZE" Style="{StaticResource FieldLabel}" />
+                        <Border Style="{StaticResource InputBorder}">
+                            <Border.StrokeShape><RoundRectangle CornerRadius="8" /></Border.StrokeShape>
+                            <Picker ItemsSource="{Binding PaperSizes}"
+                                    SelectedItem="{Binding PaperSize}"
+                                    HeightRequest="42"
+                                    TextColor="{StaticResource TextMain}" />
+                        </Border>
+
+                        <HorizontalStackLayout Spacing="20" Margin="0,12,0,0">
+                            <HorizontalStackLayout Spacing="6">
+                                <CheckBox IsChecked="{Binding IsDefaultProfile}" Color="{StaticResource PrimaryBlue}" />
+                                <Label Text="Default" VerticalTextAlignment="Center"
+                                       TextColor="{StaticResource TextMain}" FontSize="13" />
+                            </HorizontalStackLayout>
+                            <HorizontalStackLayout Spacing="6">
+                                <CheckBox IsChecked="{Binding IsActiveProfile}" Color="{StaticResource PrimaryBlue}" />
+                                <Label Text="Active" VerticalTextAlignment="Center"
+                                       TextColor="{StaticResource TextMain}" FontSize="13" />
+                            </HorizontalStackLayout>
+                        </HorizontalStackLayout>
+
+                        <Button Text="Save Profile"
+                                Command="{Binding SaveProfileCommand}"
+                                BackgroundColor="{StaticResource PrimaryBlue}"
+                                TextColor="White"
+                                FontAttributes="Bold"
+                                FontSize="14"
+                                Margin="0,14,0,0"
+                                HorizontalOptions="Start"
+                                Padding="22,10" />
+                    </VerticalStackLayout>
+                </Border>
+
+                <!-- Right: Profiles list -->
+                <Border Grid.Column="{OnIdiom Phone=0, Tablet=1, Desktop=1}"
+                        Grid.Row="{OnIdiom Phone=1, Tablet=0, Desktop=0}"
+                        BackgroundColor="{StaticResource SurfaceCard}"
+                        Stroke="{StaticResource BorderSoft}"
+                        StrokeThickness="1"
+                        Padding="16,14">
+                    <Border.StrokeShape>
+                        <RoundRectangle CornerRadius="14" />
+                    </Border.StrokeShape>
+                    <VerticalStackLayout Spacing="10">
+                        <Label Text="Saved Profiles"
+                               FontSize="17"
+                               FontAttributes="Bold"
+                               TextColor="{StaticResource TextMain}" />
+                        <CollectionView ItemsSource="{Binding Profiles}"
+                                        SelectedItem="{Binding SelectedProfile}"
+                                        HeightRequest="320">
+                            <CollectionView.ItemTemplate>
+                                <DataTemplate>
+                                    <Border Margin="0,0,0,6"
+                                            BackgroundColor="#F7F9FC"
+                                            Stroke="#D9E2EC"
+                                            StrokeThickness="1"
+                                            Padding="12,10">
+                                        <Border.StrokeShape>
+                                            <RoundRectangle CornerRadius="10" />
+                                        </Border.StrokeShape>
+                                        <VerticalStackLayout Spacing="2">
+                                            <Label Text="{Binding Name}" FontAttributes="Bold" FontSize="14"
+                                                   TextColor="{StaticResource TextMain}" />
+                                            <Label Text="{Binding DeviceName}" FontSize="12"
+                                                   TextColor="{StaticResource TextMuted}" />
+                                            <Label Text="{Binding PaperSize, StringFormat='Paper: {0}'}"
+                                                   FontSize="12" TextColor="{StaticResource TextMuted}" />
+                                            <Label Text="{Binding IsDefault, StringFormat='Default: {0}'}"
+                                                   FontSize="12" TextColor="#1A9EDB" />
+                                        </VerticalStackLayout>
+                                    </Border>
+                                </DataTemplate>
+                            </CollectionView.ItemTemplate>
+                        </CollectionView>
+                    </VerticalStackLayout>
+                </Border>
             </Grid>
 
-            <Label Text="{Binding StatusMessage}" FontSize="12" TextColor="#6B7280" />
-            <Label Text="{Binding ErrorMessage}" FontSize="12" TextColor="#B91C1C" IsVisible="{Binding HasErrors}" />
+            <Label Text="{Binding StatusMessage}" FontSize="12" TextColor="{StaticResource TextMuted}" />
+            <Label Text="{Binding ErrorMessage}" FontSize="12" TextColor="#B91C1C"
+                   IsVisible="{Binding HasErrors}" />
         </VerticalStackLayout>
     </ScrollView>
 </ContentPage>

@@ -3,7 +3,8 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="MawasaProject.Presentation.Views.Pages.LoginPage"
              Title="Login"
-             Shell.NavBarIsVisible="False">
+             Shell.NavBarIsVisible="False"
+             BackgroundColor="#0D1725">
     <ContentPage.Resources>
         <Color x:Key="LoginCardBackground">#F4F7FB</Color>
         <Color x:Key="LoginTitleText">#0B2340</Color>
@@ -23,21 +24,22 @@
         <ScrollView>
             <Grid Padding="24" MinimumHeightRequest="620">
                 <Border x:Name="LoginCard"
-                        BackgroundColor="{StaticResource LoginCardBackground}"
+                        BackgroundColor="#FFFFFF"
                         StrokeThickness="0"
-                        Padding="24"
+                        Padding="28,24"
                         MaximumWidthRequest="420"
                         HorizontalOptions="Center"
                         VerticalOptions="Center">
                     <Border.StrokeShape>
-                        <RoundRectangle CornerRadius="14" />
+                        <RoundRectangle CornerRadius="16" />
                     </Border.StrokeShape>
                     <Border.Shadow>
-                        <Shadow Brush="#2A000000" Offset="0,10" Radius="26" Opacity="0.35" />
+                        <Shadow Brush="#40000000" Offset="0,12" Radius="32" Opacity="0.45" />
                     </Border.Shadow>
 
-                    <VerticalStackLayout Spacing="14">
-                        <Grid x:Name="LogoContainer" HorizontalOptions="Center" Margin="0,2,0,8">
+                    <VerticalStackLayout Spacing="12">
+                        <!-- Logo -->
+                        <Grid x:Name="LogoContainer" HorizontalOptions="Center" Margin="0,4,0,10">
                             <Border WidthRequest="108"
                                     HeightRequest="108"
                                     BackgroundColor="#FFFFFF"
@@ -55,80 +57,72 @@
                             </Border>
                         </Grid>
 
+                        <!-- Title -->
                         <Label Text="Sign in to your account"
-                               FontSize="34"
+                               FontSize="30"
                                FontAttributes="Bold"
                                TextColor="{StaticResource LoginTitleText}"
                                HorizontalTextAlignment="Center"
                                FontFamily="OpenSansSemibold" />
-                        <Label Text="Use your MAWASA credentials"
-                               FontSize="14"
-                               TextColor="{StaticResource LoginSubText}"
-                               HorizontalTextAlignment="Center"
-                               Margin="0,-8,0,6" />
 
+                        <!-- Subtitle + divider -->
+                        <VerticalStackLayout Spacing="10" Margin="0,0,0,4">
+                            <Label Text="Use your MAWASA credentials"
+                                   FontSize="13"
+                                   TextColor="{StaticResource LoginSubText}"
+                                   HorizontalTextAlignment="Center" />
+                            <BoxView HeightRequest="1" BackgroundColor="#E4EBF2" Margin="0,2,0,0" />
+                        </VerticalStackLayout>
+
+                        <!-- Username -->
                         <Label Text="Username"
-                               FontSize="14"
+                               FontSize="13"
                                TextColor="{StaticResource LoginTitleText}"
                                FontAttributes="Bold" />
                         <Border BackgroundColor="{StaticResource LoginInputBackground}"
                                 Stroke="{StaticResource LoginInputStroke}"
-                                StrokeThickness="1">
+                                StrokeThickness="1"
+                                Padding="12,0">
                             <Border.StrokeShape>
                                 <RoundRectangle CornerRadius="8" />
                             </Border.StrokeShape>
-                            <Grid ColumnDefinitions="40,*" HeightRequest="44">
-                                <Label Text="@"
-                                       Grid.Column="0"
-                                       HorizontalTextAlignment="Center"
-                                       VerticalTextAlignment="Center"
-                                       TextColor="#7B8EA4"
-                                       FontAttributes="Bold" />
-                                <Entry Grid.Column="1"
-                                       Placeholder="Enter your username"
-                                       PlaceholderColor="#8A97A6"
-                                       Text="{Binding Username}"
-                                       TextColor="#1B2B3D"
-                                        ReturnType="Next"
-                                        IsSpellCheckEnabled="False"
-                                        IsTextPredictionEnabled="False"
-                                       BackgroundColor="Transparent"
-                                       ClearButtonVisibility="WhileEditing"
-                                       Margin="0,0,10,0" />
-                            </Grid>
+                            <Entry Placeholder="Enter your username"
+                                   PlaceholderColor="#8A97A6"
+                                   Text="{Binding Username}"
+                                   TextColor="#1B2B3D"
+                                   ReturnType="Next"
+                                   IsSpellCheckEnabled="False"
+                                   IsTextPredictionEnabled="False"
+                                   BackgroundColor="Transparent"
+                                   ClearButtonVisibility="WhileEditing"
+                                   HeightRequest="44" />
                         </Border>
 
+                        <!-- Password -->
                         <Label Text="Password"
-                               FontSize="14"
+                               FontSize="13"
                                TextColor="{StaticResource LoginTitleText}"
                                FontAttributes="Bold"
                                Margin="0,4,0,0" />
                         <Border BackgroundColor="{StaticResource LoginInputBackground}"
                                 Stroke="{StaticResource LoginInputStroke}"
-                                StrokeThickness="1">
+                                StrokeThickness="1"
+                                Padding="12,0">
                             <Border.StrokeShape>
                                 <RoundRectangle CornerRadius="8" />
                             </Border.StrokeShape>
-                            <Grid ColumnDefinitions="40,*,64" HeightRequest="44">
-                                <Label Text="#"
-                                       Grid.Column="0"
-                                       HorizontalTextAlignment="Center"
-                                       VerticalTextAlignment="Center"
-                                       TextColor="#7B8EA4"
-                                       FontAttributes="Bold" />
-                                <Entry Grid.Column="1"
-                                       Placeholder="Enter your password"
+                            <Grid ColumnDefinitions="*,64" HeightRequest="44">
+                                <Entry Placeholder="Enter your password"
                                        PlaceholderColor="#8A97A6"
                                        Text="{Binding Password}"
                                        TextColor="#1B2B3D"
                                        IsPassword="{Binding IsPasswordHidden}"
-                                        ReturnType="Done"
-                                        ReturnCommand="{Binding LoginCommand}"
-                                        IsSpellCheckEnabled="False"
-                                        IsTextPredictionEnabled="False"
-                                       BackgroundColor="Transparent"
-                                       Margin="0,0,4,0" />
-                                <Button Grid.Column="2"
+                                       ReturnType="Done"
+                                       ReturnCommand="{Binding LoginCommand}"
+                                       IsSpellCheckEnabled="False"
+                                       IsTextPredictionEnabled="False"
+                                       BackgroundColor="Transparent" />
+                                <Button Grid.Column="1"
                                         Text="{Binding PasswordToggleText}"
                                         Command="{Binding TogglePasswordVisibilityCommand}"
                                         Padding="8,0"
@@ -138,15 +132,21 @@
                             </Grid>
                         </Border>
 
-                        <Grid ColumnDefinitions="Auto,*,Auto" Margin="0,2,0,2">
-                            <HorizontalStackLayout Grid.Column="0" Grid.ColumnSpan="2" Spacing="6" VerticalOptions="Center">
-                                <CheckBox IsChecked="{Binding RememberMe}" Color="#2E6EEB" Scale="0.85" />
+                        <!-- Remember me + Forgot password -->
+                        <Grid ColumnDefinitions="*,Auto" Margin="0,4,0,4">
+                            <HorizontalStackLayout Spacing="4" VerticalOptions="Center">
+                                <CheckBox IsChecked="{Binding RememberMe}"
+                                          Color="#2E6EEB"
+                                          BackgroundColor="Transparent"
+                                          Scale="0.85"
+                                          MinimumWidthRequest="32"
+                                          MinimumHeightRequest="32" />
                                 <Label Text="Remember me"
                                        TextColor="{StaticResource LoginSubText}"
                                        FontSize="13"
                                        VerticalTextAlignment="Center" />
                             </HorizontalStackLayout>
-                            <Label Grid.Column="2"
+                            <Label Grid.Column="1"
                                    Text="Forgot password?"
                                    TextColor="{StaticResource LoginLink}"
                                    FontSize="13"
@@ -158,14 +158,16 @@
                             </Label>
                         </Grid>
 
+                        <!-- Login button -->
                         <Button Text="Login"
                                 Command="{Binding LoginCommand}"
-                                HeightRequest="46"
-                                FontSize="18"
+                                HeightRequest="48"
+                                FontSize="17"
                                 FontAttributes="Bold"
                                 BackgroundColor="{StaticResource LoginPrimary}"
                                 TextColor="White"
-                                Margin="0,6,0,0">
+                                CornerRadius="10"
+                                Margin="0,2,0,0">
                             <Button.VisualStateManager.VisualStateGroups>
                                 <VisualStateGroupList>
                                     <VisualStateGroup x:Name="CommonStates">
@@ -184,19 +186,18 @@
                                            IsRunning="{Binding IsBusy}"
                                            Color="{StaticResource LoginPrimary}"
                                            HorizontalOptions="Center"
-                                           Margin="0,4,0,0" />
+                                           Margin="0,2,0,0" />
 
                         <Label Text="{Binding ErrorMessage}"
                                TextColor="{StaticResource LoginError}"
                                FontSize="13"
                                HorizontalTextAlignment="Center"
-                               LineBreakMode="WordWrap"
-                               Margin="0,-6,0,0" />
+                               LineBreakMode="WordWrap" />
+
                         <Label Text="Authorized personnel only"
-                               FontSize="12"
+                               FontSize="11"
                                TextColor="{StaticResource LoginSubText}"
-                               HorizontalTextAlignment="Center"
-                               Margin="0,-2,0,0" />
+                               HorizontalTextAlignment="Center" />
                     </VerticalStackLayout>
                 </Border>
             </Grid>

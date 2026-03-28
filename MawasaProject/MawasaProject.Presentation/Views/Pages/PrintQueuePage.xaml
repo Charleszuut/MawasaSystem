@@ -2,58 +2,158 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="MawasaProject.Presentation.Views.Pages.PrintQueuePage"
-             Title="Print Queue">
-    <ScrollView>
-        <VerticalStackLayout Padding="20" Spacing="10" MaximumWidthRequest="960" HorizontalOptions="Center">
-            <Label Text="Print Queue" FontSize="24" FontAttributes="Bold" />
+             Title="Print Queue"
+             Shell.NavBarIsVisible="False"
+             BackgroundColor="#E9EDF3">
+    <ContentPage.Resources>
+        <Color x:Key="SurfaceCard">#FFFFFF</Color>
+        <Color x:Key="TextMain">#1F2A37</Color>
+        <Color x:Key="TextMuted">#6F8093</Color>
+        <Color x:Key="BorderSoft">#D9E2EC</Color>
+        <Color x:Key="PrimaryBlue">#1A9EDB</Color>
+    </ContentPage.Resources>
 
+    <ScrollView>
+        <VerticalStackLayout Padding="16,14,16,32" Spacing="14">
+
+            <!-- Header -->
+            <VerticalStackLayout Spacing="2">
+                <Label Text="Print Queue"
+                       FontSize="30"
+                       FontAttributes="Bold"
+                       TextColor="{StaticResource TextMain}" />
+                <Label Text="Monitor and manage queued print jobs."
+                       FontSize="13"
+                       TextColor="{StaticResource TextMuted}" />
+            </VerticalStackLayout>
+
+            <!-- Action Buttons -->
             <HorizontalStackLayout Spacing="8">
-                <Button Text="Refresh" Command="{Binding RefreshCommand}" />
-                <Button Text="Process Queue" Command="{Binding ProcessQueueCommand}" />
-                <Button Text="Retry Selected" Command="{Binding RetrySelectedCommand}" />
+                <Button Text="Refresh"
+                        Command="{Binding RefreshCommand}"
+                        BackgroundColor="#EEF4FB"
+                        TextColor="#2D5279"
+                        FontAttributes="Bold"
+                        FontSize="13"
+                        Padding="16,8" />
+                <Button Text="Process Queue"
+                        Command="{Binding ProcessQueueCommand}"
+                        BackgroundColor="{StaticResource PrimaryBlue}"
+                        TextColor="White"
+                        FontAttributes="Bold"
+                        FontSize="13"
+                        Padding="16,8" />
+                <Button Text="Retry Selected"
+                        Command="{Binding RetrySelectedCommand}"
+                        BackgroundColor="#EEF4FB"
+                        TextColor="#2D5279"
+                        FontAttributes="Bold"
+                        FontSize="13"
+                        Padding="16,8" />
             </HorizontalStackLayout>
 
-            <Grid ColumnDefinitions="*,*" ColumnSpacing="10">
-                <VerticalStackLayout Spacing="6">
-                    <Label Text="Jobs" FontAttributes="Bold" />
-                    <CollectionView ItemsSource="{Binding Jobs}" SelectedItem="{Binding SelectedJob}">
-                        <CollectionView.ItemTemplate>
-                            <DataTemplate>
-                                <Frame Padding="8" Margin="0,3" BorderColor="#D1D5DB">
-                                    <VerticalStackLayout Spacing="2">
-                                        <Label Text="{Binding Id}" FontSize="12" />
-                                        <Label Text="{Binding TemplateName}" FontAttributes="Bold" />
-                                        <Label Text="{Binding PrinterName}" FontSize="12" />
-                                        <Label Text="{Binding Status, StringFormat='Status: {0}'}" FontSize="12" />
-                                        <Label Text="{Binding RetryCount, StringFormat='Retry: {0}'}" FontSize="12" />
-                                        <Label Text="{Binding LastError}" FontSize="12" TextColor="#B91C1C" />
-                                    </VerticalStackLayout>
-                                </Frame>
-                            </DataTemplate>
-                        </CollectionView.ItemTemplate>
-                    </CollectionView>
-                </VerticalStackLayout>
+            <Grid ColumnDefinitions="{OnIdiom Phone='*', Tablet='*,*', Desktop='*,*'}"
+                  ColumnSpacing="14">
 
-                <VerticalStackLayout Grid.Column="1" Spacing="6">
-                    <Label Text="Logs (selected job)" FontAttributes="Bold" />
-                    <CollectionView ItemsSource="{Binding Logs}">
-                        <CollectionView.ItemTemplate>
-                            <DataTemplate>
-                                <Frame Padding="8" Margin="0,3" BorderColor="#D1D5DB">
-                                    <VerticalStackLayout Spacing="2">
-                                        <Label Text="{Binding LoggedAtUtc}" FontSize="12" />
-                                        <Label Text="{Binding Status}" FontAttributes="Bold" />
-                                        <Label Text="{Binding Error}" FontSize="12" TextColor="#B91C1C" />
-                                    </VerticalStackLayout>
-                                </Frame>
-                            </DataTemplate>
-                        </CollectionView.ItemTemplate>
-                    </CollectionView>
-                </VerticalStackLayout>
+                <!-- Jobs list -->
+                <Border BackgroundColor="{StaticResource SurfaceCard}"
+                        Stroke="{StaticResource BorderSoft}"
+                        StrokeThickness="1"
+                        Padding="16,14">
+                    <Border.StrokeShape>
+                        <RoundRectangle CornerRadius="14" />
+                    </Border.StrokeShape>
+                    <VerticalStackLayout Spacing="10">
+                        <Label Text="Jobs"
+                               FontSize="17"
+                               FontAttributes="Bold"
+                               TextColor="{StaticResource TextMain}" />
+                        <CollectionView ItemsSource="{Binding Jobs}"
+                                        SelectedItem="{Binding SelectedJob}"
+                                        HeightRequest="380">
+                            <CollectionView.ItemTemplate>
+                                <DataTemplate>
+                                    <Border Margin="0,0,0,6"
+                                            BackgroundColor="#F7F9FC"
+                                            Stroke="#D9E2EC"
+                                            StrokeThickness="1"
+                                            Padding="12,10">
+                                        <Border.StrokeShape>
+                                            <RoundRectangle CornerRadius="10" />
+                                        </Border.StrokeShape>
+                                        <VerticalStackLayout Spacing="2">
+                                            <Label Text="{Binding TemplateName}"
+                                                   FontAttributes="Bold"
+                                                   FontSize="14"
+                                                   TextColor="{StaticResource TextMain}" />
+                                            <Label Text="{Binding PrinterName}"
+                                                   FontSize="12"
+                                                   TextColor="{StaticResource TextMuted}" />
+                                            <Label Text="{Binding Status, StringFormat='Status: {0}'}"
+                                                   FontSize="12"
+                                                   TextColor="#2D6DE2"
+                                                   FontAttributes="Bold" />
+                                            <Label Text="{Binding LastError}"
+                                                   FontSize="12"
+                                                   TextColor="#B91C1C" />
+                                        </VerticalStackLayout>
+                                    </Border>
+                                </DataTemplate>
+                            </CollectionView.ItemTemplate>
+                        </CollectionView>
+                    </VerticalStackLayout>
+                </Border>
+
+                <!-- Logs list -->
+                <Border Grid.Column="{OnIdiom Phone=0, Tablet=1, Desktop=1}"
+                        Grid.Row="{OnIdiom Phone=1, Tablet=0, Desktop=0}"
+                        BackgroundColor="{StaticResource SurfaceCard}"
+                        Stroke="{StaticResource BorderSoft}"
+                        StrokeThickness="1"
+                        Padding="16,14">
+                    <Border.StrokeShape>
+                        <RoundRectangle CornerRadius="14" />
+                    </Border.StrokeShape>
+                    <VerticalStackLayout Spacing="10">
+                        <Label Text="Job Logs"
+                               FontSize="17"
+                               FontAttributes="Bold"
+                               TextColor="{StaticResource TextMain}" />
+                        <CollectionView ItemsSource="{Binding Logs}"
+                                        HeightRequest="380">
+                            <CollectionView.ItemTemplate>
+                                <DataTemplate>
+                                    <Border Margin="0,0,0,6"
+                                            BackgroundColor="#F7F9FC"
+                                            Stroke="#D9E2EC"
+                                            StrokeThickness="1"
+                                            Padding="12,10">
+                                        <Border.StrokeShape>
+                                            <RoundRectangle CornerRadius="10" />
+                                        </Border.StrokeShape>
+                                        <VerticalStackLayout Spacing="2">
+                                            <Label Text="{Binding Status}"
+                                                   FontAttributes="Bold"
+                                                   FontSize="13"
+                                                   TextColor="{StaticResource TextMain}" />
+                                            <Label Text="{Binding LoggedAtUtc}"
+                                                   FontSize="11"
+                                                   TextColor="{StaticResource TextMuted}" />
+                                            <Label Text="{Binding Error}"
+                                                   FontSize="12"
+                                                   TextColor="#B91C1C" />
+                                        </VerticalStackLayout>
+                                    </Border>
+                                </DataTemplate>
+                            </CollectionView.ItemTemplate>
+                        </CollectionView>
+                    </VerticalStackLayout>
+                </Border>
             </Grid>
 
-            <Label Text="{Binding StatusMessage}" FontSize="12" TextColor="#6B7280" />
-            <Label Text="{Binding ErrorMessage}" FontSize="12" TextColor="#B91C1C" IsVisible="{Binding HasErrors}" />
+            <Label Text="{Binding StatusMessage}" FontSize="12" TextColor="{StaticResource TextMuted}" />
+            <Label Text="{Binding ErrorMessage}" FontSize="12" TextColor="#B91C1C"
+                   IsVisible="{Binding HasErrors}" />
         </VerticalStackLayout>
     </ScrollView>
 </ContentPage>
