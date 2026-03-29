@@ -59,3 +59,6 @@ splashSplashScreen.scale-150.png
 splashSplashScreen.scale-200.png
 splashSplashScreen.scale-400.png
 AboutAssets.txt
+analytics_chart.html
+chart.umd.min.js
+revenue_chart.html

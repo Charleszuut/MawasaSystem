@@ -9,207 +9,321 @@
     FlyoutWidth="240">
 
     <Shell.Resources>
-        <Color x:Key="SidebarBlue">#1A9EDB</Color>
-        <Color x:Key="SidebarBlueDark">#168DC6</Color>
-        <Color x:Key="SidebarItemActive">#22ABE8</Color>
-        <Color x:Key="SidebarText">#E8F6FF</Color>
+        <Color x:Key="SidebarBg">#0F2B45</Color>
+        <Color x:Key="SidebarHeader">#0A1F33</Color>
+        <Color x:Key="SidebarItemActive">#1E7FC2</Color>
+        <Color x:Key="SidebarText">#DAEEFF</Color>
+        <Color x:Key="SidebarSubText">#A8D4EF</Color>
+        <Color x:Key="SidebarAccent">#3DB1F5</Color>
+        <Color x:Key="SidebarSubMenuBg">#0D2236</Color>
+        <Color x:Key="SidebarSubMenuActive">#1E7FC2</Color>
     </Shell.Resources>
 
     <Shell.FlyoutContent>
-        <Grid BackgroundColor="{StaticResource SidebarBlue}">
+        <Grid BackgroundColor="{StaticResource SidebarBg}">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="*" />
+                <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
 
-            <VerticalStackLayout Padding="14,18,12,14" Spacing="10" BackgroundColor="{StaticResource SidebarBlueDark}">
-                <HorizontalStackLayout Spacing="10">
-                    <Border WidthRequest="48" HeightRequest="48" BackgroundColor="#FFFFFF" StrokeThickness="0">
+            <!-- Header -->
+            <Grid BackgroundColor="{StaticResource SidebarHeader}" Padding="14,18,14,14">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+
+                <HorizontalStackLayout Spacing="12">
+                    <Border WidthRequest="44" HeightRequest="44"
+                            BackgroundColor="#FFFFFF" StrokeThickness="0">
                         <Border.StrokeShape>
-                            <RoundRectangle CornerRadius="8" />
+                            <RoundRectangle CornerRadius="10" />
                         </Border.StrokeShape>
-                        <Image Source="mawasa_logo.png" Margin="6" Aspect="AspectFit" />
+                        <Border.Shadow>
+                            <Shadow Brush="#50000000" Offset="0,3" Radius="8" Opacity="0.5" />
+                        </Border.Shadow>
+                        <Image Source="mawasa_logo.png" Margin="5" Aspect="AspectFit" />
                     </Border>
-                    <VerticalStackLayout Spacing="0" VerticalOptions="Center">
-                        <Label Text="MAWASA" TextColor="#FFFFFF" FontAttributes="Bold" FontSize="26" />
+                    <VerticalStackLayout Spacing="1" VerticalOptions="Center">
+                        <Label Text="MAWASA"
+                               TextColor="#FFFFFF"
+                               FontAttributes="Bold"
+                               FontSize="20" />
                         <Label Text="Brgy. Manambulan, Tugbok&#10;District, Davao City"
-                               TextColor="#D9F2FF"
-                               FontSize="11" />
+                               TextColor="#6FB0D8"
+                               FontSize="10" />
                     </VerticalStackLayout>
                 </HorizontalStackLayout>
-            </VerticalStackLayout>
 
+                <!-- Role badge -->
+                <Border Grid.Row="1"
+                        BackgroundColor="#0D2B44"
+                        StrokeThickness="1"
+                        Stroke="#1A5070"
+                        Padding="10,6"
+                        Margin="0,12,0,0">
+                    <Border.StrokeShape>
+                        <RoundRectangle CornerRadius="6" />
+                    </Border.StrokeShape>
+                    <Grid ColumnDefinitions="Auto,*,Auto">
+                        <BoxView WidthRequest="7" HeightRequest="7"
+                                 BackgroundColor="{StaticResource SidebarAccent}"
+                                 VerticalOptions="Center"
+                                 CornerRadius="4" />
+                        <Label x:Name="RoleLabel"
+                               Grid.Column="1"
+                               Text="ADMIN MENU"
+                               TextColor="#94C8E8"
+                               FontSize="11"
+                               FontAttributes="Bold"
+                               CharacterSpacing="0.8"
+                               Margin="8,0,0,0"
+                               VerticalTextAlignment="Center" />
+                        <Label x:Name="UserLabel"
+                               Grid.Column="2"
+                               Text="●"
+                               TextColor="#3DB1F5"
+                               FontSize="10"
+                               VerticalTextAlignment="Center" />
+                    </Grid>
+                </Border>
+            </Grid>
+
+            <!-- Nav Items -->
             <ScrollView Grid.Row="1">
-                <VerticalStackLayout Padding="12,14,12,24" Spacing="8">
-                    <Label x:Name="AdminMenuLabel"
-                           Text="ADMIN MENU"
-                           TextColor="#D7F0FF"
-                           FontSize="12"
-                           FontAttributes="Bold"
-                           Margin="2,0,0,4" />
+                <VerticalStackLayout x:Name="AdminMenuLabel" Padding="10,14,10,24" Spacing="2">
 
-                    <Border x:Name="DashboardNavItem" BackgroundColor="{StaticResource SidebarItemActive}" StrokeThickness="0" Padding="12,10">
-                        <Border.StrokeShape>
-                            <RoundRectangle CornerRadius="10" />
-                        </Border.StrokeShape>
-                        <Border.GestureRecognizers>
-                            <TapGestureRecognizer Tapped="OnDashboardTapped" />
-                        </Border.GestureRecognizers>
-                        <Label Text="Dashboard" TextColor="{StaticResource SidebarText}" FontSize="15" FontAttributes="Bold" />
-                    </Border>
+                    <!-- Dashboard -->
+                    <Grid x:Name="DashboardNavItem" ColumnDefinitions="4,*">
+                        <BoxView x:Name="DashboardAccent"
+                                 BackgroundColor="{StaticResource SidebarAccent}"
+                                 WidthRequest="4" CornerRadius="2"
+                                 IsVisible="False" VerticalOptions="Fill" />
+                        <Border Grid.Column="1" x:Name="DashboardNavBorder"
+                                BackgroundColor="Transparent" StrokeThickness="0" Padding="14,12">
+                            <Border.StrokeShape><RoundRectangle CornerRadius="10" /></Border.StrokeShape>
+                            <Border.GestureRecognizers>
+                                <TapGestureRecognizer Tapped="OnDashboardTapped" />
+                            </Border.GestureRecognizers>
+                            <Label x:Name="DashboardLabel" Text="Dashboard"
+                                   TextColor="{StaticResource SidebarText}" FontSize="14"
+                                   VerticalTextAlignment="Center" />
+                        </Border>
+                    </Grid>
 
-                    <Border x:Name="BillingNavItem" BackgroundColor="Transparent" StrokeThickness="0" Padding="12,10">
-                        <Border.StrokeShape>
-                            <RoundRectangle CornerRadius="10" />
-                        </Border.StrokeShape>
-                        <Border.GestureRecognizers>
-                            <TapGestureRecognizer Tapped="OnBillingTapped" />
-                        </Border.GestureRecognizers>
-                        <Label Text="Billing" TextColor="{StaticResource SidebarText}" FontSize="15" />
-                    </Border>
+                    <!-- Billing -->
+                    <Grid x:Name="BillingNavItem" ColumnDefinitions="4,*">
+                        <BoxView x:Name="BillingAccent"
+                                 BackgroundColor="{StaticResource SidebarAccent}"
+                                 WidthRequest="4" CornerRadius="2"
+                                 IsVisible="False" VerticalOptions="Fill" />
+                        <Border Grid.Column="1" x:Name="BillingNavBorder"
+                                BackgroundColor="Transparent" StrokeThickness="0" Padding="14,12">
+                            <Border.StrokeShape><RoundRectangle CornerRadius="10" /></Border.StrokeShape>
+                            <Border.GestureRecognizers>
+                                <TapGestureRecognizer Tapped="OnBillingTapped" />
+                            </Border.GestureRecognizers>
+                            <Label x:Name="BillingLabel" Text="Billing"
+                                   TextColor="{StaticResource SidebarText}" FontSize="14"
+                                   VerticalTextAlignment="Center" />
+                        </Border>
+                    </Grid>
 
-                    <Border x:Name="PaymentsNavItem" BackgroundColor="Transparent" StrokeThickness="0" Padding="12,10">
-                        <Border.StrokeShape>
-                            <RoundRectangle CornerRadius="10" />
-                        </Border.StrokeShape>
-                        <Border.GestureRecognizers>
-                            <TapGestureRecognizer Tapped="OnPaymentsTapped" />
-                        </Border.GestureRecognizers>
-                        <Label Text="Payments" TextColor="{StaticResource SidebarText}" FontSize="15" />
-                    </Border>
+                    <!-- Payments -->
+                    <Grid x:Name="PaymentsNavItem" ColumnDefinitions="4,*">
+                        <BoxView x:Name="PaymentsAccent"
+                                 BackgroundColor="{StaticResource SidebarAccent}"
+                                 WidthRequest="4" CornerRadius="2"
+                                 IsVisible="False" VerticalOptions="Fill" />
+                        <Border Grid.Column="1" x:Name="PaymentsNavBorder"
+                                BackgroundColor="Transparent" StrokeThickness="0" Padding="14,12">
+                            <Border.StrokeShape><RoundRectangle CornerRadius="10" /></Border.StrokeShape>
+                            <Border.GestureRecognizers>
+                                <TapGestureRecognizer Tapped="OnPaymentsTapped" />
+                            </Border.GestureRecognizers>
+                            <Label x:Name="PaymentsLabel" Text="Payments"
+                                   TextColor="{StaticResource SidebarText}" FontSize="14"
+                                   VerticalTextAlignment="Center" />
+                        </Border>
+                    </Grid>
 
-                    <Border x:Name="CustomersNavItem" BackgroundColor="Transparent" StrokeThickness="0" Padding="12,10">
-                        <Border.StrokeShape>
-                            <RoundRectangle CornerRadius="10" />
-                        </Border.StrokeShape>
-                        <Border.GestureRecognizers>
-                            <TapGestureRecognizer Tapped="OnCustomersTapped" />
-                        </Border.GestureRecognizers>
-                        <Grid ColumnDefinitions="*,Auto">
-                            <Label Text="Customers" TextColor="{StaticResource SidebarText}" FontSize="15" />
-                            <Label Grid.Column="1" Text="v" TextColor="{StaticResource SidebarText}" FontSize="14" />
-                        </Grid>
-                    </Border>
+                    <!-- Customers (expandable) -->
+                    <Grid x:Name="CustomersNavItem" ColumnDefinitions="4,*">
+                        <BoxView x:Name="CustomersAccent"
+                                 BackgroundColor="{StaticResource SidebarAccent}"
+                                 WidthRequest="4" CornerRadius="2"
+                                 IsVisible="False" VerticalOptions="Fill" />
+                        <Border Grid.Column="1" x:Name="CustomersNavBorder"
+                                BackgroundColor="Transparent" StrokeThickness="0" Padding="14,12">
+                            <Border.StrokeShape><RoundRectangle CornerRadius="10" /></Border.StrokeShape>
+                            <Border.GestureRecognizers>
+                                <TapGestureRecognizer Tapped="OnCustomersTapped" />
+                            </Border.GestureRecognizers>
+                            <Grid ColumnDefinitions="*,Auto">
+                                <Label x:Name="CustomersLabel" Text="Customers"
+                                       TextColor="{StaticResource SidebarText}" FontSize="14"
+                                       VerticalTextAlignment="Center" />
+                                <Label x:Name="CustomersChevron" Grid.Column="1"
+                                       Text="›" TextColor="{StaticResource SidebarSubText}"
+                                       FontSize="18" VerticalTextAlignment="Center" />
+                            </Grid>
+                        </Border>
+                    </Grid>
 
-                    <VerticalStackLayout x:Name="CustomersActionMenu" IsVisible="False" Spacing="6" Margin="16,-2,0,2">
-                        <Border x:Name="CustomersManagementActionItem" BackgroundColor="#137DB2" StrokeThickness="0" Padding="10,8">
-                            <Border.StrokeShape>
-                                <RoundRectangle CornerRadius="8" />
-                            </Border.StrokeShape>
+                    <VerticalStackLayout x:Name="CustomersActionMenu" IsVisible="False" Spacing="2" Margin="14,0,4,4">
+                        <Border x:Name="CustomersManagementActionItem"
+                                BackgroundColor="{StaticResource SidebarSubMenuBg}"
+                                StrokeThickness="0" Padding="14,10">
+                            <Border.StrokeShape><RoundRectangle CornerRadius="8" /></Border.StrokeShape>
                             <Border.GestureRecognizers>
                                 <TapGestureRecognizer Tapped="OnCustomersManagementTapped" />
                             </Border.GestureRecognizers>
-                            <Label Text="Customer Management" TextColor="#EAF6FF" FontSize="13" />
+                            <Label Text="Customer Management"
+                                   TextColor="{StaticResource SidebarSubText}" FontSize="13" />
                         </Border>
-
-                        <Border x:Name="CustomersRegisterActionItem" BackgroundColor="#137DB2" StrokeThickness="0" Padding="10,8">
-                            <Border.StrokeShape>
-                                <RoundRectangle CornerRadius="8" />
-                            </Border.StrokeShape>
+                        <Border x:Name="CustomersRegisterActionItem"
+                                BackgroundColor="{StaticResource SidebarSubMenuBg}"
+                                StrokeThickness="0" Padding="14,10">
+                            <Border.StrokeShape><RoundRectangle CornerRadius="8" /></Border.StrokeShape>
                             <Border.GestureRecognizers>
                                 <TapGestureRecognizer Tapped="OnCustomersRegisterTapped" />
                             </Border.GestureRecognizers>
-                            <Label Text="Create/Register Customers" TextColor="#EAF6FF" FontSize="13" />
+                            <Label Text="Create/Register Customers"
+                                   TextColor="{StaticResource SidebarSubText}" FontSize="13" />
                         </Border>
                     </VerticalStackLayout>
 
-                    <Border x:Name="ReportsNavItem" BackgroundColor="Transparent" StrokeThickness="0" Padding="12,10">
-                        <Border.StrokeShape>
-                            <RoundRectangle CornerRadius="10" />
-                        </Border.StrokeShape>
-                        <Border.GestureRecognizers>
-                            <TapGestureRecognizer Tapped="OnReportsTapped" />
-                        </Border.GestureRecognizers>
-                        <Grid ColumnDefinitions="*,Auto">
-                            <Label Text="Reports" TextColor="{StaticResource SidebarText}" FontSize="15" />
-                            <Label Grid.Column="1" Text="v" TextColor="{StaticResource SidebarText}" FontSize="14" />
-                        </Grid>
-                    </Border>
+                    <!-- Reports (expandable) -->
+                    <Grid x:Name="ReportsNavItem" ColumnDefinitions="4,*">
+                        <BoxView x:Name="ReportsAccent"
+                                 BackgroundColor="{StaticResource SidebarAccent}"
+                                 WidthRequest="4" CornerRadius="2"
+                                 IsVisible="False" VerticalOptions="Fill" />
+                        <Border Grid.Column="1" x:Name="ReportsNavBorder"
+                                BackgroundColor="Transparent" StrokeThickness="0" Padding="14,12">
+                            <Border.StrokeShape><RoundRectangle CornerRadius="10" /></Border.StrokeShape>
+                            <Border.GestureRecognizers>
+                                <TapGestureRecognizer Tapped="OnReportsTapped" />
+                            </Border.GestureRecognizers>
+                            <Grid ColumnDefinitions="*,Auto">
+                                <Label x:Name="ReportsLabel" Text="Reports"
+                                       TextColor="{StaticResource SidebarText}" FontSize="14"
+                                       VerticalTextAlignment="Center" />
+                                <Label x:Name="ReportsChevron" Grid.Column="1"
+                                       Text="›" TextColor="{StaticResource SidebarSubText}"
+                                       FontSize="18" VerticalTextAlignment="Center" />
+                            </Grid>
+                        </Border>
+                    </Grid>
 
-                    <VerticalStackLayout x:Name="ReportsActionMenu" IsVisible="False" Spacing="6" Margin="16,-2,0,2">
-                        <Border x:Name="ReportsPaymentsActionItem" BackgroundColor="#137DB2" StrokeThickness="0" Padding="10,8">
-                            <Border.StrokeShape>
-                                <RoundRectangle CornerRadius="8" />
-                            </Border.StrokeShape>
+                    <VerticalStackLayout x:Name="ReportsActionMenu" IsVisible="False" Spacing="2" Margin="14,0,4,4">
+                        <Border x:Name="ReportsPaymentsActionItem"
+                                BackgroundColor="{StaticResource SidebarSubMenuBg}"
+                                StrokeThickness="0" Padding="14,10">
+                            <Border.StrokeShape><RoundRectangle CornerRadius="8" /></Border.StrokeShape>
                             <Border.GestureRecognizers>
                                 <TapGestureRecognizer Tapped="OnReportsCustomerPaymentTapped" />
                             </Border.GestureRecognizers>
-                            <Label Text="Customer Payment Report" TextColor="#EAF6FF" FontSize="13" />
+                            <Label Text="Customer Payment Report"
+                                   TextColor="{StaticResource SidebarSubText}" FontSize="13" />
                         </Border>
-
-                        <Border x:Name="ReportsIssueActionItem" BackgroundColor="#137DB2" StrokeThickness="0" Padding="10,8">
-                            <Border.StrokeShape>
-                                <RoundRectangle CornerRadius="8" />
-                            </Border.StrokeShape>
+                        <Border x:Name="ReportsIssueActionItem"
+                                BackgroundColor="{StaticResource SidebarSubMenuBg}"
+                                StrokeThickness="0" Padding="14,10">
+                            <Border.StrokeShape><RoundRectangle CornerRadius="8" /></Border.StrokeShape>
                             <Border.GestureRecognizers>
                                 <TapGestureRecognizer Tapped="OnReportsIssueTapped" />
                             </Border.GestureRecognizers>
-                            <Label Text="Issue Report" TextColor="#EAF6FF" FontSize="13" />
+                            <Label Text="Issue Report"
+                                   TextColor="{StaticResource SidebarSubText}" FontSize="13" />
                         </Border>
-
-                        <Border x:Name="ReportsPrintActionItem" BackgroundColor="#137DB2" StrokeThickness="0" Padding="10,8">
-                            <Border.StrokeShape>
-                                <RoundRectangle CornerRadius="8" />
-                            </Border.StrokeShape>
+                        <Border x:Name="ReportsPrintActionItem"
+                                BackgroundColor="{StaticResource SidebarSubMenuBg}"
+                                StrokeThickness="0" Padding="14,10">
+                            <Border.StrokeShape><RoundRectangle CornerRadius="8" /></Border.StrokeShape>
                             <Border.GestureRecognizers>
                                 <TapGestureRecognizer Tapped="OnReportsPrintTapped" />
                             </Border.GestureRecognizers>
-                            <Label Text="Print Reports" TextColor="#EAF6FF" FontSize="13" />
+                            <Label Text="Print Reports"
+                                   TextColor="{StaticResource SidebarSubText}" FontSize="13" />
                         </Border>
                     </VerticalStackLayout>
 
-                    <Border x:Name="AuditNavItem" BackgroundColor="Transparent" StrokeThickness="0" Padding="12,10">
-                        <Border.StrokeShape>
-                            <RoundRectangle CornerRadius="10" />
-                        </Border.StrokeShape>
-                        <Border.GestureRecognizers>
-                            <TapGestureRecognizer Tapped="OnAuditTapped" />
-                        </Border.GestureRecognizers>
-                        <Label Text="Audit" TextColor="{StaticResource SidebarText}" FontSize="15" />
-                    </Border>
+                    <!-- Audit -->
+                    <Grid x:Name="AuditNavItem" ColumnDefinitions="4,*">
+                        <BoxView x:Name="AuditAccent"
+                                 BackgroundColor="{StaticResource SidebarAccent}"
+                                 WidthRequest="4" CornerRadius="2"
+                                 IsVisible="False" VerticalOptions="Fill" />
+                        <Border Grid.Column="1" x:Name="AuditNavBorder"
+                                BackgroundColor="Transparent" StrokeThickness="0" Padding="14,12">
+                            <Border.StrokeShape><RoundRectangle CornerRadius="10" /></Border.StrokeShape>
+                            <Border.GestureRecognizers>
+                                <TapGestureRecognizer Tapped="OnAuditTapped" />
+                            </Border.GestureRecognizers>
+                            <Label x:Name="AuditLabel" Text="Audit"
+                                   TextColor="{StaticResource SidebarText}" FontSize="14"
+                                   VerticalTextAlignment="Center" />
+                        </Border>
+                    </Grid>
 
-                    <Border x:Name="SettingsNavItem" BackgroundColor="Transparent" StrokeThickness="0" Padding="12,10">
-                        <Border.StrokeShape>
-                            <RoundRectangle CornerRadius="10" />
-                        </Border.StrokeShape>
-                        <Border.GestureRecognizers>
-                            <TapGestureRecognizer Tapped="OnSettingsTapped" />
-                        </Border.GestureRecognizers>
-                        <Label Text="Settings" TextColor="{StaticResource SidebarText}" FontSize="15" />
-                    </Border>
+                    <!-- Settings -->
+                    <Grid x:Name="SettingsNavItem" ColumnDefinitions="4,*">
+                        <BoxView x:Name="SettingsAccent"
+                                 BackgroundColor="{StaticResource SidebarAccent}"
+                                 WidthRequest="4" CornerRadius="2"
+                                 IsVisible="False" VerticalOptions="Fill" />
+                        <Border Grid.Column="1" x:Name="SettingsNavBorder"
+                                BackgroundColor="Transparent" StrokeThickness="0" Padding="14,12">
+                            <Border.StrokeShape><RoundRectangle CornerRadius="10" /></Border.StrokeShape>
+                            <Border.GestureRecognizers>
+                                <TapGestureRecognizer Tapped="OnSettingsTapped" />
+                            </Border.GestureRecognizers>
+                            <Label x:Name="SettingsLabel" Text="Settings"
+                                   TextColor="{StaticResource SidebarText}" FontSize="14"
+                                   VerticalTextAlignment="Center" />
+                        </Border>
+                    </Grid>
+
                 </VerticalStackLayout>
             </ScrollView>
+
+            <!-- Footer -->
+            <Border Grid.Row="2"
+                    BackgroundColor="{StaticResource SidebarHeader}"
+                    StrokeThickness="0"
+                    Padding="14,10">
+                <Label Text="MAWASA Water System v1.0"
+                       TextColor="#2B5470"
+                       FontSize="10"
+                       HorizontalTextAlignment="Center" />
+            </Border>
+
         </Grid>
     </Shell.FlyoutContent>
 
     <FlyoutItem x:Name="LoginItem" Title="Login" Route="login-root" FlyoutItemIsVisible="False">
         <ShellContent ContentTemplate="{DataTemplate pages:LoginPage}" Route="login" />
     </FlyoutItem>
-
     <FlyoutItem x:Name="DashboardItem" Title="Dashboard" Route="dashboard">
         <ShellContent ContentTemplate="{DataTemplate pages:DashboardPage}" Route="home" />
     </FlyoutItem>
-
     <FlyoutItem x:Name="BillingItem" Title="Billing" Route="billing">
         <ShellContent ContentTemplate="{DataTemplate pages:BillingPage}" Route="home" />
     </FlyoutItem>
-
     <FlyoutItem x:Name="PaymentsItem" Title="Payments" Route="payments">
         <ShellContent ContentTemplate="{DataTemplate pages:PaymentsPage}" Route="home" />
     </FlyoutItem>
-
     <FlyoutItem x:Name="CustomersItem" Title="Customers" Route="customers">
         <ShellContent ContentTemplate="{DataTemplate pages:CustomersPage}" Route="home" />
     </FlyoutItem>
-
     <FlyoutItem x:Name="ReportsItem" Title="Reports" Route="reports">
         <ShellContent ContentTemplate="{DataTemplate pages:ReportsPage}" Route="home" />
     </FlyoutItem>
-
     <FlyoutItem x:Name="AuditItem" Title="Audit" Route="audit">
         <ShellContent ContentTemplate="{DataTemplate pages:AuditPage}" Route="home" />
     </FlyoutItem>
-
     <FlyoutItem x:Name="SettingsItem" Title="Settings" Route="settings">
         <ShellContent ContentTemplate="{DataTemplate pages:SettingsPage}" Route="home" />
     </FlyoutItem>

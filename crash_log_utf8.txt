@@ -1,0 +1,77 @@
+﻿[2026-03-17T04:15:07.3860869Z] App started. Log file: C:\Users\Aldren Louie Reyes\AppData\Local\User Name\com.companyname.mawasaproject.presentation\Data\mawasa.crash.log
+[2026-03-17T04:29:59.8725589Z] App started. Log file: C:\Users\Aldren Louie Reyes\AppData\Local\User Name\com.companyname.mawasaproject.presentation\Data\mawasa.crash.log
+[2026-03-17T04:38:40.8028350Z] App started. Log file: C:\Users\Aldren Louie Reyes\AppData\Local\User Name\com.companyname.mawasaproject.presentation\Data\mawasa.crash.log
+[2026-03-17T04:41:57.9372864Z] App started. Log file: C:\Users\Aldren Louie Reyes\AppData\Local\User Name\com.companyname.mawasaproject.presentation\Data\mawasa.crash.log
+[2026-03-17T04:44:16.6360192Z] App started. Log file: C:\Users\Aldren Louie Reyes\AppData\Local\User Name\com.companyname.mawasaproject.presentation\Data\mawasa.crash.log
+[2026-03-17T04:52:40.3120194Z] App started. Log file: C:\Users\Aldren Louie Reyes\AppData\Local\User Name\com.companyname.mawasaproject.presentation\Data\mawasa.crash.log
+[2026-03-17T04:52:41.5255494Z] InitializeAsync
+Microsoft.Data.Sqlite.SqliteException (0x80004005): SQLite Error 1: 'incomplete input'.
+   at Microsoft.Data.Sqlite.SqliteException.ThrowExceptionForRC(Int32 rc, sqlite3 db)
+   at Microsoft.Data.Sqlite.SqliteCommand.PrepareAndEnumerateStatements()+MoveNext()
+   at Microsoft.Data.Sqlite.SqliteCommand.GetStatements()+MoveNext()
+   at Microsoft.Data.Sqlite.SqliteDataReader.NextResult()
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader(CommandBehavior behavior)
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader()
+   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteNonQuery()
+   at System.Data.Common.DbCommand.ExecuteNonQueryAsync(CancellationToken cancellationToken)
+--- End of stack trace from previous location ---
+   at MawasaProject.Infrastructure.Data.SqliteDatabaseInitializer.ExecuteMigrationScriptAsync(SqliteConnection connection, SqliteTransaction transaction, String script, CancellationToken cancellationToken) in C:\Coding Files\C#\MawasaSystem\MawasaProject\MawasaProject.Infrastructure\Data\SqliteDatabaseInitializer.cs:line 189
+   at MawasaProject.Infrastructure.Data.SqliteDatabaseInitializer.ApplyMigrationAsync(SqliteConnection connection, DatabaseMigration migration, CancellationToken cancellationToken) in C:\Coding Files\C#\MawasaSystem\MawasaProject\MawasaProject.Infrastructure\Data\SqliteDatabaseInitializer.cs:line 151
+   at MawasaProject.Infrastructure.Data.SqliteDatabaseInitializer.InitializeAsync(CancellationToken cancellationToken) in C:\Coding Files\C#\MawasaSystem\MawasaProject\MawasaProject.Infrastructure\Data\SqliteDatabaseInitializer.cs:line 55
+   at MawasaProject.Infrastructure.Data.SqliteDatabaseInitializer.InitializeAsync(CancellationToken cancellationToken) in C:\Coding Files\C#\MawasaSystem\MawasaProject\MawasaProject.Infrastructure\Data\SqliteDatabaseInitializer.cs:line 73
+   at MawasaProject.Presentation.App.InitializeAsync(Window window) in C:\Coding Files\C#\MawasaSystem\MawasaProject\MawasaProject.Presentation\App.xaml.cs:line 89
+
+[2026-03-26T03:07:39.5653593Z] App started. Log file: C:\Users\Aldren Louie Reyes\AppData\Local\User Name\com.companyname.mawasaproject.presentation\Data\mawasa.crash.log
+[2026-03-26T03:59:49.4664914Z] Navigation failed: //payments/home
+Microsoft.Maui.Controls.Xaml.XamlParseException: Position 55:21. Cannot assign property "IsClippedToBounds": Property does not exist, or is not assignable, or mismatching type between value and property
+   at Microsoft.Maui.Controls.Xaml.ApplyPropertiesVisitor.SetPropertyValue(Object xamlelement, XmlName propertyName, Object value, Object rootElement, INode node, HydrationContext context, IXmlLineInfo lineInfo)
+   at Microsoft.Maui.Controls.Xaml.ApplyPropertiesVisitor.Visit(ValueNode node, INode parentNode)
+   at Microsoft.Maui.Controls.Xaml.ElementNode.Accept(IXamlNodeVisitor visitor, INode parentNode)
+   at Microsoft.Maui.Controls.Xaml.ElementNode.Accept(IXamlNodeVisitor visitor, INode parentNode)
+   at Microsoft.Maui.Controls.Xaml.ElementNode.Accept(IXamlNodeVisitor visitor, INode parentNode)
+   at Microsoft.Maui.Controls.Xaml.RootNode.Accept(IXamlNodeVisitor visitor, INode parentNode)
+   at Microsoft.Maui.Controls.Xaml.XamlLoader.Visit(RootNode rootnode, HydrationContext visitorContext, Boolean useDesignProperties)
+   at Microsoft.Maui.Controls.Xaml.XamlLoader.Load(Object view, String xaml, Assembly rootAssembly, Boolean useDesignProperties)
+   at Microsoft.Maui.Controls.Xaml.XamlLoader.Load(Object view, String xaml, Boolean useDesignProperties)
+   at Microsoft.Maui.Controls.Xaml.XamlLoader.Load(Object view, Type callingType)
+   at Microsoft.Maui.Controls.Xaml.Extensions.LoadFromXaml[TXaml](TXaml view, Type callingType)
+   at MawasaProject.Presentation.Views.Pages.PaymentsPage.InitializeComponent() in C:\Coding Files\C#\MawasaSystem\MawasaProject\MawasaProject.Presentation\obj\Debug\net10.0-windows10.0.19041.0\win-x64\Microsoft.Maui.Controls.SourceGen\Microsoft.Maui.Controls.SourceGen.XamlGenerator\Views_Pages_PaymentsPage.xaml.sg.cs:line 20
+   at MawasaProject.Presentation.Views.Pages.PaymentsPage..ctor() in C:\Coding Files\C#\MawasaSystem\MawasaProject\MawasaProject.Presentation\Views\Pages\PaymentsPage.xaml.cs:line 13
+   at System.Reflection.ConstructorInvoker.InterpretedInvoke(Object obj, IntPtr* args)
+   at System.Reflection.ConstructorInvoker.InvokeDirectByRefWithFewArgs(Span`1 copyOfArgs)
+   at System.Reflection.ConstructorInvoker.InvokeDirectByRef(Object arg1, Object arg2, Object arg3, Object arg4)
+   at System.Reflection.ConstructorInvoker.InvokeImpl(Object arg1, Object arg2, Object arg3, Object arg4)
+   at System.Reflection.ConstructorInvoker.Invoke(Span`1 arguments)
+   at Microsoft.Extensions.DependencyInjection.ActivatorUtilities.ConstructorMatcher.CreateInstance(IServiceProvider provider)
+   at Microsoft.Extensions.DependencyInjection.ActivatorUtilities.CreateInstance(IServiceProvider provider, Type instanceType, Object[] parameters)
+   at Microsoft.Maui.Controls.ShellContent.<>c__DisplayClass20_0.<Microsoft.Maui.Controls.IShellContentController.GetOrCreateContent>b__0()
+   at Microsoft.Maui.Controls.ElementTemplate.CreateContent()
+   at Microsoft.Maui.Controls.Internals.DataTemplateExtensions.CreateContent(DataTemplate self, Object item, BindableObject container)
+   at Microsoft.Maui.Controls.ShellContent.Microsoft.Maui.Controls.IShellContentController.GetOrCreateContent()
+   at Microsoft.Maui.Controls.Handlers.ShellContentHandler.CreatePlatformElement()
+   at Microsoft.Maui.Handlers.ElementHandler`2.OnCreatePlatformElement()
+   at Microsoft.Maui.Handlers.ElementHandler.SetVirtualView(IElement view)
+   at Microsoft.Maui.Controls.Element.SetHandler(IElementHandler newHandler)
+   at Microsoft.Maui.Platform.ElementExtensions.ToHandler(IElement view, IMauiContext context)
+   at Microsoft.Maui.Platform.ElementExtensions.ToPlatform(IElement view, IMauiContext context)
+   at Microsoft.Maui.Controls.Handlers.ShellSectionHandler.SyncNavigationStack(Boolean animated, NavigationRequestedEventArgs e)
+   at Microsoft.Maui.Controls.Handlers.ShellSectionHandler.MapCurrentItem(ShellSectionHandler handler, ShellSection item)
+   at Microsoft.Maui.PropertyMapper.UpdateProperties(IElementHandler viewHandler, IElement virtualView)
+   at Microsoft.Maui.Handlers.ElementHandler.SetVirtualView(IElement view)
+   at Microsoft.Maui.Controls.Handlers.ShellSectionHandler.SetVirtualView(IElement view)
+   at Microsoft.Maui.Controls.Handlers.ShellItemHandler.UpdateCurrentItem()
+   at Microsoft.Maui.Controls.Handlers.ShellItemHandler.MapCurrentItem(ShellItemHandler handler, ShellItem item)
+   at Microsoft.Maui.PropertyMapper.UpdateProperties(IElementHandler viewHandler, IElement virtualView)
+   at Microsoft.Maui.Handlers.ElementHandler.SetVirtualView(IElement view)
+   at Microsoft.Maui.Controls.Handlers.ShellItemHandler.SetVirtualView(IElement view)
+   at Microsoft.Maui.Controls.Platform.ShellView.CreateShellItemView()
+   at Microsoft.Maui.Controls.Platform.ShellView.SwitchShellItem(ShellItem newItem, Boolean animate)
+   at Microsoft.Maui.Controls.Handlers.ShellHandler.MapCurrentItem(ShellHandler handler, Shell view)
+   at Microsoft.Maui.PropertyMapper.UpdateProperty(IElementHandler viewHandler, IElement virtualView, String property)
+   at Microsoft.Maui.Controls.Element.OnBindablePropertySet(BindableProperty property, Object original, Object value, Boolean changed, Boolean willFirePropertyChanged)
+   at Microsoft.Maui.Controls.BindableObject.SetValueActual(BindableProperty property, BindablePropertyContext context, Object value, Boolean currentlyApplying, SetValueFlags attributes, SetterSpecificity specificity, Boolean silent)
+   at Microsoft.Maui.Controls.BindableObject.SetValue(BindableProperty property, Object value, SetterSpecificity specificity)
+   at Microsoft.Maui.Controls.Element.SetValueFromRenderer(BindableProperty property, Object value)
+   at Microsoft.Maui.Controls.ShellNavigationManager.GoToAsync(ShellNavigationParameters shellNavigationParameters, ShellNavigationRequest navigationRequest)
+   at MawasaProject.Presentation.Shell.AppShell.NavigateToAsync(String route) in C:\Coding Files\C#\MawasaSystem\MawasaProject\MawasaProject.Presentation\Shell\AppShell.xaml.cs:line 103
+

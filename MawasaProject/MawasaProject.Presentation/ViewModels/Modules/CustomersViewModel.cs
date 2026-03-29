@@ -11,10 +11,16 @@ namespace MawasaProject.Presentation.ViewModels.Modules;
 public sealed class CustomersViewModel : BaseViewModel
 {
     private const int PageSize = 10;
+    private static readonly TimeSpan CacheTtl = TimeSpan.FromSeconds(90);
 
     private readonly ICustomerService _customerService;
     private readonly IBillingService _billingService;
     private readonly IDialogService _dialogService;
+
+    // In-memory cache — avoids repeated DB round-trips on every navigation
+    private IReadOnlyList<Customer>? _customerCache;
+    private IReadOnlyList<Bill>? _billCache;
+    private DateTime _cacheExpiry = DateTime.MinValue;
 
     private readonly List<CustomerGridRowItem> _allRows = [];
     private readonly List<CustomerGridRowItem> _filteredRows = [];
@@ -319,6 +325,7 @@ public sealed class CustomersViewModel : BaseViewModel
         Email = string.Empty;
         Address = string.Empty;
 
+        InvalidateCache();
         await LoadCustomersAsync(SearchQuery);
         await _dialogService.AlertAsync("Customer", "Customer created successfully.");
     }
@@ -348,14 +355,44 @@ public sealed class CustomersViewModel : BaseViewModel
         await _customerService.CreateCustomerAsync(customer);
         ClearRegistrationForm();
 
+        InvalidateCache();
         await LoadCustomersAsync(SearchQuery);
         await _dialogService.AlertAsync("Customer Registration", "Customer registered successfully.");
     }
 
     private async Task LoadCustomersAsync(string? query)
     {
-        var customers = await _customerService.SearchCustomersAsync(string.IsNullOrWhiteSpace(query) ? null : query);
-        var bills = await _billingService.GetBillsAsync();
+        // Refresh from DB only when cache has expired or a query filter is active
+        var useCache = _customerCache is not null
+            && _billCache is not null
+            && string.IsNullOrWhiteSpace(query)
+            && DateTime.UtcNow < _cacheExpiry;
+
+        IReadOnlyList<Customer> customers;
+        IReadOnlyList<Bill> bills;
+
+        if (useCache)
+        {
+            customers = _customerCache!;
+            bills = _billCache!;
+            StatusMessage = $"Loaded {customers.Count} customers (cached).";
+        }
+        else
+        {
+            customers = await _customerService.SearchCustomersAsync(
+                string.IsNullOrWhiteSpace(query) ? null : query);
+            bills = await _billingService.GetBillsAsync();
+
+            if (string.IsNullOrWhiteSpace(query))
+            {
+                _customerCache = customers;
+                _billCache = bills;
+                _cacheExpiry = DateTime.UtcNow.Add(CacheTtl);
+            }
+
+            StatusMessage = $"Loaded {customers.Count} customer(s) from database.";
+        }
+
         var billsByCustomer = bills
             .GroupBy(x => x.CustomerId)
             .ToDictionary(
@@ -375,7 +412,14 @@ public sealed class CustomersViewModel : BaseViewModel
         }
 
         ApplyFilters(resetToFirstPage: true);
-        StatusMessage = $"Loaded {_allRows.Count} customer row(s).";
+    }
+
+    /// <summary>Clears the customer+bill cache so the next load always hits the DB.</summary>
+    private void InvalidateCache()
+    {
+        _customerCache = null;
+        _billCache = null;
+        _cacheExpiry = DateTime.MinValue;
     }
 
     private void ApplyFilters(bool resetToFirstPage)

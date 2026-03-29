@@ -10,6 +10,7 @@ namespace MawasaProject.Presentation.ViewModels.Modules;
 public sealed class DashboardViewModel : BaseViewModel
 {
     private readonly IDashboardService _dashboardService;
+    private readonly AppStateStore _appState;
     private readonly AsyncCommand _refreshCommand;
 
     private DateTime _startDateUtc = DateTime.UtcNow.AddMonths(-11);
@@ -26,16 +27,22 @@ public sealed class DashboardViewModel : BaseViewModel
     private double _collectionRate;
 
     public DashboardViewModel()
-        : this(App.Services.GetRequiredService<IDashboardService>())
+        : this(
+            App.Services.GetRequiredService<IDashboardService>(),
+            App.Services.GetRequiredService<AppStateStore>())
     {
     }
 
-    public DashboardViewModel(IDashboardService dashboardService)
+    public DashboardViewModel(IDashboardService dashboardService, AppStateStore appState)
     {
         _dashboardService = dashboardService;
+        _appState = appState;
         RevenueSeries = [];
         _refreshCommand = new AsyncCommand(async () => await RefreshAsync());
     }
+
+    public string CurrentUsername => _appState.Session?.Username ?? "Administrator";
+    public string CurrentRoleDisplay => _appState.Session?.Roles.FirstOrDefault().ToString() ?? "Admin User";
 
     public DateTime StartDateUtc
     {
@@ -141,6 +148,8 @@ public sealed class DashboardViewModel : BaseViewModel
                     RelativeHeight = maxRevenue <= 0m ? 0d : (double)(point.Revenue / maxRevenue)
                 });
             }
+            
+            RaisePropertyChanged(nameof(RevenueSeries));
 
             AverageMonthlyRevenue = series.Length == 0 ? 0m : series.Average(x => x.Revenue);
             MonthlyRevenueChangePercentage = CalculateMonthOverMonthChange(series);

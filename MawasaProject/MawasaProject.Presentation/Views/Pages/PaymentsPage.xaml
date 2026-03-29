@@ -35,11 +35,6 @@
                             BackgroundColor="{StaticResource PrimaryBlue}"
                             TextColor="White"
                             Padding="12,8" />
-                    <Button Text="Applicant Fees"
-                            BackgroundColor="#E8EBF1"
-                            TextColor="#5E6F83"
-                            IsEnabled="False"
-                            Padding="12,8" />
                 </HorizontalStackLayout>
                 <Label Grid.Column="1"
                        Text="{Binding SearchGuide}"
@@ -51,20 +46,17 @@
             <Border BackgroundColor="{StaticResource SurfaceCard}"
                     Stroke="{StaticResource BorderSoft}"
                     StrokeThickness="1"
-                    Padding="14,12"
-                    IsClippedToBounds="False">
+                    Padding="14,12">
                 <Border.StrokeShape>
                     <RoundRectangle CornerRadius="14" />
                 </Border.StrokeShape>
 
                 <Grid ColumnDefinitions="3.2*,Auto,Auto"
                       ColumnSpacing="10"
-                      VerticalOptions="Center"
-                      IsClippedToBounds="False">
-                    <VerticalStackLayout Spacing="4" IsClippedToBounds="False">
+                      VerticalOptions="Center">
+                    <VerticalStackLayout Spacing="4">
                         <Label Text="Search Customer" FontSize="24" FontAttributes="Bold" TextColor="{StaticResource TextMain}" />
                         <AbsoluteLayout HeightRequest="44"
-                                        IsClippedToBounds="False"
                                         ZIndex="40">
                             <Border BackgroundColor="White" Stroke="{StaticResource BorderStrong}" StrokeThickness="1" Padding="10,0"
                                     AbsoluteLayout.LayoutBounds="0,0,1,44"

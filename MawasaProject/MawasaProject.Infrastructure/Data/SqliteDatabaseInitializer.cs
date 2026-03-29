@@ -33,9 +33,7 @@ public sealed class SqliteDatabaseInitializer(
     private static readonly Guid StaffRoleId = Guid.Parse("83CA95EC-56D3-4627-A1DC-F0081B8CC8C8");
     private static readonly Guid AdminUserId = Guid.Parse("9B9B34E1-9F8A-4BD5-B8FB-1DF7A1724E21");
     private static readonly Guid StaffUserId = Guid.Parse("6AE79A5F-7CF1-4E2B-98A3-F9E7C090E5F1");
-    private static readonly Guid SampleCustomerId = Guid.Parse("5AC1FF84-7785-47E3-B1B8-66CCFF2D8EC0");
-    private static readonly Guid SampleBillId = Guid.Parse("053D5168-D69A-49A2-9F8F-D55D78267B62");
-    private static readonly Guid SamplePaymentId = Guid.Parse("E2F0F58D-7677-4B4A-B1C9-9ACF5A060D5D");
+
 
     public async Task InitializeAsync(CancellationToken cancellationToken = default)
     {
@@ -720,64 +718,6 @@ public sealed class SqliteDatabaseInitializer(
                 ("$Id", Guid.NewGuid().ToString()),
                 ("$UserId", resolvedAdminUserId.ToString()),
                 ("$RoleId", resolvedStaffRoleId.ToString()),
-                ("$CreatedAtUtc", now)
-            ],
-            cancellationToken);
-
-        await ExecuteAsync(connection, transaction,
-            "INSERT OR IGNORE INTO Customers (Id, Name, PhoneNumber, Email, Address, CreatedAtUtc, IsDeleted) VALUES ($Id, $Name, $Phone, $Email, $Address, $CreatedAtUtc, 0);",
-            [
-                ("$Id", SampleCustomerId.ToString()),
-                ("$Name", "Sample Customer"),
-                ("$Phone", "+1-555-0100"),
-                ("$Email", "customer@example.com"),
-                ("$Address", "101 Main St"),
-                ("$CreatedAtUtc", now)
-            ],
-            cancellationToken);
-
-        var resolvedCustomerId = await QueryGuidAsync(
-            connection,
-            transaction,
-            "SELECT Id FROM Customers WHERE Email = $Email OR Name = $Name LIMIT 1;",
-            [
-                ("$Email", "customer@example.com"),
-                ("$Name", "Sample Customer")
-            ],
-            cancellationToken) ?? SampleCustomerId;
-
-        await ExecuteAsync(connection, transaction,
-            "INSERT OR IGNORE INTO Bills (Id, CustomerId, BillNumber, Amount, Balance, DueDateUtc, Status, CreatedByUserId, CreatedAtUtc, IsDeleted) VALUES ($Id, $CustomerId, $BillNumber, $Amount, $Balance, $DueDateUtc, $Status, $CreatedByUserId, $CreatedAtUtc, 0);",
-            [
-                ("$Id", SampleBillId.ToString()),
-                ("$CustomerId", resolvedCustomerId.ToString()),
-                ("$BillNumber", "BILL-1001"),
-                ("$Amount", 150m),
-                ("$Balance", 50m),
-                ("$DueDateUtc", DateTime.UtcNow.AddDays(10).ToString("O")),
-                ("$Status", 1),
-                ("$CreatedByUserId", resolvedAdminUserId.ToString()),
-                ("$CreatedAtUtc", now)
-            ],
-            cancellationToken);
-
-        var resolvedBillId = await QueryGuidAsync(
-            connection,
-            transaction,
-            "SELECT Id FROM Bills WHERE BillNumber = $BillNumber LIMIT 1;",
-            [("$BillNumber", "BILL-1001")],
-            cancellationToken) ?? SampleBillId;
-
-        await ExecuteAsync(connection, transaction,
-            "INSERT OR IGNORE INTO Payments (Id, BillId, Amount, PaymentDateUtc, Status, ReferenceNumber, CreatedByUserId, CreatedAtUtc) VALUES ($Id, $BillId, $Amount, $PaymentDateUtc, $Status, $Reference, $CreatedByUserId, $CreatedAtUtc);",
-            [
-                ("$Id", SamplePaymentId.ToString()),
-                ("$BillId", resolvedBillId.ToString()),
-                ("$Amount", 100m),
-                ("$PaymentDateUtc", now),
-                ("$Status", 2),
-                ("$Reference", "PMT-1001"),
-                ("$CreatedByUserId", resolvedAdminUserId.ToString()),
                 ("$CreatedAtUtc", now)
             ],
             cancellationToken);
