@@ -226,7 +226,7 @@ public sealed class PaymentsViewModel : BaseViewModel
 
     public async Task LiveSearchAsync(string? searchText)
     {
-        var term = searchText?.Trim() ?? string.Empty;
+        var term = searchText ?? string.Empty;
         BillSearchText = term;
 
         if (string.IsNullOrWhiteSpace(term))

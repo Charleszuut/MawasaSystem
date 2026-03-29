@@ -210,16 +210,40 @@ public sealed class PrintQueueService(
 
     private static async Task SimulatePlatformPrintAsync(PrintJob job, CancellationToken cancellationToken)
     {
-        await Task.Delay(TimeSpan.FromMilliseconds(35), cancellationToken);
-
-        if (string.IsNullOrWhiteSpace(job.PrinterName))
+        await Task.Run(() =>
         {
-            throw new InvalidOperationException("Printer name is not configured.");
-        }
+            if (string.IsNullOrWhiteSpace(job.PrinterName))
+            {
+                throw new InvalidOperationException("Printer name is not configured.");
+            }
 
-        if (job.Payload.Contains("[FAIL]", StringComparison.OrdinalIgnoreCase))
-        {
-            throw new InvalidOperationException("Simulated print engine failure.");
-        }
+            if (job.Payload.Contains("[FAIL]", StringComparison.OrdinalIgnoreCase))
+            {
+                throw new InvalidOperationException("Simulated print engine failure.");
+            }
+
+            if (!OperatingSystem.IsWindows())
+            {
+                return;
+            }
+
+#pragma warning disable CA1416 // Validate platform compatibility
+            using var document = new System.Drawing.Printing.PrintDocument();
+            document.PrinterSettings.PrinterName = job.PrinterName;
+
+            if (!document.PrinterSettings.IsValid)
+            {
+                throw new InvalidOperationException($"Printer '{job.PrinterName}' is not valid or not found.");
+            }
+
+            document.PrintPage += (sender, e) =>
+            {
+                using var font = new System.Drawing.Font("Consolas", 10);
+                e.Graphics?.DrawString(job.Payload, font, System.Drawing.Brushes.Black, new System.Drawing.PointF(10, 10));
+            };
+
+            document.Print();
+#pragma warning restore CA1416
+        }, cancellationToken);
     }
 }

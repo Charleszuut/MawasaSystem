@@ -8,24 +8,45 @@ public sealed class PrinterService(
     ISqliteConnectionManager connectionManager,
     PrintQueueService printQueueService) : IPrinterService
 {
+#pragma warning disable CA1416 // Validate platform compatibility
     public async Task<IReadOnlyList<string>> GetInstalledPrintersAsync(CancellationToken cancellationToken = default)
     {
-        var profiles = await GetProfilesAsync(cancellationToken);
-        var output = profiles
-            .Where(p => p.IsActive)
-            .OrderByDescending(p => p.IsDefault)
-            .ThenBy(p => p.Name)
-            .Select(p => p.DeviceName)
-            .Distinct(StringComparer.OrdinalIgnoreCase)
-            .ToList();
+        var output = new List<string>();
+
+        if (OperatingSystem.IsWindows())
+        {
+            try
+            {
+                foreach (string printer in System.Drawing.Printing.PrinterSettings.InstalledPrinters)
+                {
+                    output.Add(printer);
+                }
+            }
+            catch
+            {
+                // Fallback if print spooler fails
+            }
+        }
 
         if (output.Count == 0)
         {
             output.Add("Default-Printer");
+            var profiles = await GetProfilesAsync(cancellationToken);
+            var dbPrinters = profiles
+                .Where(p => p.IsActive)
+                .Select(p => p.DeviceName)
+                .Distinct(StringComparer.OrdinalIgnoreCase);
+
+            foreach (var dbp in dbPrinters)
+            {
+                if (!output.Contains(dbp, StringComparer.OrdinalIgnoreCase))
+                    output.Add(dbp);
+            }
         }
 
-        return output;
+        return output.Distinct(StringComparer.OrdinalIgnoreCase).OrderBy(x => x).ToList();
     }
+#pragma warning restore CA1416
 
     public async Task<IReadOnlyList<PrinterProfile>> GetProfilesAsync(CancellationToken cancellationToken = default)
     {

@@ -414,6 +414,14 @@
           }
         }
       },
+      "Microsoft.Win32.SystemEvents/9.0.0": {
+        "runtime": {
+          "runtimes/win/lib/net9.0/Microsoft.Win32.SystemEvents.dll": {
+            "assemblyVersion": "9.0.0.0",
+            "fileVersion": "9.0.24.52809"
+          }
+        }
+      },
       "Microsoft.WindowsAppSDK/1.7.250909003": {
         "dependencies": {
           "Microsoft.Web.WebView2": "1.0.3179.45"
@@ -529,6 +537,45 @@
           }
         }
       },
+      "PDFsharp/6.1.1": {
+        "dependencies": {
+          "Microsoft.Extensions.Logging": "10.0.0"
+        },
+        "runtime": {
+          "lib/net6.0/PdfSharp.Charting.dll": {
+            "assemblyVersion": "6.1.1.0",
+            "fileVersion": "6.1.1.7121"
+          },
+          "lib/net6.0/PdfSharp.Quality.dll": {
+            "assemblyVersion": "6.1.1.0",
+            "fileVersion": "6.1.1.7121"
+          },
+          "lib/net6.0/PdfSharp.Snippets.dll": {
+            "assemblyVersion": "6.1.1.0",
+            "fileVersion": "6.1.1.7121"
+          },
+          "lib/net6.0/PdfSharp.System.dll": {
+            "assemblyVersion": "6.1.1.0",
+            "fileVersion": "6.1.1.7121"
+          },
+          "lib/net6.0/PdfSharp.WPFonts.dll": {
+            "assemblyVersion": "6.1.1.0",
+            "fileVersion": "6.1.1.7121"
+          },
+          "lib/net6.0/PdfSharp.dll": {
+            "assemblyVersion": "6.1.1.0",
+            "fileVersion": "6.1.1.7121"
+          }
+        },
+        "resources": {
+          "lib/net6.0/de/PdfSharp.Charting.resources.dll": {
+            "locale": "de"
+          },
+          "lib/net6.0/de/PdfSharp.resources.dll": {
+            "locale": "de"
+          }
+        }
+      },
       "SQLitePCLRaw.bundle_e_sqlite3/2.1.11": {
         "dependencies": {
           "SQLitePCLRaw.lib.e_sqlite3": "2.1.11",
@@ -567,6 +614,21 @@
           }
         }
       },
+      "System.Drawing.Common/9.0.0": {
+        "dependencies": {
+          "Microsoft.Win32.SystemEvents": "9.0.0"
+        },
+        "runtime": {
+          "lib/net9.0/System.Drawing.Common.dll": {
+            "assemblyVersion": "9.0.0.0",
+            "fileVersion": "9.0.24.52901"
+          },
+          "lib/net9.0/System.Private.Windows.Core.dll": {
+            "assemblyVersion": "9.0.0.0",
+            "fileVersion": "9.0.24.52901"
+          }
+        }
+      },
       "MawasaProject.Application/1.0.0": {
         "dependencies": {
           "MawasaProject.Domain": "1.0.0",
@@ -594,7 +656,9 @@
           "MawasaProject.Domain": "1.0.0",
           "Microsoft.Data.Sqlite": "10.0.0",
           "Microsoft.Extensions.DependencyInjection.Abstractions": "10.0.0",
-          "Microsoft.Extensions.Logging.Abstractions": "10.0.0"
+          "Microsoft.Extensions.Logging.Abstractions": "10.0.0",
+          "PDFsharp": "6.1.1",
+          "System.Drawing.Common": "9.0.0"
         },
         "runtime": {
           "MawasaProject.Infrastructure.dll": {
@@ -792,12 +856,26 @@
       "path": "microsoft.web.webview2/1.0.3179.45",
       "hashPath": "microsoft.web.webview2.1.0.3179.45.nupkg.sha512"
     },
+    "Microsoft.Win32.SystemEvents/9.0.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-z8FfGIaoeALdD+KF44A2uP8PZIQQtDGiXsOLuN8nohbKhkyKt7zGaZb+fKiCxTuBqG22Q7myIAioSWaIcOOrOw==",
+      "path": "microsoft.win32.systemevents/9.0.0",
+      "hashPath": "microsoft.win32.systemevents.9.0.0.nupkg.sha512"
+    },
     "Microsoft.WindowsAppSDK/1.7.250909003": {
       "type": "package",
       "serviceable": true,
       "sha512": "sha512-zeVFVrkFYPkAL1cmXo62D1LVC66VqBiMx+WfZ3aDUmizNECCJewMTk0JwjlgYQcIqxqsK1SjF1CeG74TsokWpQ==",
       "path": "microsoft.windowsappsdk/1.7.250909003",
       "hashPath": "microsoft.windowsappsdk.1.7.250909003.nupkg.sha512"
+    },
+    "PDFsharp/6.1.1": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-wxBLG2f713s2Fp2rYxTCReNOcXT/4YX4h4TJW6y75xAEq2iaEjLDjZRgtXW1/IgadzyluIVmw4RqHz1rL4BYKg==",
+      "path": "pdfsharp/6.1.1",
+      "hashPath": "pdfsharp.6.1.1.nupkg.sha512"
     },
     "SQLitePCLRaw.bundle_e_sqlite3/2.1.11": {
       "type": "package",
@@ -826,6 +904,13 @@
       "sha512": "sha512-Y/0ZkR+r0Cg3DQFuCl1RBnv/tmxpIZRU3HUvelPw6MVaKHwYYR8YNvgs0vuNuXCMvlyJ+Fh88U1D4tah1tt6qw==",
       "path": "sqlitepclraw.provider.e_sqlite3/2.1.11",
       "hashPath": "sqlitepclraw.provider.e_sqlite3.2.1.11.nupkg.sha512"
+    },
+    "System.Drawing.Common/9.0.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-uoozjI3+dlgKh2onFJcz8aNLh6TRCPlLSh8Dbuljc8CdvqXrxHOVysJlrHvlsOCqceqGBR1wrMPxlnzzhynktw==",
+      "path": "system.drawing.common/9.0.0",
+      "hashPath": "system.drawing.common.9.0.0.nupkg.sha512"
     },
     "MawasaProject.Application/1.0.0": {
       "type": "project",

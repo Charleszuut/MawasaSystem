@@ -150,8 +150,8 @@
                                     </VerticalStackLayout>
                                 </Grid>
 
-                                <Grid ColumnDefinitions="{OnIdiom Phone='*', Tablet='*,*,*', Desktop='*,*,*'}"
-                                      RowDefinitions="{OnIdiom Phone='Auto,Auto,Auto', Tablet='Auto', Desktop='Auto'}"
+                                <Grid ColumnDefinitions="{OnIdiom Phone='*', Tablet='*,*', Desktop='*,*'}"
+                                      RowDefinitions="{OnIdiom Phone='Auto,Auto', Tablet='Auto', Desktop='Auto'}"
                                       ColumnSpacing="10"
                                       RowSpacing="10">
                                     <VerticalStackLayout Spacing="4">
@@ -175,19 +175,6 @@
                                             </Border.StrokeShape>
                                             <Picker ItemsSource="{Binding PurokOptions}"
                                                     SelectedItem="{Binding RegistrationSelectedPurok}" />
-                                        </Border>
-                                    </VerticalStackLayout>
-
-                                    <VerticalStackLayout Grid.Column="{OnIdiom Phone=0, Tablet=2, Desktop=2}"
-                                                         Grid.Row="{OnIdiom Phone=2, Tablet=0, Desktop=0}"
-                                                         Spacing="4">
-                                        <Label Text="Postal Code (optional)" Style="{StaticResource FieldLabelStyle}" />
-                                        <Border BackgroundColor="White" Stroke="{StaticResource BorderStrong}" StrokeThickness="1" Padding="10,0">
-                                            <Border.StrokeShape>
-                                                <RoundRectangle CornerRadius="8" />
-                                            </Border.StrokeShape>
-                                            <Entry Placeholder="e.g. 4271"
-                                                   Text="{Binding RegistrationPostalCode}" />
                                         </Border>
                                     </VerticalStackLayout>
                                 </Grid>
@@ -309,17 +296,16 @@
 
                     <ScrollView Orientation="Horizontal">
                         <VerticalStackLayout WidthRequest="1150" Spacing="0">
-                            <Grid ColumnDefinitions="0.6*,1.4*,2*,3.3*,1.5*,1.7*,1.5*,1.3*"
+                            <Grid ColumnDefinitions="1.4*,2*,3.3*,1.5*,1.7*,1.5*,1.3*"
                                   BackgroundColor="#1F67D7"
                                   Padding="10,8">
-                                <Label Text="" />
-                                <Label Grid.Column="1" Text="ACCOUNT NO." FontSize="10" FontAttributes="Bold" TextColor="White" />
-                                <Label Grid.Column="2" Text="NAME" FontSize="10" FontAttributes="Bold" TextColor="White" />
-                                <Label Grid.Column="3" Text="ADDRESS" FontSize="10" FontAttributes="Bold" TextColor="White" />
-                                <Label Grid.Column="4" Text="APPLICATION" FontSize="10" FontAttributes="Bold" TextColor="White" />
-                                <Label Grid.Column="5" Text="CONTACT NO." FontSize="10" FontAttributes="Bold" TextColor="White" />
-                                <Label Grid.Column="6" Text="STATUS" FontSize="10" FontAttributes="Bold" TextColor="White" />
-                                <Label Grid.Column="7" Text="CREATED" FontSize="10" FontAttributes="Bold" TextColor="White" />
+                                <Label Text="ACCOUNT NO." FontSize="10" FontAttributes="Bold" TextColor="White" />
+                                <Label Grid.Column="1" Text="NAME" FontSize="10" FontAttributes="Bold" TextColor="White" />
+                                <Label Grid.Column="2" Text="ADDRESS" FontSize="10" FontAttributes="Bold" TextColor="White" />
+                                <Label Grid.Column="3" Text="APPLICATION" FontSize="10" FontAttributes="Bold" TextColor="White" />
+                                <Label Grid.Column="4" Text="CONTACT NO." FontSize="10" FontAttributes="Bold" TextColor="White" />
+                                <Label Grid.Column="5" Text="STATUS" FontSize="10" FontAttributes="Bold" TextColor="White" />
+                                <Label Grid.Column="6" Text="CREATED" FontSize="10" FontAttributes="Bold" TextColor="White" />
                             </Grid>
 
                             <CollectionView ItemsSource="{Binding Customers}"
@@ -327,7 +313,7 @@
                                             HeightRequest="470">
                                 <CollectionView.ItemTemplate>
                                     <DataTemplate>
-                                        <Grid ColumnDefinitions="0.6*,1.4*,2*,3.3*,1.5*,1.7*,1.5*,1.3*"
+                                        <Grid ColumnDefinitions="1.4*,2*,3.3*,1.5*,1.7*,1.5*,1.3*"
                                               Padding="10,9"
                                               ColumnSpacing="8"
                                               BackgroundColor="{Binding RowBackground}">
@@ -336,30 +322,24 @@
                                                 <RowDefinition Height="1" />
                                             </Grid.RowDefinitions>
 
-                                            <CheckBox IsChecked="False"
-                                                      IsEnabled="False"
-                                                      VerticalOptions="Center"
-                                                      Color="#BCC8D8" />
-
-                                            <Label Grid.Column="1"
-                                                   Text="{Binding AccountNumber}"
+                                            <Label Text="{Binding AccountNumber}"
                                                    FontSize="12"
                                                    TextColor="#20354A"
                                                    VerticalTextAlignment="Center" />
-                                            <Label Grid.Column="2"
+                                            <Label Grid.Column="1"
                                                    Text="{Binding Name}"
                                                    FontSize="12"
                                                    FontAttributes="Bold"
                                                    TextColor="#20354A"
                                                    VerticalTextAlignment="Center" />
-                                            <Label Grid.Column="3"
-                                                   Text="{Binding Address}"
-                                                   FontSize="12"
-                                                   TextColor="#41556D"
-                                                   LineBreakMode="TailTruncation"
-                                                   VerticalTextAlignment="Center" />
+                                            <Label Grid.Column="2"
+                                                    Text="{Binding Address}"
+                                                    FontSize="12"
+                                                    TextColor="#41556D"
+                                                    LineBreakMode="TailTruncation"
+                                                    VerticalTextAlignment="Center" />
 
-                                            <Border Grid.Column="4"
+                                            <Border Grid.Column="3"
                                                     BackgroundColor="{Binding ApplicationBackground}"
                                                     StrokeThickness="0"
                                                     Padding="8,4"
@@ -374,13 +354,13 @@
                                                        TextColor="{Binding ApplicationForeground}" />
                                             </Border>
 
-                                            <Label Grid.Column="5"
+                                            <Label Grid.Column="4"
                                                    Text="{Binding ContactNumber}"
                                                    FontSize="12"
                                                    TextColor="#41556D"
                                                    VerticalTextAlignment="Center" />
 
-                                            <Border Grid.Column="6"
+                                            <Border Grid.Column="5"
                                                     BackgroundColor="{Binding StatusBackground}"
                                                     StrokeThickness="0"
                                                     Padding="8,4"
@@ -395,14 +375,14 @@
                                                        TextColor="{Binding StatusForeground}" />
                                             </Border>
 
-                                            <Label Grid.Column="7"
+                                            <Label Grid.Column="6"
                                                    Text="{Binding CreatedDisplay}"
                                                    FontSize="12"
                                                    TextColor="#41556D"
                                                    VerticalTextAlignment="Center" />
 
                                             <BoxView Grid.Row="1"
-                                                     Grid.ColumnSpan="8"
+                                                     Grid.ColumnSpan="7"
                                                      HeightRequest="1"
                                                      Color="#E2EAF4"
                                                      Margin="0,9,0,0" />

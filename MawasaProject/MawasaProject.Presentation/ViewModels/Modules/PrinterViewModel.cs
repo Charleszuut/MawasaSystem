@@ -158,10 +158,34 @@ public sealed class PrinterViewModel : BaseViewModel
             return;
         }
 
+        var confirm = await _dialogService.ConfirmAsync(
+            "Confirm Print",
+            $"Are you sure you want to send a test page to {SelectedPrinter}?",
+            "Print",
+            "Cancel");
+
+        if (!confirm)
+        {
+            return;
+        }
+
+        var receiptDesign = 
+            "=================================\n" +
+            "      MAWASA WATER SYSTEM\n" +
+            "=================================\n" +
+            $"DATE   : {DateTime.Now:MMM dd, yyyy HH:mm}\n" +
+            $"DEVICE : {SelectedPrinter}\n" +
+            $"PROFILE: {(string.IsNullOrWhiteSpace(ProfileName) ? "Default" : ProfileName)}\n" +
+            "---------------------------------\n" +
+            "If you can read this, your\n" +
+            "printer is properly configured\n" +
+            "and ready to print tickets!\n" +
+            "=================================\n\n\n";
+
         var jobId = await _printerService.EnqueueAsync(new PrintRequest
         {
             TemplateName = "Test",
-            Content = "Mawasa Printer test page " + DateTime.UtcNow.ToString("O"),
+            Content = receiptDesign,
             PrinterName = SelectedPrinter,
             ProfileName = string.IsNullOrWhiteSpace(ProfileName) ? null : ProfileName,
             PaperSize = PaperSize,

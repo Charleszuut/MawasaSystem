@@ -41,12 +41,11 @@ public sealed class CustomersViewModel : BaseViewModel
     private bool _isRegisterMode;
     private string _registrationFirstName = string.Empty;
     private string _registrationLastName = string.Empty;
-    private string _registrationBarangay = string.Empty;
-    private string _registrationCityMunicipality = string.Empty;
-    private string _registrationProvince = string.Empty;
+    private string _registrationBarangay = "Manambulan";
+    private string _registrationCityMunicipality = "Davao City";
+    private string _registrationProvince = "Davao del Sur";
     private string _registrationStreetBlockLot = string.Empty;
     private string _registrationSelectedPurok = "Select Purok";
-    private string _registrationPostalCode = string.Empty;
     private string _registrationContactNumber = string.Empty;
     private int _currentPage = 1;
     private int _totalPages = 1;
@@ -208,12 +207,6 @@ public sealed class CustomersViewModel : BaseViewModel
     {
         get => _registrationSelectedPurok;
         set => SetProperty(ref _registrationSelectedPurok, value);
-    }
-
-    public string RegistrationPostalCode
-    {
-        get => _registrationPostalCode;
-        set => SetProperty(ref _registrationPostalCode, value);
     }
 
     public string RegistrationContactNumber
@@ -587,11 +580,6 @@ public sealed class CustomersViewModel : BaseViewModel
             parts.Add(RegistrationProvince.Trim());
         }
 
-        if (!string.IsNullOrWhiteSpace(RegistrationPostalCode))
-        {
-            parts.Add($"Postal {RegistrationPostalCode.Trim()}");
-        }
-
         return parts.Count == 0 ? null : string.Join(", ", parts);
     }
 
@@ -599,12 +587,11 @@ public sealed class CustomersViewModel : BaseViewModel
     {
         RegistrationFirstName = string.Empty;
         RegistrationLastName = string.Empty;
-        RegistrationBarangay = string.Empty;
-        RegistrationCityMunicipality = string.Empty;
-        RegistrationProvince = string.Empty;
+        RegistrationBarangay = "Manambulan";
+        RegistrationCityMunicipality = "Davao City";
+        RegistrationProvince = "Davao del Sur";
         RegistrationStreetBlockLot = string.Empty;
         RegistrationSelectedPurok = PurokOptions[0];
-        RegistrationPostalCode = string.Empty;
         RegistrationContactNumber = string.Empty;
     }
 }

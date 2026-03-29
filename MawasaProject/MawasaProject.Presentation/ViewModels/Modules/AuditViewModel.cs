@@ -10,7 +10,7 @@ namespace MawasaProject.Presentation.ViewModels.Modules;
 
 public sealed class AuditViewModel : BaseViewModel
 {
-    private const int PageSize = 20;
+    private const int PageSize = 10;
     private readonly IAuditService _auditService;
 
     private readonly List<AuditLogRowItem> _allRows = [];

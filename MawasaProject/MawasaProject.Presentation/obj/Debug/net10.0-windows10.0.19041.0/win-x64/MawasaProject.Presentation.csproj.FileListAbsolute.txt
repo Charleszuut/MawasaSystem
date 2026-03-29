@@ -1069,3 +1069,14 @@ C:\Coding Files\C#\MawasaSystem\MawasaProject\MawasaProject.Presentation\obj\Deb
 C:\Coding Files\C#\MawasaSystem\MawasaProject\MawasaProject.Presentation\bin\Debug\net10.0-windows10.0.19041.0\win-x64\revenue_chart.html
 C:\Coding Files\C#\MawasaSystem\MawasaProject\MawasaProject.Presentation\bin\Debug\net10.0-windows10.0.19041.0\win-x64\chart.umd.min.js
 C:\Coding Files\C#\MawasaSystem\MawasaProject\MawasaProject.Presentation\bin\Debug\net10.0-windows10.0.19041.0\win-x64\analytics_chart.html
+C:\Coding Files\C#\MawasaSystem\MawasaProject\MawasaProject.Presentation\bin\Debug\net10.0-windows10.0.19041.0\win-x64\Microsoft.Win32.SystemEvents.dll
+C:\Coding Files\C#\MawasaSystem\MawasaProject\MawasaProject.Presentation\bin\Debug\net10.0-windows10.0.19041.0\win-x64\System.Drawing.Common.dll
+C:\Coding Files\C#\MawasaSystem\MawasaProject\MawasaProject.Presentation\bin\Debug\net10.0-windows10.0.19041.0\win-x64\System.Private.Windows.Core.dll
+C:\Coding Files\C#\MawasaSystem\MawasaProject\MawasaProject.Presentation\bin\Debug\net10.0-windows10.0.19041.0\win-x64\PdfSharp.Charting.dll
+C:\Coding Files\C#\MawasaSystem\MawasaProject\MawasaProject.Presentation\bin\Debug\net10.0-windows10.0.19041.0\win-x64\PdfSharp.Quality.dll
+C:\Coding Files\C#\MawasaSystem\MawasaProject\MawasaProject.Presentation\bin\Debug\net10.0-windows10.0.19041.0\win-x64\PdfSharp.Snippets.dll
+C:\Coding Files\C#\MawasaSystem\MawasaProject\MawasaProject.Presentation\bin\Debug\net10.0-windows10.0.19041.0\win-x64\PdfSharp.System.dll
+C:\Coding Files\C#\MawasaSystem\MawasaProject\MawasaProject.Presentation\bin\Debug\net10.0-windows10.0.19041.0\win-x64\PdfSharp.WPFonts.dll
+C:\Coding Files\C#\MawasaSystem\MawasaProject\MawasaProject.Presentation\bin\Debug\net10.0-windows10.0.19041.0\win-x64\PdfSharp.dll
+C:\Coding Files\C#\MawasaSystem\MawasaProject\MawasaProject.Presentation\bin\Debug\net10.0-windows10.0.19041.0\win-x64\de\PdfSharp.Charting.resources.dll
+C:\Coding Files\C#\MawasaSystem\MawasaProject\MawasaProject.Presentation\bin\Debug\net10.0-windows10.0.19041.0\win-x64\de\PdfSharp.resources.dll

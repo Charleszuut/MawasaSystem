@@ -63,7 +63,7 @@
                             <Label Grid.Column="5" Text="Details" FontSize="10" FontAttributes="Bold" TextColor="White" HorizontalTextAlignment="Center" />
                         </Grid>
 
-                        <CollectionView ItemsSource="{Binding Logs}" SelectionMode="None" HeightRequest="620">
+                        <CollectionView ItemsSource="{Binding Logs}" SelectionMode="None" HeightRequest="400">
                             <CollectionView.ItemTemplate>
                                 <DataTemplate>
                                     <Grid ColumnDefinitions="1.6*,1.2*,1*,1.2*,2.6*,Auto" Padding="10,9" ColumnSpacing="8" BackgroundColor="{Binding RowBackground}">
