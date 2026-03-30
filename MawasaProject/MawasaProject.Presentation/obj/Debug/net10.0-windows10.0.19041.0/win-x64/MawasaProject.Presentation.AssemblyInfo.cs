@@ -10,14 +10,14 @@
 using System;
 using System.Reflection;
 
+[assembly: System.Reflection.AssemblyMetadataAttribute("Microsoft.Maui.ApplicationModel.AppInfo.PackageName", "com.companyname.mawasaproject.presentation")]
+[assembly: System.Reflection.AssemblyMetadataAttribute("Microsoft.Maui.ApplicationModel.AppInfo.PublisherName", "User Name")]
+[assembly: System.Reflection.AssemblyMetadataAttribute("Microsoft.Maui.ApplicationModel.AppInfo.Name", "MawasaProject.Presentation")]
+[assembly: System.Reflection.AssemblyMetadataAttribute("Microsoft.Maui.ApplicationModel.AppInfo.Version", "1.0.0.1")]
 [assembly: System.Reflection.AssemblyCompanyAttribute("MawasaProject.Presentation")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-<<<<<<< HEAD
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+e824200bcff83657388d5874af61a93768b025cb")]
-=======
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0+168d2a85e740d7c4c811d7544c8366d7e279dbab")]
->>>>>>> 94d0361 (Fixes and mini polish)
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0+dff835c5d3ace05db576f7003c2c0d9687c6f455")]
 [assembly: System.Reflection.AssemblyProductAttribute("MawasaProject.Presentation")]
 [assembly: System.Reflection.AssemblyTitleAttribute("MawasaProject.Presentation")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
