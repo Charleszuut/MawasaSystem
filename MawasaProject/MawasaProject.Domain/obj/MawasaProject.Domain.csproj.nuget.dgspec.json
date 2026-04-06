@@ -1,23 +1,23 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Coding Files\\C#\\MawasaSystem\\MawasaProject\\MawasaProject.Domain\\MawasaProject.Domain.csproj": {}
+    "C:\\Projects\\MawasaSystem\\MawasaProject\\MawasaProject.Domain\\MawasaProject.Domain.csproj": {}
   },
   "projects": {
-    "C:\\Coding Files\\C#\\MawasaSystem\\MawasaProject\\MawasaProject.Domain\\MawasaProject.Domain.csproj": {
+    "C:\\Projects\\MawasaSystem\\MawasaProject\\MawasaProject.Domain\\MawasaProject.Domain.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Coding Files\\C#\\MawasaSystem\\MawasaProject\\MawasaProject.Domain\\MawasaProject.Domain.csproj",
+        "projectUniqueName": "C:\\Projects\\MawasaSystem\\MawasaProject\\MawasaProject.Domain\\MawasaProject.Domain.csproj",
         "projectName": "MawasaProject.Domain",
-        "projectPath": "C:\\Coding Files\\C#\\MawasaSystem\\MawasaProject\\MawasaProject.Domain\\MawasaProject.Domain.csproj",
-        "packagesPath": "C:\\Users\\Aldren Louie Reyes\\.nuget\\packages\\",
-        "outputPath": "C:\\Coding Files\\C#\\MawasaSystem\\MawasaProject\\MawasaProject.Domain\\obj\\",
+        "projectPath": "C:\\Projects\\MawasaSystem\\MawasaProject\\MawasaProject.Domain\\MawasaProject.Domain.csproj",
+        "packagesPath": "C:\\Users\\decay\\.nuget\\packages\\",
+        "outputPath": "C:\\Projects\\MawasaSystem\\MawasaProject\\MawasaProject.Domain\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
         ],
         "configFilePaths": [
-          "C:\\Users\\Aldren Louie Reyes\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\decay\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
