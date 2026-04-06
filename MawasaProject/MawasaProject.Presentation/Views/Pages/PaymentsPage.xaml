@@ -154,6 +154,40 @@
                 </Grid>
             </Border>
 
+            <!-- Selected Customer Badge -->
+            <Border BackgroundColor="#EAF4FF"
+                    Stroke="#B3D4F7"
+                    StrokeThickness="1"
+                    Padding="10,8"
+                    IsVisible="{Binding HasSelectedCustomer}">
+                <Border.StrokeShape>
+                    <RoundRectangle CornerRadius="10" />
+                </Border.StrokeShape>
+                <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="10">
+                    <Border BackgroundColor="#2D6DE2" StrokeThickness="0" Padding="8,4" VerticalOptions="Center">
+                        <Border.StrokeShape><RoundRectangle CornerRadius="6" /></Border.StrokeShape>
+                        <Label Text="SELECTED" FontSize="9" FontAttributes="Bold" TextColor="White" />
+                    </Border>
+                    <Label Grid.Column="1"
+                           Text="{Binding SelectedCustomerDisplay}"
+                           FontSize="14"
+                           FontAttributes="Bold"
+                           TextColor="#1E3A5A"
+                           VerticalTextAlignment="Center" />
+                    <Button Grid.Column="2"
+                            Text="✕"
+                            Command="{Binding ClearSelectedCustomerCommand}"
+                            BackgroundColor="#DCE8F5"
+                            TextColor="#4A6B8A"
+                            FontAttributes="Bold"
+                            FontSize="12"
+                            WidthRequest="34"
+                            HeightRequest="34"
+                            Padding="0"
+                            VerticalOptions="Center" />
+                </Grid>
+            </Border>
+
             <Border BackgroundColor="{StaticResource SurfaceCard}" Stroke="{StaticResource BorderSoft}" StrokeThickness="1" Padding="14,12">
                 <Border.StrokeShape>
                     <RoundRectangle CornerRadius="14" />

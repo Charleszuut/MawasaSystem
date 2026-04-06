@@ -11,7 +11,7 @@ public sealed class PrinterViewModel : BaseViewModel
     private readonly IPrinterService _printerService;
     private readonly IDialogService _dialogService;
 
-    private string _selectedPrinter = string.Empty;
+    private string? _selectedPrinter;
     private PrinterProfile? _selectedProfile;
     private string _profileName = string.Empty;
     private string _paperSize = "A4";
@@ -40,10 +40,33 @@ public sealed class PrinterViewModel : BaseViewModel
     public ObservableCollection<string> PaperSizes { get; } = [];
     public ObservableCollection<PrinterProfile> Profiles { get; } = [];
 
-    public string SelectedPrinter
+    public string? SelectedPrinter
     {
         get => _selectedPrinter;
-        set => SetProperty(ref _selectedPrinter, value);
+        set 
+        {
+            if (SetProperty(ref _selectedPrinter, value))
+            {
+                RaisePropertyChanged(nameof(SelectedPrinterIndex));
+            }
+        }
+    }
+
+    public int SelectedPrinterIndex
+    {
+        get => string.IsNullOrEmpty(SelectedPrinter) ? -1 : Printers.IndexOf(SelectedPrinter);
+        set
+        {
+            if (value >= 0 && value < Printers.Count)
+            {
+                SelectedPrinter = Printers[value];
+            }
+            else
+            {
+                SelectedPrinter = null;
+            }
+            RaisePropertyChanged(nameof(SelectedPrinterIndex));
+        }
     }
 
     public PrinterProfile? SelectedProfile
@@ -105,8 +128,8 @@ public sealed class PrinterViewModel : BaseViewModel
         }
 
         SelectedPrinter = Profiles.FirstOrDefault(p => p.IsDefault)?.DeviceName
-            ?? Printers.FirstOrDefault()
-            ?? string.Empty;
+            ?? Printers.FirstOrDefault();
+        RaisePropertyChanged(nameof(SelectedPrinterIndex));
         StatusMessage = $"Loaded {Printers.Count} printer device(s), {Profiles.Count} profile(s).";
     }));
 

@@ -12,6 +12,8 @@
         <Color x:Key="SidebarBg">#0F2B45</Color>
         <Color x:Key="SidebarHeader">#0A1F33</Color>
         <Color x:Key="SidebarItemActive">#1E7FC2</Color>
+        <Color x:Key="SidebarItemHover">#15395A</Color>
+        <Color x:Key="SidebarSubMenuHover">#112D47</Color>
         <Color x:Key="SidebarText">#DAEEFF</Color>
         <Color x:Key="SidebarSubText">#A8D4EF</Color>
         <Color x:Key="SidebarAccent">#3DB1F5</Color>
@@ -105,6 +107,7 @@
                             <Border.StrokeShape><RoundRectangle CornerRadius="10" /></Border.StrokeShape>
                             <Border.GestureRecognizers>
                                 <TapGestureRecognizer Tapped="OnDashboardTapped" />
+                                <PointerGestureRecognizer PointerEntered="OnNavItemPointerEntered" PointerExited="OnNavItemPointerExited" />
                             </Border.GestureRecognizers>
                             <Label x:Name="DashboardLabel" Text="Dashboard"
                                    TextColor="{StaticResource SidebarText}" FontSize="14"
@@ -123,6 +126,7 @@
                             <Border.StrokeShape><RoundRectangle CornerRadius="10" /></Border.StrokeShape>
                             <Border.GestureRecognizers>
                                 <TapGestureRecognizer Tapped="OnBillingTapped" />
+                                <PointerGestureRecognizer PointerEntered="OnNavItemPointerEntered" PointerExited="OnNavItemPointerExited" />
                             </Border.GestureRecognizers>
                             <Label x:Name="BillingLabel" Text="Billing"
                                    TextColor="{StaticResource SidebarText}" FontSize="14"
@@ -141,6 +145,7 @@
                             <Border.StrokeShape><RoundRectangle CornerRadius="10" /></Border.StrokeShape>
                             <Border.GestureRecognizers>
                                 <TapGestureRecognizer Tapped="OnPaymentsTapped" />
+                                <PointerGestureRecognizer PointerEntered="OnNavItemPointerEntered" PointerExited="OnNavItemPointerExited" />
                             </Border.GestureRecognizers>
                             <Label x:Name="PaymentsLabel" Text="Payments"
                                    TextColor="{StaticResource SidebarText}" FontSize="14"
@@ -159,6 +164,7 @@
                             <Border.StrokeShape><RoundRectangle CornerRadius="10" /></Border.StrokeShape>
                             <Border.GestureRecognizers>
                                 <TapGestureRecognizer Tapped="OnCustomersTapped" />
+                                <PointerGestureRecognizer PointerEntered="OnNavItemPointerEntered" PointerExited="OnNavItemPointerExited" />
                             </Border.GestureRecognizers>
                             <Grid ColumnDefinitions="*,Auto">
                                 <Label x:Name="CustomersLabel" Text="Customers"
@@ -178,6 +184,7 @@
                             <Border.StrokeShape><RoundRectangle CornerRadius="8" /></Border.StrokeShape>
                             <Border.GestureRecognizers>
                                 <TapGestureRecognizer Tapped="OnCustomersManagementTapped" />
+                                <PointerGestureRecognizer PointerEntered="OnSubItemPointerEntered" PointerExited="OnSubItemPointerExited" />
                             </Border.GestureRecognizers>
                             <Label Text="Customer Management"
                                    TextColor="{StaticResource SidebarSubText}" FontSize="13" />
@@ -188,6 +195,7 @@
                             <Border.StrokeShape><RoundRectangle CornerRadius="8" /></Border.StrokeShape>
                             <Border.GestureRecognizers>
                                 <TapGestureRecognizer Tapped="OnCustomersRegisterTapped" />
+                                <PointerGestureRecognizer PointerEntered="OnSubItemPointerEntered" PointerExited="OnSubItemPointerExited" />
                             </Border.GestureRecognizers>
                             <Label Text="Create/Register Customers"
                                    TextColor="{StaticResource SidebarSubText}" FontSize="13" />
@@ -205,6 +213,7 @@
                             <Border.StrokeShape><RoundRectangle CornerRadius="10" /></Border.StrokeShape>
                             <Border.GestureRecognizers>
                                 <TapGestureRecognizer Tapped="OnReportsTapped" />
+                                <PointerGestureRecognizer PointerEntered="OnNavItemPointerEntered" PointerExited="OnNavItemPointerExited" />
                             </Border.GestureRecognizers>
                             <Grid ColumnDefinitions="*,Auto">
                                 <Label x:Name="ReportsLabel" Text="Reports"
@@ -224,6 +233,7 @@
                             <Border.StrokeShape><RoundRectangle CornerRadius="8" /></Border.StrokeShape>
                             <Border.GestureRecognizers>
                                 <TapGestureRecognizer Tapped="OnReportsCustomerPaymentTapped" />
+                                <PointerGestureRecognizer PointerEntered="OnSubItemPointerEntered" PointerExited="OnSubItemPointerExited" />
                             </Border.GestureRecognizers>
                             <Label Text="Customer Payment Report"
                                    TextColor="{StaticResource SidebarSubText}" FontSize="13" />
@@ -234,6 +244,7 @@
                             <Border.StrokeShape><RoundRectangle CornerRadius="8" /></Border.StrokeShape>
                             <Border.GestureRecognizers>
                                 <TapGestureRecognizer Tapped="OnReportsIssueTapped" />
+                                <PointerGestureRecognizer PointerEntered="OnSubItemPointerEntered" PointerExited="OnSubItemPointerExited" />
                             </Border.GestureRecognizers>
                             <Label Text="Issue Report"
                                    TextColor="{StaticResource SidebarSubText}" FontSize="13" />
@@ -244,6 +255,7 @@
                             <Border.StrokeShape><RoundRectangle CornerRadius="8" /></Border.StrokeShape>
                             <Border.GestureRecognizers>
                                 <TapGestureRecognizer Tapped="OnReportsPrintTapped" />
+                                <PointerGestureRecognizer PointerEntered="OnSubItemPointerEntered" PointerExited="OnSubItemPointerExited" />
                             </Border.GestureRecognizers>
                             <Label Text="Print Reports"
                                    TextColor="{StaticResource SidebarSubText}" FontSize="13" />
@@ -261,6 +273,7 @@
                             <Border.StrokeShape><RoundRectangle CornerRadius="10" /></Border.StrokeShape>
                             <Border.GestureRecognizers>
                                 <TapGestureRecognizer Tapped="OnAuditTapped" />
+                                <PointerGestureRecognizer PointerEntered="OnNavItemPointerEntered" PointerExited="OnNavItemPointerExited" />
                             </Border.GestureRecognizers>
                             <Label x:Name="AuditLabel" Text="Audit"
                                    TextColor="{StaticResource SidebarText}" FontSize="14"
@@ -279,6 +292,7 @@
                             <Border.StrokeShape><RoundRectangle CornerRadius="10" /></Border.StrokeShape>
                             <Border.GestureRecognizers>
                                 <TapGestureRecognizer Tapped="OnSettingsTapped" />
+                                <PointerGestureRecognizer PointerEntered="OnNavItemPointerEntered" PointerExited="OnNavItemPointerExited" />
                             </Border.GestureRecognizers>
                             <Label x:Name="SettingsLabel" Text="Settings"
                                    TextColor="{StaticResource SidebarText}" FontSize="14"

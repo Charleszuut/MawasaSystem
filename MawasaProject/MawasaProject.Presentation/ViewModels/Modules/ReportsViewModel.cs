@@ -74,6 +74,7 @@ public sealed partial class ReportsViewModel : BaseViewModel
 
     private bool _isInitialized;
     private bool _suppressSearchSortRefresh;
+    private int _selectedQuickRange;
 
     public ReportsViewModel()
         : this(
@@ -404,4 +405,22 @@ public sealed partial class ReportsViewModel : BaseViewModel
     public AsyncCommand ExportOverdueCsvCommand => _exportOverdueCsvCommand;
 
     public AsyncCommand ExportPaymentsCsvCommand => _exportPaymentsCsvCommand;
+
+    // Quick range active state colors
+    public string Last30DaysBackground => _selectedQuickRange == 30 ? "#2D6DE2" : "#EFF4FC";
+    public string Last30DaysTextColor => _selectedQuickRange == 30 ? "#FFFFFF" : "#4A5D76";
+    public string Last90DaysBackground => _selectedQuickRange == 90 ? "#2D6DE2" : "#EFF4FC";
+    public string Last90DaysTextColor => _selectedQuickRange == 90 ? "#FFFFFF" : "#4A5D76";
+    public string Last12MonthsBackground => _selectedQuickRange == 365 ? "#2D6DE2" : "#EFF4FC";
+    public string Last12MonthsTextColor => _selectedQuickRange == 365 ? "#FFFFFF" : "#4A5D76";
+
+    private void RaiseQuickRangeProperties()
+    {
+        RaisePropertyChanged(nameof(Last30DaysBackground));
+        RaisePropertyChanged(nameof(Last30DaysTextColor));
+        RaisePropertyChanged(nameof(Last90DaysBackground));
+        RaisePropertyChanged(nameof(Last90DaysTextColor));
+        RaisePropertyChanged(nameof(Last12MonthsBackground));
+        RaisePropertyChanged(nameof(Last12MonthsTextColor));
+    }
 }

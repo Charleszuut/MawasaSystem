@@ -25,6 +25,9 @@ public sealed class AuditViewModel : BaseViewModel
     private string _searchText = string.Empty;
     private string _selectedSortColumn = "Time";
     private string _selectedSortDirection = "Descending";
+    private string _selectedCategory = "All";
+    private DateTime _filterFromDate = DateTime.UtcNow.AddYears(-1);
+    private DateTime _filterToDate = DateTime.UtcNow;
     private int _currentPage = 1;
     private int _totalPages = 1;
     private int _filteredCount;
@@ -63,6 +66,34 @@ public sealed class AuditViewModel : BaseViewModel
     public IReadOnlyList<string> SortColumns { get; } = ["Time", "User", "Module", "Action"];
 
     public IReadOnlyList<string> SortDirections { get; } = ["Ascending", "Descending"];
+
+    public IReadOnlyList<string> CategoryOptions { get; } = ["All", "Bill", "Customer", "Payment", "Authentication", "Settings", "Backup", "Print"];
+
+    public string SelectedCategory
+    {
+        get => _selectedCategory;
+        set
+        {
+            if (!SetProperty(ref _selectedCategory, value))
+            {
+                return;
+            }
+
+            ApplyFilters(resetToFirstPage: true);
+        }
+    }
+
+    public DateTime FilterFromDate
+    {
+        get => _filterFromDate;
+        set => SetProperty(ref _filterFromDate, value);
+    }
+
+    public DateTime FilterToDate
+    {
+        get => _filterToDate;
+        set => SetProperty(ref _filterToDate, value);
+    }
 
     public string SearchText
     {
@@ -220,7 +251,7 @@ public sealed class AuditViewModel : BaseViewModel
 
     private async Task LoadLogsAsync(CancellationToken cancellationToken)
     {
-        var items = await _auditService.GetLogsAsync(DateTime.UtcNow.AddYears(-1), DateTime.UtcNow, cancellationToken);
+        var items = await _auditService.GetLogsAsync(FilterFromDate, FilterToDate, cancellationToken);
         _allRows.Clear();
 
         foreach (var item in items.OrderByDescending(x => x.TimestampUtc))
@@ -245,6 +276,13 @@ public sealed class AuditViewModel : BaseViewModel
                 || row.ModuleDisplay.Contains(term, StringComparison.OrdinalIgnoreCase)
                 || row.ActionDisplay.Contains(term, StringComparison.OrdinalIgnoreCase)
                 || row.DescriptionDisplay.Contains(term, StringComparison.OrdinalIgnoreCase));
+        }
+
+        // Category filter
+        if (!string.Equals(_selectedCategory, "All", StringComparison.OrdinalIgnoreCase))
+        {
+            query = query.Where(row =>
+                row.ModuleDisplay.Contains(_selectedCategory, StringComparison.OrdinalIgnoreCase));
         }
 
         query = SelectedSortColumn switch

@@ -83,8 +83,7 @@
                             <Picker Title="Select Printer"
                                     TitleColor="#8A97A6"
                                     ItemsSource="{Binding Printers}"
-                                    SelectedItem="{Binding SelectedPrinter}"
-                                    ItemDisplayBinding="{Binding .}"
+                                    SelectedIndex="{Binding SelectedPrinterIndex, Mode=TwoWay}"
                                     HeightRequest="42"
                                     TextColor="{StaticResource TextMain}" />
                         </Border>

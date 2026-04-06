@@ -19,10 +19,10 @@ public sealed class CustomerRepository(
     protected override string DeleteSql => "UPDATE Customers SET IsDeleted = 1, DeletedAtUtc = $DeletedAtUtc WHERE Id = $Id;";
 
     protected override string InsertSql =>
-        "INSERT INTO Customers (Id, Name, PhoneNumber, Email, Address, CreatedAtUtc, UpdatedAtUtc, IsDeleted, DeletedAtUtc) VALUES ($Id, $Name, $PhoneNumber, $Email, $Address, $CreatedAtUtc, $UpdatedAtUtc, $IsDeleted, $DeletedAtUtc);";
+        "INSERT INTO Customers (Id, Name, PhoneNumber, Email, Address, ConnectionStatus, DisconnectionReason, DisconnectedAtUtc, CreatedAtUtc, UpdatedAtUtc, IsDeleted, DeletedAtUtc) VALUES ($Id, $Name, $PhoneNumber, $Email, $Address, $ConnectionStatus, $DisconnectionReason, $DisconnectedAtUtc, $CreatedAtUtc, $UpdatedAtUtc, $IsDeleted, $DeletedAtUtc);";
 
     protected override string UpdateSql =>
-        "UPDATE Customers SET Name = $Name, PhoneNumber = $PhoneNumber, Email = $Email, Address = $Address, UpdatedAtUtc = $UpdatedAtUtc, IsDeleted = $IsDeleted, DeletedAtUtc = $DeletedAtUtc WHERE Id = $Id;";
+        "UPDATE Customers SET Name = $Name, PhoneNumber = $PhoneNumber, Email = $Email, Address = $Address, ConnectionStatus = $ConnectionStatus, DisconnectionReason = $DisconnectionReason, DisconnectedAtUtc = $DisconnectedAtUtc, UpdatedAtUtc = $UpdatedAtUtc, IsDeleted = $IsDeleted, DeletedAtUtc = $DeletedAtUtc WHERE Id = $Id;";
 
     protected override Customer Map(SqliteDataReader reader)
     {
@@ -36,6 +36,9 @@ public sealed class CustomerRepository(
         command.Parameters.AddWithValue("$PhoneNumber", (object?)entity.PhoneNumber ?? DBNull.Value);
         command.Parameters.AddWithValue("$Email", (object?)entity.Email ?? DBNull.Value);
         command.Parameters.AddWithValue("$Address", (object?)entity.Address ?? DBNull.Value);
+        command.Parameters.AddWithValue("$ConnectionStatus", (int)entity.ConnectionStatus);
+        command.Parameters.AddWithValue("$DisconnectionReason", (object?)entity.DisconnectionReason ?? DBNull.Value);
+        command.Parameters.AddWithValue("$DisconnectedAtUtc", (object?)entity.DisconnectedAtUtc?.ToString("O") ?? DBNull.Value);
         command.Parameters.AddWithValue("$CreatedAtUtc", entity.CreatedAtUtc.ToString("O"));
         command.Parameters.AddWithValue("$UpdatedAtUtc", (object?)entity.UpdatedAtUtc?.ToString("O") ?? DBNull.Value);
         command.Parameters.AddWithValue("$IsDeleted", entity.IsDeleted ? 1 : 0);

@@ -296,7 +296,7 @@
 
                     <ScrollView Orientation="Horizontal">
                         <VerticalStackLayout WidthRequest="1150" Spacing="0">
-                            <Grid ColumnDefinitions="1.4*,2*,3.3*,1.5*,1.7*,1.5*,1.3*"
+                            <Grid ColumnDefinitions="1.4*,2*,3.3*,1.5*,1.7*,1.5*,1.3*,Auto"
                                   BackgroundColor="#1F67D7"
                                   Padding="10,8">
                                 <Label Text="ACCOUNT NO." FontSize="10" FontAttributes="Bold" TextColor="White" />
@@ -306,6 +306,7 @@
                                 <Label Grid.Column="4" Text="CONTACT NO." FontSize="10" FontAttributes="Bold" TextColor="White" />
                                 <Label Grid.Column="5" Text="STATUS" FontSize="10" FontAttributes="Bold" TextColor="White" />
                                 <Label Grid.Column="6" Text="CREATED" FontSize="10" FontAttributes="Bold" TextColor="White" />
+                                <Label Grid.Column="7" Text="ACTION" FontSize="10" FontAttributes="Bold" TextColor="White" />
                             </Grid>
 
                             <CollectionView ItemsSource="{Binding Customers}"
@@ -313,7 +314,7 @@
                                             HeightRequest="470">
                                 <CollectionView.ItemTemplate>
                                     <DataTemplate>
-                                        <Grid ColumnDefinitions="1.4*,2*,3.3*,1.5*,1.7*,1.5*,1.3*"
+                                        <Grid ColumnDefinitions="1.4*,2*,3.3*,1.5*,1.7*,1.5*,1.3*,Auto"
                                               Padding="10,9"
                                               ColumnSpacing="8"
                                               BackgroundColor="{Binding RowBackground}">
@@ -381,8 +382,29 @@
                                                    TextColor="#41556D"
                                                    VerticalTextAlignment="Center" />
 
+                                            <HorizontalStackLayout Grid.Column="7" Spacing="6" VerticalOptions="Center">
+                                                <Button Text="Disconnect"
+                                                        IsVisible="{Binding IsConnected}"
+                                                        Command="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}}, Path=BindingContext.DisconnectCustomerCommand}"
+                                                        CommandParameter="{Binding CustomerId}"
+                                                        BackgroundColor="#FFF1F0"
+                                                        TextColor="#B71C1C"
+                                                        FontSize="10"
+                                                        FontAttributes="Bold"
+                                                        Padding="8,4" />
+                                                <Button Text="Reconnect"
+                                                        IsVisible="{Binding IsDisconnected}"
+                                                        Command="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}}, Path=BindingContext.ReconnectCustomerCommand}"
+                                                        CommandParameter="{Binding CustomerId}"
+                                                        BackgroundColor="#E8F8EE"
+                                                        TextColor="#1F8A57"
+                                                        FontSize="10"
+                                                        FontAttributes="Bold"
+                                                        Padding="8,4" />
+                                            </HorizontalStackLayout>
+
                                             <BoxView Grid.Row="1"
-                                                     Grid.ColumnSpan="7"
+                                                     Grid.ColumnSpan="8"
                                                      HeightRequest="1"
                                                      Color="#E2EAF4"
                                                      Margin="0,9,0,0" />

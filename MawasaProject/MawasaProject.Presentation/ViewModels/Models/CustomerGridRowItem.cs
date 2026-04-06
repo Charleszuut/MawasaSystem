@@ -16,4 +16,6 @@ public sealed class CustomerGridRowItem
     public DateTime CreatedAtUtc { get; init; }
     public string CreatedDisplay { get; init; } = string.Empty;
     public string RowBackground { get; init; } = "#F9FBFE";
+    public bool IsConnected { get; init; } = true;
+    public bool IsDisconnected => !IsConnected;
 }

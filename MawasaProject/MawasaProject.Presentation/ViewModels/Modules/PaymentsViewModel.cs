@@ -23,6 +23,7 @@ public sealed class PaymentsViewModel : BaseViewModel
     private readonly AsyncCommand _refreshHistoryCommand;
     private readonly RelayCommand _openCustomerSuggestionsCommand;
     private readonly RelayCommand _dismissCustomerSuggestionsCommand;
+    private readonly RelayCommand _clearSelectedCustomerCommand;
     private readonly RelayCommandOfT<CustomerSuggestionItem> _selectCustomerSuggestionCommand;
 
     private Guid _selectedBillId;
@@ -44,6 +45,7 @@ public sealed class PaymentsViewModel : BaseViewModel
     private decimal _amountTendered;
     private string _reference = string.Empty;
     private string _searchGuide = "Guide: Search an account, review unpaid bills, then process payment.";
+    private string _selectedCustomerDisplay = string.Empty;
 
     public PaymentsViewModel(
         IPaymentService paymentService,
@@ -63,6 +65,7 @@ public sealed class PaymentsViewModel : BaseViewModel
         _refreshHistoryCommand = new AsyncCommand(async () => await RunBusyAsync(RefreshHistoryAsync), () => HasSelectedBill);
         _openCustomerSuggestionsCommand = new RelayCommand(OpenCustomerSuggestions);
         _dismissCustomerSuggestionsCommand = new RelayCommand(DismissCustomerSuggestions);
+        _clearSelectedCustomerCommand = new RelayCommand(ClearSelectedCustomer);
         _selectCustomerSuggestionCommand = new RelayCommandOfT<CustomerSuggestionItem>(SelectCustomerSuggestion);
 
         CustomerSuggestions = [];
@@ -206,7 +209,25 @@ public sealed class PaymentsViewModel : BaseViewModel
 
     public RelayCommand DismissCustomerSuggestionsCommand => _dismissCustomerSuggestionsCommand;
 
+    public RelayCommand ClearSelectedCustomerCommand => _clearSelectedCustomerCommand;
+
     public RelayCommandOfT<CustomerSuggestionItem> SelectCustomerSuggestionCommand => _selectCustomerSuggestionCommand;
+
+    public string SelectedCustomerDisplay
+    {
+        get => _selectedCustomerDisplay;
+        private set
+        {
+            if (!SetProperty(ref _selectedCustomerDisplay, value))
+            {
+                return;
+            }
+
+            RaisePropertyChanged(nameof(HasSelectedCustomer));
+        }
+    }
+
+    public bool HasSelectedCustomer => !string.IsNullOrEmpty(SelectedCustomerDisplay);
 
     public bool IsCustomerSuggestionsOpen
     {
@@ -458,10 +479,18 @@ public sealed class PaymentsViewModel : BaseViewModel
 
     private void ApplyCustomerSuggestion(CustomerSuggestionItem suggestion)
     {
-        BillSearchText = suggestion.FullName;
+        SelectedCustomerDisplay = $"{suggestion.FullName} ({suggestion.AccountNumber})";
+        BillSearchText = string.Empty;
         StatusMessage = $"Selected {suggestion.FullName}.";
         DismissCustomerSuggestions();
         _ = RunBusyAsync(async () => await LoadBillSnapshotSilentAsync(suggestion.FullName));
+    }
+
+    private void ClearSelectedCustomer()
+    {
+        SelectedCustomerDisplay = string.Empty;
+        ResetSelectedBillState();
+        StatusMessage = "Customer selection cleared.";
     }
 
     private void SetHighlightedSuggestion(CustomerSuggestionItem? suggestion)

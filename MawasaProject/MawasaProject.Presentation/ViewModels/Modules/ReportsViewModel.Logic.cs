@@ -77,14 +77,7 @@ public sealed partial class ReportsViewModel
             .Where(b => !filter.CustomerId.HasValue || b.CustomerId == filter.CustomerId.Value)
             .ToList();
 
-        var paymentsByBill = await LoadPaymentsByBillAsync(filteredBills, cancellationToken);
-
-        CollectedAmount = paymentsByBill
-            .SelectMany(static pair => pair.Value)
-            .Where(p => p.Status == PaymentStatus.Completed)
-            .Where(p => IsWithinRange(p.PaymentDateUtc, filter.StartDateUtc, filter.EndDateUtc))
-            .Sum(p => p.Amount);
-
+        CollectedAmount = filteredBills.Sum(b => b.Amount - b.Balance);
         TotalBilledAmount = filteredBills.Sum(b => b.Amount);
         VarianceAmount = Math.Max(0m, TotalBilledAmount - CollectedAmount);
 
@@ -462,6 +455,8 @@ public sealed partial class ReportsViewModel
     {
         EndDateUtc = DateTime.UtcNow.Date;
         StartDateUtc = EndDateUtc.AddDays(-days);
+        _selectedQuickRange = days;
+        RaiseQuickRangeProperties();
     }
 
     private void ResetFilters()
@@ -472,6 +467,8 @@ public sealed partial class ReportsViewModel
         CustomerFilterText = string.Empty;
         SearchText = string.Empty;
         SelectedSortDirection = "Ascending";
+        _selectedQuickRange = 0;
+        RaiseQuickRangeProperties();
         UpdateSortOptionsForMode();
         _ = _applyFiltersCommand.ExecuteAsync();
     }

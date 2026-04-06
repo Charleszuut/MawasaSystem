@@ -11,4 +11,9 @@ public sealed class DialogService : IDialogService
     {
         return Microsoft.Maui.Controls.Shell.Current.DisplayAlertAsync(title, message, accept, cancel);
     }
+
+    public Task<string> PromptAsync(string title, string message, string accept = "OK", string cancel = "Cancel")
+    {
+        return Microsoft.Maui.Controls.Shell.Current.DisplayPromptAsync(title, message, accept, cancel);
+    }
 }

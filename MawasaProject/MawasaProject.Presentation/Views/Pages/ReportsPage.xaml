@@ -72,9 +72,9 @@
                         </Grid>
                         <Grid ColumnDefinitions="*,Auto,Auto" ColumnSpacing="8">
                             <HorizontalStackLayout Spacing="8">
-                                <Button Text="Last 30 days" Command="{Binding SetLast30DaysCommand}" BackgroundColor="#EFF4FC" TextColor="#4A5D76" FontSize="12" />
-                                <Button Text="Last 90 days" Command="{Binding SetLast90DaysCommand}" BackgroundColor="#EFF4FC" TextColor="#4A5D76" FontSize="12" />
-                                <Button Text="Last 12 months" Command="{Binding SetLast12MonthsCommand}" BackgroundColor="#EFF4FC" TextColor="#4A5D76" FontSize="12" />
+                                <Button Text="Last 30 days" Command="{Binding SetLast30DaysCommand}" BackgroundColor="{Binding Last30DaysBackground}" TextColor="{Binding Last30DaysTextColor}" FontSize="12" />
+                                <Button Text="Last 90 days" Command="{Binding SetLast90DaysCommand}" BackgroundColor="{Binding Last90DaysBackground}" TextColor="{Binding Last90DaysTextColor}" FontSize="12" />
+                                <Button Text="Last 12 months" Command="{Binding SetLast12MonthsCommand}" BackgroundColor="{Binding Last12MonthsBackground}" TextColor="{Binding Last12MonthsTextColor}" FontSize="12" />
                             </HorizontalStackLayout>
                             <Button Grid.Column="1" Text="Apply filters" Command="{Binding ApplyFiltersCommand}" BackgroundColor="{StaticResource PrimaryBlue}" TextColor="White" FontAttributes="Bold" />
                             <Button Grid.Column="2" Text="Reset" Command="{Binding ResetFiltersCommand}" BackgroundColor="#EEF3FB" TextColor="#4A5D76" />

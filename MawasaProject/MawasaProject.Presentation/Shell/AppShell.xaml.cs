@@ -15,8 +15,10 @@ public partial class AppShell : Microsoft.Maui.Controls.Shell
 
     private static readonly Color ActiveBg      = Color.FromArgb("#1E7FC2");
     private static readonly Color InactiveBg    = Colors.Transparent;
+    private static readonly Color HoverBg       = Color.FromArgb("#15395A");
     private static readonly Color SubActiveBg   = Color.FromArgb("#1E7FC2");
     private static readonly Color SubInactiveBg = Color.FromArgb("#0D2236");
+    private static readonly Color SubHoverBg    = Color.FromArgb("#112D47");
 
     public AppShell()
     {
@@ -349,5 +351,43 @@ public partial class AppShell : Microsoft.Maui.Controls.Shell
         item.BackgroundColor = active ? SubActiveBg : SubInactiveBg;
         if (item.Content is Label lbl)
             lbl.FontAttributes = active ? FontAttributes.Bold : FontAttributes.None;
+    }
+
+    // ──────────────────────────────────────────────────────────────
+    // Hover handlers
+    // ──────────────────────────────────────────────────────────────
+
+    /// <summary>Shows a subtle hover highlight on main nav items.</summary>
+    private void OnNavItemPointerEntered(object? sender, PointerEventArgs e)
+    {
+        if (sender is not Border border) return;
+        // Don't override active state
+        if (border.BackgroundColor.ToArgbHex() == ActiveBg.ToArgbHex()) return;
+        border.BackgroundColor = HoverBg;
+    }
+
+    /// <summary>Removes hover highlight, restoring transparent if not active.</summary>
+    private void OnNavItemPointerExited(object? sender, PointerEventArgs e)
+    {
+        if (sender is not Border border) return;
+        // Don't reset if it became active during hover
+        if (border.BackgroundColor.ToArgbHex() == ActiveBg.ToArgbHex()) return;
+        border.BackgroundColor = InactiveBg;
+    }
+
+    /// <summary>Shows hover highlight on sub-menu items.</summary>
+    private void OnSubItemPointerEntered(object? sender, PointerEventArgs e)
+    {
+        if (sender is not Border border) return;
+        if (border.BackgroundColor.ToArgbHex() == SubActiveBg.ToArgbHex()) return;
+        border.BackgroundColor = SubHoverBg;
+    }
+
+    /// <summary>Removes hover highlight from sub-menu items.</summary>
+    private void OnSubItemPointerExited(object? sender, PointerEventArgs e)
+    {
+        if (sender is not Border border) return;
+        if (border.BackgroundColor.ToArgbHex() == SubActiveBg.ToArgbHex()) return;
+        border.BackgroundColor = SubInactiveBg;
     }
 }

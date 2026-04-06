@@ -13,11 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("MawasaProject.Application")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-<<<<<<< HEAD
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+e824200bcff83657388d5874af61a93768b025cb")]
-=======
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+168d2a85e740d7c4c811d7544c8366d7e279dbab")]
->>>>>>> 94d0361 (Fixes and mini polish)
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+dff835c5d3ace05db576f7003c2c0d9687c6f455")]
 [assembly: System.Reflection.AssemblyProductAttribute("MawasaProject.Application")]
 [assembly: System.Reflection.AssemblyTitleAttribute("MawasaProject.Application")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

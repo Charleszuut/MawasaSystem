@@ -25,7 +25,7 @@ public sealed class PdfGenerator
             
             foreach (var line in lines)
             {
-                gfx.DrawString(line.TrimEnd('\r'), font, XBrushes.Black, new XRect(40, yPoint, page.Width, page.Height), format);
+                gfx.DrawString(line.TrimEnd('\r'), font, XBrushes.Black, new XRect(40, yPoint, page.Width.Point, page.Height.Point), format);
                 yPoint += 14; 
             }
 

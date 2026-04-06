@@ -28,6 +28,8 @@ public sealed class CustomersViewModel : BaseViewModel
     private readonly AsyncCommand _searchCommand;
     private readonly AsyncCommand _addCustomerCommand;
     private readonly AsyncCommand _registerCustomerCommand;
+    private readonly AsyncCommandOfT<Guid> _disconnectCustomerCommand;
+    private readonly AsyncCommandOfT<Guid> _reconnectCustomerCommand;
     private readonly RelayCommand _previousPageCommand;
     private readonly RelayCommand _nextPageCommand;
 
@@ -73,6 +75,8 @@ public sealed class CustomersViewModel : BaseViewModel
         _searchCommand = new AsyncCommand(async () => await RunBusyAsync(SearchInternalAsync));
         _addCustomerCommand = new AsyncCommand(async () => await RunBusyAsync(AddCustomerInternalAsync));
         _registerCustomerCommand = new AsyncCommand(async () => await RunBusyAsync(RegisterCustomerInternalAsync));
+        _disconnectCustomerCommand = new AsyncCommandOfT<Guid>(async id => await RunBusyAsync(() => DisconnectCustomerInternalAsync(id)));
+        _reconnectCustomerCommand = new AsyncCommandOfT<Guid>(async id => await RunBusyAsync(() => ReconnectCustomerInternalAsync(id)));
         _previousPageCommand = new RelayCommand(MoveToPreviousPage, () => CanGoPreviousPage);
         _nextPageCommand = new RelayCommand(MoveToNextPage, () => CanGoNextPage);
     }
@@ -281,6 +285,10 @@ public sealed class CustomersViewModel : BaseViewModel
 
     public AsyncCommand RegisterCustomerCommand => _registerCustomerCommand;
 
+    public AsyncCommandOfT<Guid> DisconnectCustomerCommand => _disconnectCustomerCommand;
+
+    public AsyncCommandOfT<Guid> ReconnectCustomerCommand => _reconnectCustomerCommand;
+
     public RelayCommand PreviousPageCommand => _previousPageCommand;
 
     public RelayCommand NextPageCommand => _nextPageCommand;
@@ -351,6 +359,48 @@ public sealed class CustomersViewModel : BaseViewModel
         InvalidateCache();
         await LoadCustomersAsync(SearchQuery);
         await _dialogService.AlertAsync("Customer Registration", "Customer registered successfully.");
+    }
+
+    private async Task DisconnectCustomerInternalAsync(Guid customerId)
+    {
+        var reason = await _dialogService.PromptAsync("Disconnection", "Enter reason for disconnecting this customer:", "Disconnect", "Cancel");
+        if (string.IsNullOrWhiteSpace(reason))
+        {
+            return;
+        }
+
+        try
+        {
+            await _customerService.DisconnectCustomerAsync(customerId, reason);
+            InvalidateCache();
+            await LoadCustomersAsync(SearchQuery);
+            StatusMessage = "Customer disconnected successfully.";
+        }
+        catch (Exception ex)
+        {
+            await _dialogService.AlertAsync("Error", ex.Message);
+        }
+    }
+
+    private async Task ReconnectCustomerInternalAsync(Guid customerId)
+    {
+        var confirm = await _dialogService.ConfirmAsync("Reconnection", "Are you sure you want to restore the connection for this customer?");
+        if (!confirm)
+        {
+            return;
+        }
+
+        try
+        {
+            await _customerService.ReconnectCustomerAsync(customerId);
+            InvalidateCache();
+            await LoadCustomersAsync(SearchQuery);
+            StatusMessage = "Customer reconnected successfully.";
+        }
+        catch (Exception ex)
+        {
+            await _dialogService.AlertAsync("Error", ex.Message);
+        }
     }
 
     private async Task LoadCustomersAsync(string? query)
@@ -522,6 +572,13 @@ public sealed class CustomersViewModel : BaseViewModel
             _ => ("Current", "#E8F8EE", "#1F8A57")
         };
 
+        if (customer.ConnectionStatus == ConnectionStatus.Disconnected)
+        {
+            statusText = "Disconnected";
+            statusBackground = "#FFE8E8";
+            statusForeground = "#C23B3B";
+        }
+
         var raw = BitConverter.ToUInt32(customer.Id.ToByteArray(), 0) % 1_000_000;
         var accountNumber = $"22-{raw:000000}-1";
 
@@ -540,7 +597,8 @@ public sealed class CustomersViewModel : BaseViewModel
             StatusForeground = statusForeground,
             CreatedAtUtc = customer.CreatedAtUtc,
             CreatedDisplay = customer.CreatedAtUtc.ToString("yyyy-MM-dd"),
-            RowBackground = rowIndex % 2 == 0 ? "#F9FBFE" : "#F3F7FC"
+            RowBackground = rowIndex % 2 == 0 ? "#F9FBFE" : "#F3F7FC",
+            IsConnected = customer.ConnectionStatus == ConnectionStatus.Connected
         };
     }
 

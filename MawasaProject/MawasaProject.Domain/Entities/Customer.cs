@@ -1,5 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using MawasaProject.Domain.Common;
+using MawasaProject.Domain.Enums;
 
 namespace MawasaProject.Domain.Entities;
 
@@ -19,6 +20,13 @@ public sealed class Customer : SoftDeleteEntity
     [MaxLength(250)]
     public string? Address { get; set; }
 
+    public ConnectionStatus ConnectionStatus { get; set; } = ConnectionStatus.Connected;
+
+    [MaxLength(500)]
+    public string? DisconnectionReason { get; set; }
+
+    public DateTime? DisconnectedAtUtc { get; set; }
+
     public ICollection<Bill> Bills { get; init; } = new List<Bill>();
 
     public void UpdateContact(string? phoneNumber, string? email, string? address)
@@ -26,6 +34,22 @@ public sealed class Customer : SoftDeleteEntity
         PhoneNumber = string.IsNullOrWhiteSpace(phoneNumber) ? null : phoneNumber.Trim();
         Email = string.IsNullOrWhiteSpace(email) ? null : email.Trim().ToLowerInvariant();
         Address = string.IsNullOrWhiteSpace(address) ? null : address.Trim();
+        Touch();
+    }
+
+    public void Disconnect(string reason)
+    {
+        ConnectionStatus = ConnectionStatus.Disconnected;
+        DisconnectionReason = reason;
+        DisconnectedAtUtc = DateTime.UtcNow;
+        Touch();
+    }
+
+    public void Reconnect()
+    {
+        ConnectionStatus = ConnectionStatus.Connected;
+        DisconnectionReason = null;
+        DisconnectedAtUtc = null;
         Touch();
     }
 }

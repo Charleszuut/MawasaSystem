@@ -921,7 +921,9 @@ public sealed class BillingViewModel : BaseViewModel
 
     private static string GenerateBillNumber()
     {
-        return $"INV-{DateTime.UtcNow:yyyyMMdd-HHmmssfff}";
+        var datePart = DateTime.UtcNow.ToString("yyyyMMdd-HHmmssfff");
+        var randomPart = Guid.NewGuid().ToString("N")[..6].ToUpperInvariant();
+        return $"INV-{datePart}-{randomPart}";
     }
 
     private static async Task<T> RunOnBackgroundAsync<T>(Func<CancellationToken, Task<T>> work, CancellationToken token)

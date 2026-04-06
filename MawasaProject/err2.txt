@@ -1,0 +1,20 @@
+  Determining projects to restore...
+  All projects are up-to-date for restore.
+  MawasaProject.Domain -> c:\Coding Files\C#\MawasaSystem\MawasaProject\MawasaProject.Domain\bin\Debug\net10.0\MawasaProject.Domain.dll
+  MawasaProject.Application -> c:\Coding Files\C#\MawasaSystem\MawasaProject\MawasaProject.Application\bin\Debug\net10.0\MawasaProject.Application.dll
+  MawasaProject.Infrastructure -> c:\Coding Files\C#\MawasaSystem\MawasaProject\MawasaProject.Infrastructure\bin\Debug\net10.0\MawasaProject.Infrastructure.dll
+c:\Coding Files\C#\MawasaSystem\MawasaProject\MawasaProject.Presentation\Views\Pages\DashboardPage.xaml(195,4): error MAUIG1001: An error occured while parsing Xaml: Unexpected end tag. [c:\Coding Files\C#\MawasaSystem\MawasaProject\MawasaProject.Presentation\MawasaProject.Presentation.csproj]
+c:\Coding Files\C#\MawasaSystem\MawasaProject\MawasaProject.Presentation\Views\Pages\DashboardPage.xaml.cs(14,9): error CS0103: The name 'InitializeComponent' does not exist in the current context [c:\Coding Files\C#\MawasaSystem\MawasaProject\MawasaProject.Presentation\MawasaProject.Presentation.csproj]
+c:\Coding Files\C#\MawasaSystem\MawasaProject\MawasaProject.Presentation\Views\Pages\DashboardPage.xaml.cs(58,25): error CS0103: The name 'RevenueChartView' does not exist in the current context [c:\Coding Files\C#\MawasaSystem\MawasaProject\MawasaProject.Presentation\MawasaProject.Presentation.csproj]
+c:\Coding Files\C#\MawasaSystem\MawasaProject\MawasaProject.Presentation\Views\Pages\DashboardPage.xaml.cs(77,25): error CS0103: The name 'AnalyticsChartView' does not exist in the current context [c:\Coding Files\C#\MawasaSystem\MawasaProject\MawasaProject.Presentation\MawasaProject.Presentation.csproj]
+
+Build FAILED.
+
+c:\Coding Files\C#\MawasaSystem\MawasaProject\MawasaProject.Presentation\Views\Pages\DashboardPage.xaml(195,4): error MAUIG1001: An error occured while parsing Xaml: Unexpected end tag. [c:\Coding Files\C#\MawasaSystem\MawasaProject\MawasaProject.Presentation\MawasaProject.Presentation.csproj]
+c:\Coding Files\C#\MawasaSystem\MawasaProject\MawasaProject.Presentation\Views\Pages\DashboardPage.xaml.cs(14,9): error CS0103: The name 'InitializeComponent' does not exist in the current context [c:\Coding Files\C#\MawasaSystem\MawasaProject\MawasaProject.Presentation\MawasaProject.Presentation.csproj]
+c:\Coding Files\C#\MawasaSystem\MawasaProject\MawasaProject.Presentation\Views\Pages\DashboardPage.xaml.cs(58,25): error CS0103: The name 'RevenueChartView' does not exist in the current context [c:\Coding Files\C#\MawasaSystem\MawasaProject\MawasaProject.Presentation\MawasaProject.Presentation.csproj]
+c:\Coding Files\C#\MawasaSystem\MawasaProject\MawasaProject.Presentation\Views\Pages\DashboardPage.xaml.cs(77,25): error CS0103: The name 'AnalyticsChartView' does not exist in the current context [c:\Coding Files\C#\MawasaSystem\MawasaProject\MawasaProject.Presentation\MawasaProject.Presentation.csproj]
+    0 Warning(s)
+    4 Error(s)
+
+Time Elapsed 00:00:06.72

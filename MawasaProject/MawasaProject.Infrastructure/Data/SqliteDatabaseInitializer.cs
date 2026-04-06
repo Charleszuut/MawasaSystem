@@ -26,7 +26,9 @@ public sealed class SqliteDatabaseInitializer(
         new("005", "MawasaProject.Infrastructure.Data.Sql.005_phase12_backup_hardening.sql", "Phase 12 backup and restore hardening"),
         new("006", "MawasaProject.Infrastructure.Data.Sql.006_phase13_printer_hardening.sql", "Phase 13 printer integration hardening"),
         new("007", "MawasaProject.Infrastructure.Data.Sql.007_phase14_documents_hardening.sql", "Phase 14 receipt and invoice hardening"),
-        new("008", "MawasaProject.Infrastructure.Data.Sql.008_billing_table_alias.sql", "Billing table mirror")
+        new("008", "MawasaProject.Infrastructure.Data.Sql.008_billing_table_alias.sql", "Billing table mirror"),
+        new("009", "MawasaProject.Infrastructure.Data.Sql.009_relax_billing_constraint.sql", "Relax Billing balance constraint"),
+        new("010", "MawasaProject.Infrastructure.Data.Sql.010_customer_disconnection.sql", "Customer disconnection tracking")
     ];
 
     private static readonly Guid AdminRoleId = Guid.Parse("7D089763-EBB9-4F5D-909F-02CB685EF65D");
@@ -537,7 +539,7 @@ public sealed class SqliteDatabaseInitializer(
                 CustomerId TEXT NOT NULL,
                 BillNumber TEXT NOT NULL UNIQUE,
                 Amount REAL NOT NULL CHECK(Amount >= 0),
-                Balance REAL NOT NULL CHECK(Balance >= 0 AND Balance <= Amount),
+                Balance REAL NOT NULL CHECK(Balance >= 0),
                 DueDateUtc TEXT NOT NULL,
                 PaidAtUtc TEXT NULL,
                 Status INTEGER NOT NULL CHECK(Status IN (1,2,3)),

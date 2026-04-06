@@ -7,4 +7,6 @@ public interface ICustomerService
     Task<Customer> CreateCustomerAsync(Customer customer, CancellationToken cancellationToken = default);
     Task<IReadOnlyList<Customer>> SearchCustomersAsync(string? query, CancellationToken cancellationToken = default);
     Task UpdateCustomerAsync(Customer customer, CancellationToken cancellationToken = default);
+    Task DisconnectCustomerAsync(Guid customerId, string reason, CancellationToken cancellationToken = default);
+    Task ReconnectCustomerAsync(Guid customerId, CancellationToken cancellationToken = default);
 }
