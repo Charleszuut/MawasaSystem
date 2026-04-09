@@ -27,9 +27,28 @@ public sealed class Bill : SoftDeleteEntity
 
     public Guid CreatedByUserId { get; set; }
 
+    /// <summary>True once the bill has been physically printed and dispatched to the customer.</summary>
+    public bool IsPrinted { get; set; }
+
+    /// <summary>UTC timestamp when the bill was first printed.</summary>
+    public DateTime? PrintedAtUtc { get; set; }
+
     public ICollection<Payment> Payments { get; init; } = new List<Payment>();
 
     public ICollection<BillStatusHistory> StatusHistory { get; init; } = new List<BillStatusHistory>();
+
+    /// <summary>Marks this bill as printed. Idempotent – calling twice keeps the original timestamp.</summary>
+    public void MarkPrinted(DateTime? printedAtUtc = null)
+    {
+        if (IsPrinted)
+        {
+            return;
+        }
+
+        IsPrinted = true;
+        PrintedAtUtc = printedAtUtc ?? DateTime.UtcNow;
+        Touch(PrintedAtUtc);
+    }
 
     public void InitializeForCreate()
     {

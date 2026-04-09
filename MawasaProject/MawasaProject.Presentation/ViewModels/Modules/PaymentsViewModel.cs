@@ -27,6 +27,7 @@ public sealed class PaymentsViewModel : BaseViewModel
     private readonly RelayCommandOfT<CustomerSuggestionItem> _selectCustomerSuggestionCommand;
 
     private Guid _selectedBillId;
+    private bool _selectedBillIsPrinted;
     private CancellationTokenSource? _customerSuggestionCts;
     private CustomerSuggestionItem? _highlightedCustomerSuggestion;
     private bool _isCustomerSuggestionsOpen;
@@ -193,7 +194,8 @@ public sealed class PaymentsViewModel : BaseViewModel
 
     public bool HasPaymentHistory => PaymentHistory.Count > 0;
 
-    public bool CanProcessPayment => HasSelectedBill && AmountToApply > 0m;
+    /// <summary>Payment can only proceed if a bill is selected, an amount is entered, AND the bill has been printed.</summary>
+    public bool CanProcessPayment => HasSelectedBill && AmountToApply > 0m && _selectedBillIsPrinted;
 
     public string HistorySummary => HasPaymentHistory
         ? $"Showing {PaymentHistory.Count} payment record(s)."
@@ -546,6 +548,15 @@ public sealed class PaymentsViewModel : BaseViewModel
             return;
         }
 
+        // Guard: bill must be printed before accepting payment
+        if (!_selectedBillIsPrinted)
+        {
+            await _dialogService.AlertAsync(
+                "Payment Blocked",
+                "This bill has not been printed yet. Please print the bill and distribute it to the customer before accepting payment.");
+            return;
+        }
+
         if (AmountToApply <= 0m)
         {
             await _dialogService.AlertAsync("Validation", "Payment amount must be greater than zero.");
@@ -621,6 +632,7 @@ public sealed class PaymentsViewModel : BaseViewModel
         IReadOnlyDictionary<Guid, Customer> customersById)
     {
         _selectedBillId = bill.Id;
+        _selectedBillIsPrinted = bill.IsPrinted;
         RaisePropertyChanged(nameof(HasSelectedBill));
         RaisePropertyChanged(nameof(CanProcessPayment));
         _processPaymentCommand.RaiseCanExecuteChanged();
@@ -651,10 +663,20 @@ public sealed class PaymentsViewModel : BaseViewModel
         RaisePropertyChanged(nameof(LatestBillText));
         LatestBillLabel = latestBill?.BillNumber ?? bill.BillNumber;
 
-        var (statusText, background, foreground) = ResolveBillStatusAppearance(bill.Status, bill.Balance);
-        StatusText = statusText;
-        StatusBackground = background;
-        StatusForeground = foreground;
+        // If not yet printed, override status display to warn the cashier
+        if (!bill.IsPrinted)
+        {
+            StatusText = "Not Printed — print bill before payment";
+            StatusBackground = "#FFF3CD";
+            StatusForeground = "#856404";
+        }
+        else
+        {
+            var (statusText, background, foreground) = ResolveBillStatusAppearance(bill.Status, bill.Balance);
+            StatusText = statusText;
+            StatusBackground = background;
+            StatusForeground = foreground;
+        }
 
         AmountTendered = bill.Balance;
     }
@@ -662,6 +684,7 @@ public sealed class PaymentsViewModel : BaseViewModel
     private void ResetSelectedBillState()
     {
         _selectedBillId = Guid.Empty;
+        _selectedBillIsPrinted = false;
         RaisePropertyChanged(nameof(HasSelectedBill));
         RaisePropertyChanged(nameof(CanProcessPayment));
         _processPaymentCommand.RaiseCanExecuteChanged();

@@ -12,10 +12,14 @@ public sealed class BillingLedgerRowItem
     public string DueDateDisplay { get; init; } = string.Empty;
     public decimal Amount { get; init; }
     public decimal Balance { get; init; }
+    public bool IsPrinted { get; init; }
     public string BillStatusText { get; init; } = string.Empty;
     public string BillStatusBackground { get; init; } = "#FFEAD5";
     public string BillStatusForeground { get; init; } = "#B85A00";
     public string PrintStatusText { get; init; } = string.Empty;
     public string PrintStatusBackground { get; init; } = "#E8F7EF";
     public string PrintStatusForeground { get; init; } = "#18794E";
+
+    /// <summary>Command wired by BillingViewModel to print this specific bill.</summary>
+    public required System.Windows.Input.ICommand PrintBillCommand { get; init; }
 }

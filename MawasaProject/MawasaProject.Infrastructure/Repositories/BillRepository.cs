@@ -20,10 +20,10 @@ public sealed class BillRepository(
     protected override string DeleteSql => "UPDATE Bills SET IsDeleted = 1, DeletedAtUtc = $DeletedAtUtc WHERE Id = $Id;";
 
     protected override string InsertSql =>
-        "INSERT INTO Bills (Id, CustomerId, BillNumber, Amount, Balance, DueDateUtc, PaidAtUtc, Status, CreatedByUserId, CreatedAtUtc, UpdatedAtUtc, IsDeleted, DeletedAtUtc) VALUES ($Id, $CustomerId, $BillNumber, $Amount, $Balance, $DueDateUtc, $PaidAtUtc, $Status, $CreatedByUserId, $CreatedAtUtc, $UpdatedAtUtc, $IsDeleted, $DeletedAtUtc);";
+        "INSERT INTO Bills (Id, CustomerId, BillNumber, Amount, Balance, DueDateUtc, PaidAtUtc, Status, CreatedByUserId, CreatedAtUtc, UpdatedAtUtc, IsDeleted, DeletedAtUtc, IsPrinted, PrintedAtUtc) VALUES ($Id, $CustomerId, $BillNumber, $Amount, $Balance, $DueDateUtc, $PaidAtUtc, $Status, $CreatedByUserId, $CreatedAtUtc, $UpdatedAtUtc, $IsDeleted, $DeletedAtUtc, $IsPrinted, $PrintedAtUtc);";
 
     protected override string UpdateSql =>
-        "UPDATE Bills SET CustomerId = $CustomerId, BillNumber = $BillNumber, Amount = $Amount, Balance = $Balance, DueDateUtc = $DueDateUtc, PaidAtUtc = $PaidAtUtc, Status = $Status, CreatedByUserId = $CreatedByUserId, UpdatedAtUtc = $UpdatedAtUtc, IsDeleted = $IsDeleted, DeletedAtUtc = $DeletedAtUtc WHERE Id = $Id;";
+        "UPDATE Bills SET CustomerId = $CustomerId, BillNumber = $BillNumber, Amount = $Amount, Balance = $Balance, DueDateUtc = $DueDateUtc, PaidAtUtc = $PaidAtUtc, Status = $Status, CreatedByUserId = $CreatedByUserId, UpdatedAtUtc = $UpdatedAtUtc, IsDeleted = $IsDeleted, DeletedAtUtc = $DeletedAtUtc, IsPrinted = $IsPrinted, PrintedAtUtc = $PrintedAtUtc WHERE Id = $Id;";
 
     protected override Bill Map(SqliteDataReader reader)
     {
@@ -45,6 +45,8 @@ public sealed class BillRepository(
         command.Parameters.AddWithValue("$UpdatedAtUtc", (object?)entity.UpdatedAtUtc?.ToString("O") ?? DBNull.Value);
         command.Parameters.AddWithValue("$IsDeleted", entity.IsDeleted ? 1 : 0);
         command.Parameters.AddWithValue("$DeletedAtUtc", (object?)entity.DeletedAtUtc?.ToString("O") ?? DBNull.Value);
+        command.Parameters.AddWithValue("$IsPrinted", entity.IsPrinted ? 1 : 0);
+        command.Parameters.AddWithValue("$PrintedAtUtc", (object?)entity.PrintedAtUtc?.ToString("O") ?? DBNull.Value);
     }
 
     protected override void BindUpdate(SqliteCommand command, Bill entity)
@@ -82,6 +84,42 @@ public sealed class BillRepository(
         {
             logger.Error(exception, "Failed to list overdue bills as of {0}", asOfUtc);
             throw CreateRepositoryException("GetOverdueBills", exception);
+        }
+        finally
+        {
+            await ConnectionManager.DisposeConnectionIfNeededAsync(connection);
+        }
+    }
+
+    /// <summary>
+    /// Optimized targeted UPDATE — marks only the IsPrinted and PrintedAtUtc columns
+    /// without loading or re-saving the entire entity.
+    /// </summary>
+    public async Task MarkBillPrintedAsync(Guid billId, CancellationToken cancellationToken = default)
+    {
+        const string sql = """
+            UPDATE Bills
+            SET IsPrinted = 1,
+                PrintedAtUtc = $PrintedAtUtc,
+                UpdatedAtUtc  = $UpdatedAtUtc
+            WHERE Id = $Id AND IsPrinted = 0;
+            """;
+
+        var now = DateTime.UtcNow.ToString("O");
+        var connection = await ConnectionManager.GetOpenConnectionAsync(cancellationToken);
+
+        try
+        {
+            using var command = CreateCommand(connection, sql);
+            command.Parameters.AddWithValue("$Id", billId.ToString());
+            command.Parameters.AddWithValue("$PrintedAtUtc", now);
+            command.Parameters.AddWithValue("$UpdatedAtUtc", now);
+            await command.ExecuteNonQueryAsync(cancellationToken);
+        }
+        catch (SqliteException exception)
+        {
+            logger.Error(exception, "Failed to mark bill {0} as printed", billId);
+            throw CreateRepositoryException("MarkBillPrinted", exception);
         }
         finally
         {

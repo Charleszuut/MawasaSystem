@@ -510,7 +510,7 @@ public sealed class BillingViewModel : BaseViewModel
         var billingPeriod = $"{periodStart:MMM dd} - {periodEnd:MMM dd, yyyy}";
 
         var (billStatusText, billStatusBackground, billStatusForeground) = ResolveBillStatusAppearance(bill.Status);
-        var (printStatusText, printStatusBackground, printStatusForeground) = ResolvePrintStatusAppearance(bill.Status);
+        var (printStatusText, printStatusBackground, printStatusForeground) = ResolvePrintStatusAppearance(bill.IsPrinted);
 
         return new BillingLedgerRowItem
         {
@@ -524,12 +524,26 @@ public sealed class BillingViewModel : BaseViewModel
             DueDateDisplay = bill.DueDateUtc.ToString("yyyy-MM-dd"),
             Amount = bill.Amount,
             Balance = bill.Balance,
+            IsPrinted = bill.IsPrinted,
             BillStatusText = billStatusText,
             BillStatusBackground = billStatusBackground,
             BillStatusForeground = billStatusForeground,
             PrintStatusText = printStatusText,
             PrintStatusBackground = printStatusBackground,
-            PrintStatusForeground = printStatusForeground
+            PrintStatusForeground = printStatusForeground,
+            PrintBillCommand = new AsyncCommand(async () =>
+            {
+                try
+                {
+                    await _billingService.PrintBillAsync(bill.Id);
+                    await _dialogService.AlertAsync("Print", $"Bill {bill.BillNumber} sent to printer and marked as printed.");
+                    await RunBusyAsync(LoadLedgerAsync);
+                }
+                catch (Exception ex)
+                {
+                    await _dialogService.AlertAsync("Print Error", $"Failed to print: {ex.Message}");
+                }
+            })
         };
     }
 
@@ -557,14 +571,11 @@ public sealed class BillingViewModel : BaseViewModel
         };
     }
 
-    private static (string Text, string Background, string Foreground) ResolvePrintStatusAppearance(BillStatus status)
+    private static (string Text, string Background, string Foreground) ResolvePrintStatusAppearance(bool isPrinted)
     {
-        return status switch
-        {
-            BillStatus.Paid => ("Printed", "#E8F8EE", "#1F8A57"),
-            BillStatus.Overdue => ("Awaiting print", "#EAF0FF", "#2F5DC7"),
-            _ => ("Pending print", "#EEF3FB", "#4A5D76")
-        };
+        return isPrinted
+            ? ("Printed", "#E8F8EE", "#1F8A57")
+            : ("Pending print", "#EEF3FB", "#4A5D76");
     }
 
     private void ApplyLedgerFilters(bool resetToFirstPage)
@@ -573,8 +584,8 @@ public sealed class BillingViewModel : BaseViewModel
 
         query = _selectedLedgerFilter switch
         {
-            BillingLedgerFilter.PendingPrint => query.Where(x => !string.Equals(x.PrintStatusText, "Printed", StringComparison.OrdinalIgnoreCase)),
-            BillingLedgerFilter.Printed => query.Where(x => string.Equals(x.PrintStatusText, "Printed", StringComparison.OrdinalIgnoreCase)),
+            BillingLedgerFilter.PendingPrint => query.Where(x => !x.IsPrinted),
+            BillingLedgerFilter.Printed => query.Where(x => x.IsPrinted),
             _ => query
         };
 
@@ -945,8 +956,8 @@ public sealed class BillingViewModel : BaseViewModel
             rows.Add(MapLedgerRow(bill, customerById));
         }
 
-        var pendingPrintCount = bills.Count(b => b.Status != BillStatus.Paid);
-        var printedLockedCount = bills.Count(b => b.Status == BillStatus.Paid);
+        var pendingPrintCount = bills.Count(b => !b.IsPrinted);
+        var printedLockedCount = bills.Count(b => b.IsPrinted);
         var collectionsToday = bills
             .Where(b => b.PaidAtUtc.HasValue && b.PaidAtUtc.Value.Date == DateTime.UtcNow.Date)
             .Sum(b => b.Amount);

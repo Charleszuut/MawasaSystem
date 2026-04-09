@@ -28,7 +28,8 @@ public sealed class SqliteDatabaseInitializer(
         new("007", "MawasaProject.Infrastructure.Data.Sql.007_phase14_documents_hardening.sql", "Phase 14 receipt and invoice hardening"),
         new("008", "MawasaProject.Infrastructure.Data.Sql.008_billing_table_alias.sql", "Billing table mirror"),
         new("009", "MawasaProject.Infrastructure.Data.Sql.009_relax_billing_constraint.sql", "Relax Billing balance constraint"),
-        new("010", "MawasaProject.Infrastructure.Data.Sql.010_customer_disconnection.sql", "Customer disconnection tracking")
+        new("010", "MawasaProject.Infrastructure.Data.Sql.010_customer_disconnection.sql", "Customer disconnection tracking"),
+        new("011", "MawasaProject.Infrastructure.Data.Sql.011_bills_printed_flag.sql", "Add IsPrinted flag and fix Bills CHECK constraint")
     ];
 
     private static readonly Guid AdminRoleId = Guid.Parse("7D089763-EBB9-4F5D-909F-02CB685EF65D");
@@ -575,8 +576,8 @@ public sealed class SqliteDatabaseInitializer(
             CREATE TRIGGER IF NOT EXISTS trg_Bills_Insert_Billing
             AFTER INSERT ON Bills
             BEGIN
-                INSERT OR REPLACE INTO Billing (Id, CustomerId, BillNumber, Amount, Balance, DueDateUtc, PaidAtUtc, Status, CreatedByUserId, CreatedAtUtc, UpdatedAtUtc, IsDeleted, DeletedAtUtc)
-                VALUES (NEW.Id, NEW.CustomerId, NEW.BillNumber, NEW.Amount, NEW.Balance, NEW.DueDateUtc, NEW.PaidAtUtc, NEW.Status, NEW.CreatedByUserId, NEW.CreatedAtUtc, NEW.UpdatedAtUtc, NEW.IsDeleted, NEW.DeletedAtUtc);
+                INSERT OR REPLACE INTO Billing (Id, CustomerId, BillNumber, Amount, Balance, DueDateUtc, PaidAtUtc, Status, CreatedByUserId, CreatedAtUtc, UpdatedAtUtc, IsDeleted, DeletedAtUtc, IsPrinted, PrintedAtUtc)
+                VALUES (NEW.Id, NEW.CustomerId, NEW.BillNumber, NEW.Amount, NEW.Balance, NEW.DueDateUtc, NEW.PaidAtUtc, NEW.Status, NEW.CreatedByUserId, NEW.CreatedAtUtc, NEW.UpdatedAtUtc, NEW.IsDeleted, NEW.DeletedAtUtc, NEW.IsPrinted, NEW.PrintedAtUtc);
             END;
             """;
 
@@ -590,8 +591,8 @@ public sealed class SqliteDatabaseInitializer(
             CREATE TRIGGER IF NOT EXISTS trg_Bills_Update_Billing
             AFTER UPDATE ON Bills
             BEGIN
-                INSERT OR REPLACE INTO Billing (Id, CustomerId, BillNumber, Amount, Balance, DueDateUtc, PaidAtUtc, Status, CreatedByUserId, CreatedAtUtc, UpdatedAtUtc, IsDeleted, DeletedAtUtc)
-                VALUES (NEW.Id, NEW.CustomerId, NEW.BillNumber, NEW.Amount, NEW.Balance, NEW.DueDateUtc, NEW.PaidAtUtc, NEW.Status, NEW.CreatedByUserId, NEW.CreatedAtUtc, NEW.UpdatedAtUtc, NEW.IsDeleted, NEW.DeletedAtUtc);
+                INSERT OR REPLACE INTO Billing (Id, CustomerId, BillNumber, Amount, Balance, DueDateUtc, PaidAtUtc, Status, CreatedByUserId, CreatedAtUtc, UpdatedAtUtc, IsDeleted, DeletedAtUtc, IsPrinted, PrintedAtUtc)
+                VALUES (NEW.Id, NEW.CustomerId, NEW.BillNumber, NEW.Amount, NEW.Balance, NEW.DueDateUtc, NEW.PaidAtUtc, NEW.Status, NEW.CreatedByUserId, NEW.CreatedAtUtc, NEW.UpdatedAtUtc, NEW.IsDeleted, NEW.DeletedAtUtc, NEW.IsPrinted, NEW.PrintedAtUtc);
             END;
             """;
 

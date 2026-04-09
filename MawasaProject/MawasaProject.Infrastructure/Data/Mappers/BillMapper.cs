@@ -24,7 +24,9 @@ public static class BillMapper
             CreatedAtUtc = SqliteHelper.GetDateTime(reader, "CreatedAtUtc"),
             UpdatedAtUtc = SqliteHelper.GetNullableDateTime(reader, "UpdatedAtUtc"),
             IsDeleted = SqliteHelper.GetBoolean(reader, "IsDeleted"),
-            DeletedAtUtc = SqliteHelper.GetNullableDateTime(reader, "DeletedAtUtc")
+            DeletedAtUtc = SqliteHelper.GetNullableDateTime(reader, "DeletedAtUtc"),
+            IsPrinted = SqliteHelper.GetBoolean(reader, "IsPrinted"),
+            PrintedAtUtc = SqliteHelper.GetNullableDateTime(reader, "PrintedAtUtc")
         };
     }
 

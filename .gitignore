@@ -1,0 +1,41 @@
+## .NET / C# build artifacts
+bin/
+obj/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+*.userprefs
+
+## NuGet
+*.nupkg
+*.snupkg
+packages/
+.nuget/
+
+## Visual Studio
+.vs/
+*.ncb
+*.sap
+*.sdf
+*.opensdf
+*.aps
+
+## Rider / JetBrains
+.idea/
+*.DotSettings.user
+
+## WebView2 / MAUI runtime cache
+*.exe.WebView2/
+
+## OS
+Thumbs.db
+.DS_Store
+desktop.ini
+
+## Logs and temp files
+*.log
+crash_log*.txt
+build_errors.txt
+conflicts.txt
+git_status*.txt

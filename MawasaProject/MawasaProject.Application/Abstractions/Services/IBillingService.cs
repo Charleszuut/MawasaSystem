@@ -11,4 +11,7 @@ public interface IBillingService
     Task<IReadOnlyList<BillDto>> GetBillsByCustomerAsync(Guid customerId, CancellationToken cancellationToken = default);
     Task ApplyOverdueAutomationAsync(DateTime asOfUtc, CancellationToken cancellationToken = default);
     Task UpdateBillStatusAsync(Guid billId, MawasaProject.Domain.Enums.BillStatus newStatus, Guid changedByUserId, CancellationToken cancellationToken = default);
+
+    /// <summary>Marks the bill as printed in the database and enqueues a physical print job.</summary>
+    Task PrintBillAsync(Guid billId, CancellationToken cancellationToken = default);
 }

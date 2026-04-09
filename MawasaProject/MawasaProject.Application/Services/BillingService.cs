@@ -12,6 +12,7 @@ public sealed class BillingService(
     IBillRepository billRepository,
     IUnitOfWork unitOfWork,
     IAuditInterceptor auditInterceptor,
+    IPrinterService printerService,
     BusinessRuleEngine rules) : IBillingService
 {
     public Task<IReadOnlyList<Bill>> GetBillsAsync(CancellationToken cancellationToken = default)
@@ -122,6 +123,40 @@ public sealed class BillingService(
                 context: "Bill status updated",
                 username: null,
                 ct);
+        }, cancellationToken);
+    }
+
+    public async Task PrintBillAsync(Guid billId, CancellationToken cancellationToken = default)
+    {
+        var bill = await billRepository.GetByIdAsync(billId, cancellationToken)
+            ?? throw new InvalidOperationException($"Bill {billId} was not found.");
+
+        // Build a human-readable receipt content for the printer
+        var content =
+            "=================================\n" +
+            "       MAWASA WATER SYSTEM       \n" +
+            "=================================\n" +
+            $"BILL NO : {bill.BillNumber}\n" +
+            $"DATE    : {DateTime.Now:MMM dd, yyyy HH:mm}\n" +
+            $"DUE     : {bill.DueDateUtc.ToLocalTime():MMM dd, yyyy}\n" +
+            "---------------------------------\n" +
+            $"AMOUNT  : P{bill.Amount:N2}\n" +
+            $"BALANCE : P{bill.Balance:N2}\n" +
+            $"STATUS  : {bill.Status}\n" +
+            "=================================\n" +
+            "  Please pay on or before due   \n" +
+            "  date to avoid disconnection.  \n" +
+            "=================================\n\n\n";
+
+        // Optimized: only UPDATE IsPrinted/PrintedAtUtc — no full entity round-trip
+        await billRepository.MarkBillPrintedAsync(billId, cancellationToken);
+
+        // Enqueue the physical print job (uses the saved default printer profile)
+        await printerService.EnqueueAsync(new PrintRequest
+        {
+            TemplateName = "Bill",
+            Content = content,
+            MaxRetries = 2
         }, cancellationToken);
     }
 }
